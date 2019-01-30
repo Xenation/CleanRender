@@ -1,0 +1,22 @@
+#pragma once
+#include <iostream>
+
+
+class Debug {
+public:
+	static void log(const char* msg) {
+		std::cout << "[LOG] " << msg << std::endl;
+	}
+	static void logError(const char* msg) {
+		std::cout << "[ERROR] " << msg << std::endl;
+	}
+	static void logError(const char* label, const char* msg) {
+		std::cout << "[ERROR]-" << label << ": " << msg << std::endl;
+	}
+	static void fail(const char* msg) {
+		logError(msg);
+		logError("Unexpected Termination!");
+		system("pause");
+		exit(EXIT_FAILURE);
+	}
+};
