@@ -1,6 +1,8 @@
 #pragma once
+class Mesh;
 class Pipeline {
 public:
+	Mesh* testMesh;
 	Pipeline();
 	~Pipeline();
 	void render();
