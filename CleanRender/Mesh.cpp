@@ -3,12 +3,21 @@
 
 
 Mesh::Mesh(int vCount, int iCount) {
-	vertices = new float[vCount];
-	indices = new int[iCount];
+	vertexCount = vCount;
+	indexCount = iCount;
+	indices = new int[indexCount];
 }
 
 Mesh::~Mesh() {
-	delete[] vertices;
+	if (attributeSizes != nullptr) {
+		delete[] attributeSizes;
+	}
+	if (attributeOffsets != nullptr) {
+		delete[] attributeOffsets;
+	}
+	if (vertices != nullptr) {
+		delete[] vertices;
+	}
 	delete[] indices;
 }
 
@@ -21,6 +30,7 @@ void Mesh::setAttributesDefinition(int count, int* sizes) {
 		attributeOffsets[i] = vertexFloatSize * sizeof(float);
 		vertexFloatSize += attributeSizes[i];
 	}
+	vertices = new float[vertexCount * vertexFloatSize];
 }
 
 void Mesh::setAttribute(int index, float* values) {

@@ -15,12 +15,12 @@ private:
 	GLuint vboVertices = 0;
 	GLuint vboIndices = 0;
 	int attributeCount;
-	int* attributeSizes;
-	int* attributeOffsets;
+	int* attributeSizes = nullptr;
+	int* attributeOffsets = nullptr;
 	int vertexFloatSize;
 	int vertexCount;
-	float* vertices;
+	float* vertices = nullptr;
 	int indexCount;
-	int* indices;
+	int* indices = nullptr;
 };
 
