@@ -10,6 +10,7 @@ namespace fs = std::filesystem;
 
 unsigned int ShaderProgram::shaderCount = 0;
 ShaderProgram** ShaderProgram::shaders = nullptr;
+GLuint ShaderProgram::usedProgram = 0;
 
 void ShaderProgram::initializeAll() {
 	if (!fs::exists(SHADER_DIRECTORY)) {
@@ -36,6 +37,16 @@ void ShaderProgram::reloadAll() {
 	}
 }
 
+ShaderProgram* ShaderProgram::find(std::string name) {
+	for (int i = 0; i < shaderCount; i++) {
+		if (shaders[i]->path == name) {
+			return shaders[i];
+		}
+	}
+	Debug::log("ShaderProgram", ("Could not find program named " + name).c_str());
+	return nullptr;
+}
+
 
 ShaderProgram::ShaderProgram(std::string path) {
 	this->path = path;
@@ -46,22 +57,82 @@ ShaderProgram::~ShaderProgram() {
 }
 
 void ShaderProgram::load() {
-	
+	std::string vertexFile = std::string("vs.glsl");
+	std::string fragmentFile = std::string("fs.glsl");
+
+	GLuint vs = loadShader(GL_VERTEX_SHADER, vertexFile);
+	GLuint fs = loadShader(GL_FRAGMENT_SHADER, fragmentFile);
+
+	if (vs > 0 || fs > 0) {
+		program = glCreateProgram();
+		if (vs > 0) {
+			glAttachShader(program, vs);
+		}
+		if (fs > 0) {
+			glAttachShader(program, fs);
+		}
+
+		glLinkProgram(program);
+
+		GLint isLinked = 0;
+		glGetProgramiv(program, GL_LINK_STATUS, &isLinked);
+		if (isLinked == GL_FALSE) {
+			GLint maxLength = 0;
+			glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
+
+			char* infoLog = new char[maxLength];
+			memset(infoLog, 0, maxLength * sizeof(char));
+
+			glGetProgramInfoLog(program, maxLength, &maxLength, infoLog);
+
+			glDeleteProgram(program);
+
+			std::string error = "Could not link";
+			if (vs != 0) {
+				error += " vs[" + vertexFile + "]";
+			}
+			if (fs != 0) {
+				error += " fs[" + fragmentFile + "]";
+			}
+
+			error += ", log is: " + std::string(infoLog);
+			Debug::logError("ShaderProgram", error.c_str());
+
+			delete[] infoLog;
+
+			program = 0;
+			return;
+		}
+		Debug::log("ShaderProgram", "Program load and link done!");
+		return;
+	}
+
 }
 
 void ShaderProgram::reload() {
 	if (!loaded) return;
 }
 
-char* ShaderProgram::loadSource(const char* fileName) {
+void ShaderProgram::use() {
+	/*if (program == usedProgram) return;
+	usedProgram = program;*/
+	glUseProgram(program);
+}
+
+void ShaderProgram::unuse() {
+	//usedProgram = 0;
+	glUseProgram(0);
+}
+
+char* ShaderProgram::loadSource(std::string filePath) {
 	char* src = nullptr;
 	FILE* fp = nullptr;
 	long size;
 	long i;
 
-	fopen_s(&fp, fileName, "r");
+	fopen_s(&fp, filePath.c_str(), "r");
 	if (fp == nullptr) {
-		Debug::logError("ShaderLoad", ("Could not load shader source file " + std::string(fileName)).c_str());
+		Debug::logError("ShaderLoad", ("Could not load shader source file " + filePath).c_str());
 		return nullptr;
 	}
 
@@ -72,7 +143,7 @@ char* ShaderProgram::loadSource(const char* fileName) {
 	src = (char*) malloc(size + 1);
 	if (src == nullptr) {
 		fclose(fp);
-		Debug::logError("ShaderLoad", ("Could not allocate memory for shader source file " + std::string(fileName)).c_str());
+		Debug::logError("ShaderLoad", ("Could not allocate memory for shader source file " + filePath).c_str());
 		return nullptr;
 	}
 
@@ -97,12 +168,10 @@ GLuint ShaderProgram::loadShader(GLenum type, std::string fileName) {
 	GLint compileStatus = GL_TRUE;
 	char* log = nullptr;
 	char* src = nullptr;
-	const char* filePath = (path + "/" + fileName).c_str();
+	std::string filePath = std::string(SHADER_DIRECTORY) + path + "/" + fileName;
 
-	FILE* file;
-	if (fopen_s(&file, filePath, "r") == 0) {
-		fclose(file);
-	} else {
+	if (!fs::exists(filePath)) {
+		Debug::logError("ShaderLoad", ("File " + filePath + " not found").c_str());
 		return 0;
 	}
 
@@ -130,14 +199,22 @@ GLuint ShaderProgram::loadShader(GLenum type, std::string fileName) {
 	log = new char[logSize + 1];
 	if (log == nullptr) {
 		Debug::logError("ShaderLoad", ("Could not allocate memory for shader compilation log (" + fileName + ")").c_str());
+		return 0;
+	}
+	memset(log, '\0', logSize + 1);
+
+	glGetShaderInfoLog(shader, logSize, &logSize, log);
+
+	std::string logStr = std::string(log);
+	if (compileStatus != GL_TRUE) {
+		Debug::logError("ShaderLoad", ("Could not compile shader " + fileName + ": " + logStr).c_str());
 		delete[] log;
 		glDeleteShader(shader);
 		return 0;
 	} else {
-		Debug::log("ShaderLoad", ("Shader " + fileName + " compile success").c_str());
-		std::string logStr = std::string(log);
+		Debug::log("ShaderLoad", ("Program " + path + " shader " + fileName + " compile success").c_str());
 		if (logStr.length() > 0) {
-			Debug::log("ShaderLoad", ("Compile result " + fileName + ": " + logStr).c_str());
+			Debug::log("ShaderLoad", ("Compile result " + fileName + ":\n" + logStr).c_str());
 		}
 		delete[] log;
 	}

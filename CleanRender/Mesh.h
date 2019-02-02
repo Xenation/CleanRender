@@ -6,7 +6,7 @@ public:
 	~Mesh();
 	void setAttributesDefinition(int count, int* sizes);
 	void setAttribute(int index, float* values);
-	void setIndices(int* indices);
+	void setIndices(unsigned int* indices);
 	void uploadToGL();
 	void deleteFromGL();
 	void render();
@@ -14,13 +14,14 @@ private:
 	GLuint vao = 0;
 	GLuint vboVertices = 0;
 	GLuint vboIndices = 0;
+	bool loadedToGL = false;
 	int attributeCount;
 	int* attributeSizes = nullptr;
-	int* attributeOffsets = nullptr;
+	int* attributeFloatOffsets = nullptr;
 	int vertexFloatSize;
 	int vertexCount;
 	float* vertices = nullptr;
 	int indexCount;
-	int* indices = nullptr;
+	unsigned int* indices = nullptr;
 };
 

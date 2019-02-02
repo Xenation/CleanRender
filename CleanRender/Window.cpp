@@ -26,8 +26,8 @@ void Window::initializeGLFW() {
 	}
 	glfwSetErrorCallback(error_callback);
 
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
 }
 
 void Window::resizeFrameCallback(GLFWwindow* window, int width, int height) {
@@ -45,6 +45,7 @@ Window::Window(const char* title) {
 	}
 	glfwSetKeyCallback(window, Input::getKeyCallback());
 	glfwSetFramebufferSizeCallback(window, resizeFrameCallback);
+	glfwSetWindowPos(window, 500, 500);
 
 	glfwMakeContextCurrent(window);
 	if (gl3wInit2(glfwGetProcAddress)) {
