@@ -3,6 +3,7 @@
 #include "gl3w.h"
 #include "Mesh.h"
 #include "ShaderProgram.h"
+#include "Renderer.h"
 
 
 
@@ -23,6 +24,7 @@ Pipeline::Pipeline() {
 	testMesh2->setAttribute(0, new float[12]{-1.0f, -1.0f, 0.0f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f});
 	testMesh2->setIndices(new unsigned int[3]{3, 2, 0});
 	testMesh2->uploadToGL();
+	renderers = std::unordered_map<unsigned int, Renderer*>();
 }
 
 Pipeline::~Pipeline() {
@@ -34,14 +36,28 @@ Pipeline::~Pipeline() {
 void Pipeline::render() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	testShader->use();
+	//testShader->use();
 
-	testMesh->render();
-	testMesh2->render();
+	//testMesh->render();
+	//testMesh2->render();
 
-	testShader->unuse();
+	for (std::pair<unsigned int, Renderer*> p : renderers) {
+		p.second->render();
+	}
+
+	//testShader->unuse();
 }
 
 void Pipeline::resizeFrameBuffer(int width, int height) {
 	glViewport(0, 0, width, height);
+}
+
+unsigned int Pipeline::registerRenderer(Renderer* renderer) {
+	int id = currentId++;
+	renderers[id] = renderer;
+	return id;
+}
+
+void Pipeline::unregisterRenderer(unsigned int id) {
+	renderers.erase(id);
 }
