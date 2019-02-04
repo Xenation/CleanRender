@@ -1,6 +1,7 @@
 #pragma once
 #include "Component.h"
 #include "Math.h"
+#include "SimpleList.h"
 class Transform : public Component {
 public:
 	Transform(Entity* entity);
@@ -38,12 +39,8 @@ private:
 
 	Transform* parent = nullptr;
 	unsigned int childIndex = 0;
-	Transform** children = nullptr;
-	unsigned int childrenCount = 0;
-	unsigned int childrenCapacity = 0;
+	SimpleList<Transform*> children;
 	void addChild(Transform* child);
 	void removeChild(unsigned int index);
-	void initChildArray();
-	void growChildArray();
 };
 

@@ -12,3 +12,13 @@ Component::~Component() {
 	if (entity->isDying) return;
 	entity->removeComponent(this);
 }
+
+void Component::enable() {
+	this->enabled = true;
+	onEnable();
+}
+
+void Component::disable() {
+	this->enabled = false;
+	onDisable();
+}

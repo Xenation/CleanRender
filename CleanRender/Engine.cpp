@@ -5,6 +5,8 @@
 #include "EntityManager.h"
 #include "Entity.h"
 #include "MeshRenderer.h"
+#include "Camera.h" // TODO remove when not testing
+#include "Transform.h"
 
 
 
@@ -17,6 +19,7 @@ Window* Engine::window = nullptr;
 Pipeline* Engine::pipeline = nullptr;
 EntityManager* Engine::entityManager = nullptr;
 Entity* Engine::testEntity = nullptr;
+Entity* Engine::testCamera = nullptr;
 
 
 void Engine::initialize() {
@@ -27,12 +30,16 @@ void Engine::initialize() {
 	MeshRenderer* mr = testEntity->addComponent<MeshRenderer>();
 	mr->setMesh(pipeline->testMesh);
 	mr->setShaderProgram(pipeline->testShader);
+	testCamera = new Entity();
+	testCamera->transform->setPosition({0, 0, -10});
+	testCamera->addComponent<Camera>();
 }
 
 void Engine::loop() {
 	while (!window->shouldClose()) {
 		// INPUT
 		// UPDATE
+		entityManager->updateEntities();
 		// RENDER
 		pipeline->render();
 		// DISPLAY

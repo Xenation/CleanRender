@@ -55,6 +55,12 @@
     <Filter Include="Source Files\Engine\Entity\Systems">
       <UniqueIdentifier>{705b62fe-1386-49c1-86c3-c3e5c3d1adc6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Engine\Utils">
+      <UniqueIdentifier>{36b7da28-2fb9-411c-8841-a3542d4d7d62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Utils">
+      <UniqueIdentifier>{ec2c53cb-76f7-44ad-88a6-0684b21a7bb2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -100,6 +106,9 @@
       <Filter>Source Files\Engine\Entity\Components</Filter>
     </ClCompile>
     <ClCompile Include="MeshRenderer.cpp">
+      <Filter>Source Files\Engine\Entity\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
       <Filter>Source Files\Engine\Entity\Components</Filter>
     </ClCompile>
   </ItemGroup>
@@ -150,6 +159,15 @@
       <Filter>Header Files\Engine\Entity\Components</Filter>
     </ClInclude>
     <ClInclude Include="MeshRenderer.h">
+      <Filter>Header Files\Engine\Entity\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="HollowSet.h">
+      <Filter>Header Files\Engine\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleList.h">
+      <Filter>Header Files\Engine\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
       <Filter>Header Files\Engine\Entity\Components</Filter>
     </ClInclude>
   </ItemGroup>

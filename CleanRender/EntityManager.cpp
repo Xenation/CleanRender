@@ -8,54 +8,30 @@
 
 
 
-EntityManager::EntityManager() {
-	initializeEntityArray();
+EntityManager::EntityManager() 
+	: entities(HollowSet<Entity*>(ENTITY_ARRAY_START_SIZE, ENTITY_ARRAY_INCREASE)) {
 }
 
 EntityManager::~EntityManager() {
-	for (unsigned int i = 0; i < entityCount; i++) {
+	for (unsigned int i = 0; i < entities.count; i++) {
 		delete entities[i];
 	}
-	delete[] entities;
 }
 
 void EntityManager::registerEntity(Entity* entity) {
-	if (entityCount == entityCapacity) {
-		growEntityArray();
-		if (entityCount == entityCapacity) { // Grow failled
-			return;
-		}
-	}
-	entity->id = entityCount;
-	entities[entity->id] = entity;
-	entityCount++;
+	entity->id = entities.add(entity);
 }
 
 void EntityManager::unregisterEntity(Entity* entity) {
-	unsigned int i = 0;
-	for (i = entity->id + 1; i < entityCount; i++) {
-		entities[i]->id--; // Offset ids to acount for shift
-		entities[i - 1] = entities[i];
-	}
-	entities[i - 1] = nullptr;
-	entityCount--;
+	entities.remove(entity->id);
 }
 
-void EntityManager::initializeEntityArray() {
-	entityCapacity = ENTITY_ARRAY_START_SIZE;
-	entities = new Entity*[entityCapacity];
-}
-
-void EntityManager::growEntityArray() {
-	entityCapacity += ENTITY_ARRAY_INCREASE;
-	Entity** nEntities = new Entity*[entityCapacity];
-	if (nEntities == nullptr) {
-		Debug::logError("EntityManager", "Could not allocate memory required for additionnal entities");
-		return;
+void EntityManager::updateEntities() {
+	unsigned int updated = 0;
+	for (unsigned int i = 0; i < entities.capacity; i++) {
+		if (updated == entities.count) break;
+		if (entities[i] == nullptr) continue;
+		entities[i]->updateComponents();
+		updated++;
 	}
-	for (unsigned int i = 0; i < entityCount; i++) {
-		nEntities[i] = entities[i];
-	}
-	delete[] entities;
-	entities = nEntities;
 }

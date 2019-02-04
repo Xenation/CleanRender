@@ -104,6 +104,7 @@ void ShaderProgram::load() {
 			return;
 		}
 		Debug::log("ShaderProgram", "Program load and link done!");
+		getAllLocations();
 		return;
 	}
 
@@ -122,6 +123,24 @@ void ShaderProgram::use() {
 void ShaderProgram::unuse() {
 	//usedProgram = 0;
 	glUseProgram(0);
+}
+
+void ShaderProgram::loadProjectionMatrix(Matrix4x4f mat) {
+	glUniformMatrix4fv(locationProjectionMatrix, 1, false, mat.data);
+}
+
+void ShaderProgram::loadViewMatrix(Matrix4x4f mat) {
+	glUniformMatrix4fv(locationViewMatrix, 1, false, mat.data);
+}
+
+void ShaderProgram::loadModelMatrix(Matrix4x4f mat) {
+	glUniformMatrix4fv(locationModelMatrix, 1, false, mat.data);
+}
+
+void ShaderProgram::getAllLocations() {
+	locationProjectionMatrix = glGetUniformLocation(program, "projectionMatrix");
+	locationViewMatrix = glGetUniformLocation(program, "viewMatrix");
+	locationModelMatrix = glGetUniformLocation(program, "modelMatrix");
 }
 
 char* ShaderProgram::loadSource(std::string filePath) {

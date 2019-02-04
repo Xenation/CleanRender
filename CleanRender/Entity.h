@@ -2,6 +2,7 @@
 #include <type_traits>
 #include <typeinfo>
 #include "Component.h"
+#include "HollowSet.h"
 class Transform;
 class Entity {
 public:
@@ -17,37 +18,33 @@ public:
 	// Adds a component
 	template<typename T, typename std::enable_if<std::is_base_of<Component, T>::value>::type* = nullptr>
 	T* addComponent(T* comp) {
-		if (componentCount == componentCapacity) {
-			growComponentsArray();
-			if (componentCount == componentCapacity) { // Grow failled
-				return nullptr;
-			}
+		components.add(comp);
+
+		comp->onStart();
+		if (comp->isEnabled()) {
+			comp->onEnable();
 		}
-		components[getFreeComponentIndex()] = comp;
-		componentCount++;
 		return comp;
 	}
 
 	// Adds a component by creating a new
 	template<typename T, typename std::enable_if<std::is_base_of<Component, T>::value>::type* = nullptr>
 	T* addComponent() {
-		if (componentCount == componentCapacity) {
-			growComponentsArray();
-			if (componentCount == componentCapacity) { // Grow failled
-				return nullptr;
-			}
-		}
 		T* nComponent = new T(this);
-		components[getFreeComponentIndex()] = nComponent;
+		components.add(nComponent);
 		nComponent->entity = this;
-		componentCount++;
+
+		nComponent->onStart();
+		if (nComponent->isEnabled()) {
+			nComponent->onEnable();
+		}
 		return nComponent;
 	}
 	
 	// Gets a component of the given type
 	template<typename T, typename std::enable_if<std::is_base_of<Component, T>::value>::type* = nullptr>
 	T* getComponent() {
-		for (int i = 0; i < componentCapacity; i++) {
+		for (unsigned int i = 0; i < components.capacity; i++) {
 			if (components[i] != nullptr && typeid(components[i]) == T) return components[i];
 		}
 		return nullptr;
@@ -57,8 +54,8 @@ public:
 	template<typename T, typename std::enable_if<std::is_base_of<Component, T>::value>::type* = nullptr>
 	T** getComponents() {
 		unsigned int count = 0;
-		for (int i = 0; i < componentCapacity; i++) {
-			if (count == componentCount) break;
+		for (unsigned int i = 0; i < components.capacity; i++) {
+			if (count == components.count) break;
 			if (components[i] != nullptr && typeid(components[i]) == T) count++;
 		}
 		T** comps = new Component*[count];
@@ -70,8 +67,8 @@ public:
 	template<typename T, typename std::enable_if<std::is_base_of<Component, T>::value>::type* = nullptr>
 	unsigned int getComponents(T** arr, unsigned int arrSize) {
 		unsigned int arrIndex = 0;
-		for (int i = 0; i < componentCapacity && arrIndex < arrSize; i++) {
-			if (arrIndex == componentCount) break;
+		for (unsigned int i = 0; i < components.capacity && arrIndex < arrSize; i++) {
+			if (arrIndex == components.count) break;
 			if (components[i] != nullptr && typeid(components[i]) == T) {
 				arr[arrIndex++] = components[i];
 			}
@@ -81,21 +78,23 @@ public:
 
 	// Removes a previously added component
 	void removeComponent(Component* comp) {
-		for (unsigned int i = 0; i < componentCount; i++) {
+		for (unsigned int i = 0; i < components.count; i++) {
 			if (components[i] != nullptr && components[i] == comp) {
+				if (components[i]->isEnabled()) {
+					components[i]->onDisable();
+				}
+				components[i]->onDestroy();
+
 				components[i] = nullptr;
+				components.count--;
 				break;
 			}
 		}
 	}
 
-private:
-	Component** components = nullptr;
-	unsigned int componentCount = 0;
-	unsigned int componentCapacity = 0;
+	void updateComponents();
 
-	void initComponentsArray();
-	void growComponentsArray();
-	unsigned int getFreeComponentIndex();
+private:
+	HollowSet<Component*> components;
 };
 

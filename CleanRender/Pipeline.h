@@ -1,8 +1,9 @@
 #pragma once
-#include <unordered_map>
+#include "HollowSet.h"
 class Mesh;
 class ShaderProgram;
 class Renderer;
+class Camera;
 class Pipeline {
 public:
 	Mesh* testMesh;
@@ -10,17 +11,20 @@ public:
 	ShaderProgram* testShader;
 
 	Pipeline();
+	Pipeline(const Pipeline&) = delete;
 	~Pipeline();
 
 	void render();
 	void resizeFrameBuffer(int width, int height);
 	unsigned int registerRenderer(Renderer* renderer);
 	void unregisterRenderer(unsigned int id);
+	unsigned int registerCamera(Camera* camera);
+	void unregisterCamera(unsigned int id);
 
 private:
-	std::unordered_map<unsigned int, Renderer*> renderers;
-	unsigned int currentId = 0;
+	HollowSet<Renderer*> renderers;
+	HollowSet<Camera*> cameras;
 
-	Pipeline(const Pipeline&) = delete;
+	void render(Camera* camera);
 };
 

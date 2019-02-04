@@ -4,10 +4,17 @@
 #include "Mesh.h"
 #include "ShaderProgram.h"
 #include "Renderer.h"
+#include "Camera.h"
+
+#define RENDERERS_START_SIZE 32
+#define RENDERERS_INCREASE 32
+#define CAMERAS_START_SIZE 1
+#define CAMERAS_INCREASE 1
 
 
 
-Pipeline::Pipeline() {
+Pipeline::Pipeline() 
+	: renderers(HollowSet<Renderer*>(RENDERERS_START_SIZE, RENDERERS_INCREASE)), cameras(HollowSet<Camera*>(CAMERAS_START_SIZE, CAMERAS_INCREASE)){
 	ShaderProgram::initializeAll();
 	testShader = ShaderProgram::find("test");
 	if (testShader != nullptr) {
@@ -24,7 +31,6 @@ Pipeline::Pipeline() {
 	testMesh2->setAttribute(0, new float[12]{-1.0f, -1.0f, 0.0f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f});
 	testMesh2->setIndices(new unsigned int[3]{3, 2, 0});
 	testMesh2->uploadToGL();
-	renderers = std::unordered_map<unsigned int, Renderer*>();
 }
 
 Pipeline::~Pipeline() {
@@ -34,18 +40,25 @@ Pipeline::~Pipeline() {
 
 
 void Pipeline::render() {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	//testShader->use();
-
-	//testMesh->render();
-	//testMesh2->render();
-
-	for (std::pair<unsigned int, Renderer*> p : renderers) {
-		p.second->render();
+	unsigned int rendered = 0;
+	for (unsigned int i = 0; i < cameras.capacity && rendered < cameras.count; i++) {
+		if (cameras[i] == nullptr) continue;
+		render(cameras[i]);
+		rendered++;
 	}
+}
 
-	//testShader->unuse();
+void Pipeline::render(Camera* camera) {
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	unsigned int rendered = 0;
+	for (unsigned int i = 0; i < renderers.capacity && rendered < renderers.count; i++) {
+		if (renderers[i] == nullptr) continue;
+		renderers[i]->getShaderProgram()->use();
+		renderers[i]->getShaderProgram()->loadProjectionMatrix(camera->getProjectionMatrix());
+		renderers[i]->getShaderProgram()->loadViewMatrix(camera->getViewMatrix());
+		renderers[i]->render();
+		rendered++;
+	}
 }
 
 void Pipeline::resizeFrameBuffer(int width, int height) {
@@ -53,11 +66,17 @@ void Pipeline::resizeFrameBuffer(int width, int height) {
 }
 
 unsigned int Pipeline::registerRenderer(Renderer* renderer) {
-	int id = currentId++;
-	renderers[id] = renderer;
-	return id;
+	return renderers.add(renderer);
 }
 
 void Pipeline::unregisterRenderer(unsigned int id) {
-	renderers.erase(id);
+	renderers.remove(id);
+}
+
+unsigned int Pipeline::registerCamera(Camera* camera) {
+	return cameras.add(camera);
+}
+
+void Pipeline::unregisterCamera(unsigned int id) {
+	cameras.remove(id);
 }

@@ -18,5 +18,6 @@ private:
 	~Engine();
 
 	static Entity* testEntity;
+	static Entity* testCamera;
 };
 
