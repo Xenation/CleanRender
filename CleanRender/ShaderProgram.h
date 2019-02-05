@@ -4,6 +4,8 @@
 #include "Math.h"
 class ShaderProgram {
 public:
+	static ShaderProgram* errorShader;
+	
 	static void initializeAll();
 	static void reloadAll();
 	static ShaderProgram* find(std::string name);
@@ -43,8 +45,9 @@ private:
 
 	void getAllLocations();
 
-	char* loadSource(std::string fileName);
-	GLuint loadShader(GLenum type, std::string fileName);
-
+	void load(GLuint vs, GLuint fs, bool silent = false);
+	GLuint loadShader(GLenum type, std::string fileName, bool silent = false);
+	GLuint loadShaderFromSource(GLenum type, const char* src, bool silent = false);
+	char* loadSource(std::string fileName, bool silent = false);
 };
 

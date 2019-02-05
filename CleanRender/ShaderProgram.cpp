@@ -2,28 +2,40 @@
 
 #include <filesystem>
 #include "Debug.h"
-#define SHADER_DIRECTORY "res/shaders/"
 
+#define SHADER_DIRECTORY "res/shaders/"
+#define SHADER_CODE_ERROR_VS "#version 330 core\nlayout (location = 0) in vec3 vp;\nuniform mat4x4 projectionMatrix;\nuniform mat4x4 viewMatrix;\nuniform mat4x4 modelMatrix;\nvoid main() { gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(vp, 1.0); }\n\0"
+#define SHADER_CODE_ERROR_FS "#version 330 core\nout vec4 fc;\nvoid main() { fc = vec4(1.0, 0.0, 1.0, 1.0); }\n\0"
 
 
 namespace fs = std::filesystem;
 
+ShaderProgram* ShaderProgram::errorShader = nullptr;
 unsigned int ShaderProgram::shaderCount = 0;
 ShaderProgram** ShaderProgram::shaders = nullptr;
 GLuint ShaderProgram::usedProgram = 0;
 
 void ShaderProgram::initializeAll() {
+	// Loading Error shader
+	errorShader = new ShaderProgram("Error");
+	errorShader->load(errorShader->loadShaderFromSource(GL_VERTEX_SHADER, SHADER_CODE_ERROR_VS), errorShader->loadShaderFromSource(GL_FRAGMENT_SHADER, SHADER_CODE_ERROR_FS));
+
+
+	// Searching for shaders
 	if (!fs::exists(SHADER_DIRECTORY)) {
 		Debug::logError("ShaderInit", ("Shader directory " + std::string(SHADER_DIRECTORY) + " not found!").c_str());
+		shaders = new ShaderProgram*[1];
+		shaders[0] = errorShader;
 		return;
 	}
-	shaderCount = 0;
+	shaderCount = 1;
 	for (fs::directory_entry entry : fs::directory_iterator(SHADER_DIRECTORY)) { // Counting Pass
 		shaderCount++;
 	}
-	Debug::log("ShaderInit", ("Found " + std::to_string(shaderCount) + " potential shaders:").c_str());
+	Debug::log("ShaderInit", ("Found " + std::to_string(shaderCount - 1) + " potential shaders:").c_str());
 	shaders = new ShaderProgram*[shaderCount];
-	int index = 0;
+	shaders[0] = errorShader;
+	int index = 1;
 	for (fs::directory_entry entry : fs::directory_iterator(SHADER_DIRECTORY)) { // Filling Pass
 		if (!entry.is_directory()) continue; // Keep directories only
 		shaders[index] = new ShaderProgram(entry.path().filename().string()); // TODO be carefull of UTF8 names
@@ -63,51 +75,12 @@ void ShaderProgram::load() {
 	GLuint vs = loadShader(GL_VERTEX_SHADER, vertexFile);
 	GLuint fs = loadShader(GL_FRAGMENT_SHADER, fragmentFile);
 
-	if (vs > 0 || fs > 0) {
-		program = glCreateProgram();
-		if (vs > 0) {
-			glAttachShader(program, vs);
-		}
-		if (fs > 0) {
-			glAttachShader(program, fs);
-		}
-
-		glLinkProgram(program);
-
-		GLint isLinked = 0;
-		glGetProgramiv(program, GL_LINK_STATUS, &isLinked);
-		if (isLinked == GL_FALSE) {
-			GLint maxLength = 0;
-			glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
-
-			char* infoLog = new char[maxLength];
-			memset(infoLog, 0, maxLength * sizeof(char));
-
-			glGetProgramInfoLog(program, maxLength, &maxLength, infoLog);
-
-			glDeleteProgram(program);
-
-			std::string error = "Could not link";
-			if (vs != 0) {
-				error += " vs[" + vertexFile + "]";
-			}
-			if (fs != 0) {
-				error += " fs[" + fragmentFile + "]";
-			}
-
-			error += ", log is: " + std::string(infoLog);
-			Debug::logError("ShaderProgram", error.c_str());
-
-			delete[] infoLog;
-
-			program = 0;
-			return;
-		}
-		Debug::log("ShaderProgram", "Program load and link done!");
-		getAllLocations();
-		return;
+	if (vs == 0 || fs == 0) {
+		vs = loadShaderFromSource(GL_VERTEX_SHADER, SHADER_CODE_ERROR_VS, true);
+		fs = loadShaderFromSource(GL_FRAGMENT_SHADER, SHADER_CODE_ERROR_FS, true);
 	}
 
+	load(vs, fs);
 }
 
 void ShaderProgram::reload() {
@@ -167,7 +140,141 @@ void ShaderProgram::getAllLocations() {
 	locationModelMatrix = glGetUniformLocation(program, "modelMatrix");
 }
 
-char* ShaderProgram::loadSource(std::string filePath) {
+void ShaderProgram::load(GLuint vs, GLuint fs, bool silent) {
+	if (vs > 0 || fs > 0) {
+		program = glCreateProgram();
+		if (vs > 0) {
+			glAttachShader(program, vs);
+		}
+		if (fs > 0) {
+			glAttachShader(program, fs);
+		}
+
+		glLinkProgram(program);
+
+		GLint isLinked = 0;
+		glGetProgramiv(program, GL_LINK_STATUS, &isLinked);
+		if (isLinked == GL_FALSE) {
+			if (!silent) {
+				GLint maxLength = 0;
+				glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
+
+				char* infoLog = new char[maxLength];
+				memset(infoLog, 0, maxLength * sizeof(char));
+
+				glGetProgramInfoLog(program, maxLength, &maxLength, infoLog);
+
+				std::string error = "Could not link";
+				if (vs != 0) {
+					error += " [vertex shader]";
+				}
+				if (fs != 0) {
+					error += " [fragment shader]";
+				}
+
+				error += ", log is: " + std::string(infoLog);
+				Debug::logError("ShaderProgram", error.c_str());
+
+				delete[] infoLog;
+			}
+
+			glDeleteProgram(program);
+			program = 0;
+			return;
+		}
+		Debug::log("ShaderProgram", "Program load and link done!");
+		getAllLocations();
+		return;
+	}
+
+}
+
+GLuint ShaderProgram::loadShader(GLenum type, std::string fileName, bool silent) {
+	char* src = nullptr;
+	std::string filePath = std::string(SHADER_DIRECTORY) + path + "/" + fileName;
+
+	if (!fs::exists(filePath)) {
+		if (!silent) Debug::logError("ShaderLoad", ("File " + filePath + " not found").c_str());
+		return 0;
+	}
+
+	src = loadSource(filePath);
+	if (src == nullptr) {
+		return 0;
+	}
+
+	GLuint shader = loadShaderFromSource(type, src);
+	free(src);
+	src = nullptr;
+
+	return shader;
+}
+
+GLuint ShaderProgram::loadShaderFromSource(GLenum type, const char* src, bool silent) {
+	GLuint shader = 0;
+	GLsizei logSize = 0;
+	GLint compileStatus = GL_TRUE;
+	char* log = nullptr;
+	std::string typeStr;
+	switch (type) {
+	case GL_VERTEX_SHADER:
+		typeStr = std::string("Vertex Shader");
+		break;
+	case GL_FRAGMENT_SHADER:
+		typeStr = std::string("Fragment Shader");
+		break;
+	case GL_GEOMETRY_SHADER:
+		typeStr = std::string("Geometry Shader");
+		break;
+	}
+
+	shader = glCreateShader(type);
+	if (shader == 0) {
+		if (!silent) Debug::logError("ShaderLoad", ("Program  " + path + " could not create " + typeStr).c_str());
+		return 0;
+	}
+
+	glShaderSource(shader, 1, (const GLchar**) &src, NULL);
+	glCompileShader(shader);
+
+	glGetShaderiv(shader, GL_COMPILE_STATUS, &compileStatus);
+	glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logSize);
+
+	std::string logStr;
+	if (!silent) {
+		log = new char[logSize + 1];
+		if (log == nullptr) {
+			Debug::logError("ShaderLoad", ("Program " + path + " could not allocate memory for " + typeStr + " compilation log!").c_str());
+			return 0;
+		}
+		memset(log, '\0', logSize + 1);
+
+		glGetShaderInfoLog(shader, logSize, &logSize, log);
+
+		logStr = std::string(log);
+	}
+
+	if (compileStatus != GL_TRUE) {
+		if (!silent) {
+			Debug::logError("ShaderLoad", ("Program " + path + " could not compile " + typeStr + ": \n" + logStr).c_str());
+			delete[] log;
+		}
+		glDeleteShader(shader);
+		return 0;
+	} else {
+		if (!silent) {
+			Debug::log("ShaderLoad", ("Program " + path + " " + typeStr + " compile success").c_str());
+			if (logStr.length() > 0) {
+				Debug::log("ShaderLoad", ("Compile result " + typeStr + ":\n" + logStr).c_str());
+			}
+		}
+		delete[] log;
+	}
+
+	return shader;
+}
+
+char* ShaderProgram::loadSource(std::string filePath, bool silent) {
 	char* src = nullptr;
 	FILE* fp = nullptr;
 	long size;
@@ -175,7 +282,7 @@ char* ShaderProgram::loadSource(std::string filePath) {
 
 	fopen_s(&fp, filePath.c_str(), "r");
 	if (fp == nullptr) {
-		Debug::logError("ShaderLoad", ("Could not load shader source file " + filePath).c_str());
+		if (!silent) Debug::logError("ShaderLoad", ("Could not load shader source file " + filePath).c_str());
 		return nullptr;
 	}
 
@@ -186,7 +293,7 @@ char* ShaderProgram::loadSource(std::string filePath) {
 	src = (char*) malloc(size + 1);
 	if (src == nullptr) {
 		fclose(fp);
-		Debug::logError("ShaderLoad", ("Could not allocate memory for shader source file " + filePath).c_str());
+		if (!silent) Debug::logError("ShaderLoad", ("Could not allocate memory for shader source file " + filePath).c_str());
 		return nullptr;
 	}
 
@@ -203,64 +310,4 @@ char* ShaderProgram::loadSource(std::string filePath) {
 	fclose(fp);
 
 	return src;
-}
-
-GLuint ShaderProgram::loadShader(GLenum type, std::string fileName) {
-	GLuint shader = 0;
-	GLsizei logSize = 0;
-	GLint compileStatus = GL_TRUE;
-	char* log = nullptr;
-	char* src = nullptr;
-	std::string filePath = std::string(SHADER_DIRECTORY) + path + "/" + fileName;
-
-	if (!fs::exists(filePath)) {
-		Debug::logError("ShaderLoad", ("File " + filePath + " not found").c_str());
-		return 0;
-	}
-
-	shader = glCreateShader(type);
-	if (shader == 0) {
-		Debug::logError("ShaderLoad", ("Could not create shader " + fileName).c_str());
-		return 0;
-	}
-
-	src = loadSource(filePath);
-	if (src == nullptr) {
-		glDeleteShader(shader);
-		return 0;
-	}
-
-	glShaderSource(shader, 1, (const GLchar**) &src, NULL);
-	glCompileShader(shader);
-
-	free(src);
-	src = nullptr;
-
-	glGetShaderiv(shader, GL_COMPILE_STATUS, &compileStatus);
-	glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logSize);
-
-	log = new char[logSize + 1];
-	if (log == nullptr) {
-		Debug::logError("ShaderLoad", ("Could not allocate memory for shader compilation log (" + fileName + ")").c_str());
-		return 0;
-	}
-	memset(log, '\0', logSize + 1);
-
-	glGetShaderInfoLog(shader, logSize, &logSize, log);
-
-	std::string logStr = std::string(log);
-	if (compileStatus != GL_TRUE) {
-		Debug::logError("ShaderLoad", ("Could not compile shader " + fileName + ": " + logStr).c_str());
-		delete[] log;
-		glDeleteShader(shader);
-		return 0;
-	} else {
-		Debug::log("ShaderLoad", ("Program " + path + " shader " + fileName + " compile success").c_str());
-		if (logStr.length() > 0) {
-			Debug::log("ShaderLoad", ("Compile result " + fileName + ":\n" + logStr).c_str());
-		}
-		delete[] log;
-	}
-
-	return shader;
 }

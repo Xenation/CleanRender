@@ -8,7 +8,7 @@ public:
 
 	virtual void render() = 0;
 
-	void setShaderProgram(ShaderProgram* program) { shaderProgram = program; }
+	void setShaderProgram(ShaderProgram* program);
 	ShaderProgram* getShaderProgram() { return shaderProgram; }
 
 protected:
