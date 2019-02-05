@@ -36,6 +36,48 @@ Matrix4x4f Transform::getWorldToLocalMatrix() {
 	return worldToLocalMatrix;
 }
 
+Vec4f Transform::localToWorld(Vec4f vec) {
+	if (localToWorldMatrixExpired) {
+		recalculateLTWMatrix();
+	}
+	return localToWorldMatrix * vec;
+}
+
+Vec3f Transform::localToWorldPos(Vec3f pos) {
+	if (localToWorldMatrixExpired) {
+		recalculateLTWMatrix();
+	}
+	return localToWorldMatrix.multPoint(pos);
+}
+
+Vec3f Transform::localToWorldDir(Vec3f dir) {
+	if (localToWorldMatrixExpired) {
+		recalculateLTWMatrix();
+	}
+	return localToWorldMatrix.multDirection(dir);
+}
+
+Vec4f Transform::worldToLocal(Vec4f vec) {
+	if (worldToLocalMatrixExpired) {
+		recalculateWTLMatrix();
+	}
+	return worldToLocalMatrix * vec;
+}
+
+Vec3f Transform::worldToLocalPos(Vec3f pos) {
+	if (worldToLocalMatrixExpired) {
+		recalculateWTLMatrix();
+	}
+	return worldToLocalMatrix.multPoint(pos);
+}
+
+Vec3f Transform::worldToLocalDir(Vec3f dir) {
+	if (worldToLocalMatrixExpired) {
+		recalculateWTLMatrix();
+	}
+	return worldToLocalMatrix.multDirection(dir);
+}
+
 void Transform::setParent(Transform* parent) {
 	if (this->parent == parent) return;
 	if (this->parent != nullptr) {

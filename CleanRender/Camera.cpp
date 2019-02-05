@@ -22,10 +22,28 @@ void Camera::onEnable() {
 
 void Camera::onUpdate() {
 	if (Input::wPressed) {
-		entity->transform->setPosition(entity->transform->getPosition() + Vec3f(0, 0, 0.01f));
+		entity->transform->setPosition(entity->transform->getPosition() + entity->transform->forward() * 0.01f);
 	}
 	if (Input::sPressed) {
-		entity->transform->setPosition(entity->transform->getPosition() + Vec3f(0, 0, -0.01f));
+		entity->transform->setPosition(entity->transform->getPosition() + entity->transform->backward() * 0.01f);
+	}
+	if (Input::dPressed) {
+		entity->transform->setPosition(entity->transform->getPosition() + entity->transform->right() * 0.01f);
+	}
+	if (Input::aPressed) {
+		entity->transform->setPosition(entity->transform->getPosition() + entity->transform->left() * 0.01f);
+	}
+	if (Input::qPressed) {
+		entity->transform->setPosition(entity->transform->getPosition() + entity->transform->down() * 0.01f);
+	}
+	if (Input::ePressed) {
+		entity->transform->setPosition(entity->transform->getPosition() + entity->transform->up() * 0.01f);
+	}
+	if (Input::mouseRightPressed) {
+		eulerRot.y += Input::mouseDelta.x * 0.01f;
+		eulerRot.x += Input::mouseDelta.y * 0.01f;
+		Input::mouseDelta = Vec2f::zero; // TODO remove when input system better
+		entity->transform->setRotation(Quaternion::euler(eulerRot));
 	}
 }
 
@@ -57,7 +75,7 @@ void Camera::setFarPlane(float far) {
 }
 
 void Camera::updateProjectionMatrix() {
+	aspectRatio = Engine::pipeline->getAspectRatio();
 	projectionMatrix = Matrix4x4f::perspectiveProjection(fov, aspectRatio, nearPlane, farPlane);
 	projectionMatrixExpired = false;
-	
 }

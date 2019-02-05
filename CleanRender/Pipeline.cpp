@@ -13,13 +13,14 @@
 
 
 
-Pipeline::Pipeline() 
+Pipeline::Pipeline(int width, int height) 
 	: renderers(HollowSet<Renderer*>(RENDERERS_START_SIZE, RENDERERS_INCREASE)), cameras(HollowSet<Camera*>(CAMERAS_START_SIZE, CAMERAS_INCREASE)){
 	ShaderProgram::initializeAll();
 	testShader = ShaderProgram::find("test");
 	if (testShader != nullptr) {
 		testShader->load();
 	}
+	resizeFrameBuffer(width, height);
 	glClearColor(0.5f, 0, 0, 1);
 	testMesh = new Mesh(3, 3);
 	testMesh->setAttributesDefinition(1, new int[1] {3});
@@ -63,6 +64,13 @@ void Pipeline::render(Camera* camera) {
 
 void Pipeline::resizeFrameBuffer(int width, int height) {
 	glViewport(0, 0, width, height);
+	aspectRatio = ((float) width) / ((float) height);
+	unsigned int adjusted = 0;
+	for (unsigned int i = 0; i < cameras.capacity && adjusted < cameras.count; i++) {
+		if (cameras[i] == nullptr) continue;
+		cameras[i]->updateProjectionMatrix();
+		adjusted++;
+	}
 }
 
 unsigned int Pipeline::registerRenderer(Renderer* renderer) {

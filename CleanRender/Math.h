@@ -548,7 +548,7 @@ public:
 
 	/* ---- OPERATORS ---- */
 	// Mul
-	inline Quaternion operator*(Quaternion b) {
+	inline Quaternion operator*(const Quaternion& b) {
 		return {
 			b.w * this->x + b.x * this->w - b.y * this->z + b.z * this->y,
 			b.w * this->y + b.x * this->z + b.y * this->w - b.z * this->x,
@@ -556,15 +556,21 @@ public:
 			b.w * this->w - b.x * this->x - b.y * this->y - b.z * this->z
 		};
 	}
+	inline friend void operator*=(Quaternion& a, const Quaternion& b) {
+		a.x = b.w * a.x + b.x * a.w - b.y * a.z + b.z * a.y;
+		a.y = b.w * a.y + b.x * a.z + b.y * a.w - b.z * a.x;
+		a.z = b.w * a.z - b.x * a.y + b.y * a.x + b.z * a.w;
+		a.w = b.w * a.w - b.x * a.x - b.y * a.y - b.z * a.z;
+	}
 
 	/* ---- METHODS ---- */
-	static Quaternion euler(Vec3f eulerRot) {
+	inline static Quaternion euler(const Vec3f& eulerRot) {
 		return headingAttitudeBank(eulerRot.y, eulerRot.z, eulerRot.x);
 	}
-	static Quaternion attitude(float pitch, float roll, float yaw) {
+	inline static Quaternion attitude(const float& pitch, const float& roll, const float& yaw) {
 		return headingAttitudeBank(yaw, roll, pitch);
 	}
-	static Quaternion headingAttitudeBank(float heading, float attitude, float bank) {
+	inline static Quaternion headingAttitudeBank(const float& heading, const float& attitude, const float& bank) {
 		float c1 = cosf(heading * 0.5f);
 		float s1 = sinf(heading * 0.5f);
 		float c2 = cosf(attitude * 0.5f);

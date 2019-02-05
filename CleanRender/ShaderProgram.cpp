@@ -125,6 +125,30 @@ void ShaderProgram::unuse() {
 	glUseProgram(0);
 }
 
+GLuint ShaderProgram::getUniformLocation(const char* str) {
+	return glGetUniformLocation(program, str);
+}
+
+void ShaderProgram::loadFloat(GLuint location, float f) {
+	glUniform1f(location, f);
+}
+
+void ShaderProgram::loadVec2f(GLuint location, Vec2f vec) {
+	glUniform2f(location, vec.x, vec.y);
+}
+
+void ShaderProgram::loadVec3f(GLuint location, Vec3f vec) {
+	glUniform3f(location, vec.x, vec.y, vec.z);
+}
+
+void ShaderProgram::loadVec4f(GLuint location, Vec4f vec) {
+	glUniform4f(location, vec.x, vec.y, vec.z, vec.w);
+}
+
+void ShaderProgram::loadMatrix(GLuint location, Matrix4x4f matrix) {
+	glUniformMatrix4fv(location, 1, false, matrix.data);
+}
+
 void ShaderProgram::loadProjectionMatrix(Matrix4x4f mat) {
 	glUniformMatrix4fv(locationProjectionMatrix, 1, false, mat.data);
 }

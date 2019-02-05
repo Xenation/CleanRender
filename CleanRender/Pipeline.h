@@ -10,12 +10,14 @@ public:
 	Mesh* testMesh2;
 	ShaderProgram* testShader;
 
-	Pipeline();
+	Pipeline(int width, int height);
 	Pipeline(const Pipeline&) = delete;
 	~Pipeline();
 
 	void render();
 	void resizeFrameBuffer(int width, int height);
+	inline float getAspectRatio() { return aspectRatio; }
+
 	unsigned int registerRenderer(Renderer* renderer);
 	void unregisterRenderer(unsigned int id);
 	unsigned int registerCamera(Camera* camera);
@@ -24,6 +26,7 @@ public:
 private:
 	HollowSet<Renderer*> renderers;
 	HollowSet<Camera*> cameras;
+	float aspectRatio = 1.0f;
 
 	void render(Camera* camera);
 };

@@ -15,6 +15,7 @@ void error_callback(int error, const char* description) {
 
 
 bool Window::isGLFWinitialized = false;
+HollowSet<Window*> Window::windows = HollowSet<Window*>(1, 1);
 
 void Window::initializeGLFW() {
 	if (isGLFWinitialized) return;
@@ -32,6 +33,11 @@ void Window::initializeGLFW() {
 
 void Window::resizeFrameCallback(GLFWwindow* window, int width, int height) {
 	Engine::pipeline->resizeFrameBuffer(width, height);
+	for (unsigned int i = 0; i < windows.capacity; i++) {
+		if (windows[i] == nullptr || windows[i]->window != window) continue;
+		windows[i]->width = width;
+		windows[i]->height = height;
+	}
 }
 
 
@@ -44,8 +50,11 @@ Window::Window(const char* title) {
 		Debug::log("Window created");
 	}
 	glfwSetKeyCallback(window, Input::getKeyCallback());
+	glfwSetMouseButtonCallback(window, Input::getMouseButtonCallback());
+	glfwSetCursorPosCallback(window, Input::getMousePosCallback());
 	glfwSetFramebufferSizeCallback(window, resizeFrameCallback);
 	glfwSetWindowPos(window, 500, 500);
+	glfwGetWindowSize(window, &width, &height);
 
 	glfwMakeContextCurrent(window);
 	if (gl3wInit2(glfwGetProcAddress)) {
@@ -53,9 +62,12 @@ Window::Window(const char* title) {
 	} else {
 		Debug::log("GL3W initialized");
 	}
+
+	id = windows.add(this);
 }
 
 Window::~Window() {
+	windows.remove(id);
 	glfwDestroyWindow(window);
 	glfwTerminate();
 }

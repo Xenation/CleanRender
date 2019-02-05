@@ -18,8 +18,23 @@ public:
 	Matrix4x4f getLocalToWorldMatrix();
 	Matrix4x4f getWorldToLocalMatrix();
 
+	Vec4f localToWorld(Vec4f vec);
+	Vec3f localToWorldPos(Vec3f pos);
+	Vec3f localToWorldDir(Vec3f dir);
+	Vec4f worldToLocal(Vec4f vec);
+	Vec3f worldToLocalPos(Vec3f pos);
+	Vec3f worldToLocalDir(Vec3f dir);
+
+	inline Vec3f forward() { return localToWorldDir(Vec3f::forward).normalized(); }
+	inline Vec3f backward() { return localToWorldDir(Vec3f::backward).normalized(); }
+	inline Vec3f right() { return localToWorldDir(Vec3f::right).normalized(); }
+	inline Vec3f left() { return localToWorldDir(Vec3f::left).normalized(); }
+	inline Vec3f up() { return localToWorldDir(Vec3f::up).normalized(); }
+	inline Vec3f down() { return localToWorldDir(Vec3f::down).normalized(); }
+
 	void setParent(Transform* parent);
 	inline Transform* getParent() { return parent; }
+
 private:
 	Vec3f position = Vec3f::zero;
 	Vec3f scale = Vec3f::one;

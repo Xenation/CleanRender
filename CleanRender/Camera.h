@@ -21,8 +21,12 @@ public:
 	void setNearPlane(float near);
 	void setFarPlane(float far);
 
+	void updateProjectionMatrix();
+
 private:
 	unsigned int id;
+
+	Vec3f eulerRot = Vec3f::zero;
 
 	float fov = 90.0f;
 	float nearPlane = 0.01f;
@@ -30,7 +34,5 @@ private:
 	float aspectRatio = 1.0f;
 	Matrix4x4f projectionMatrix;
 	bool projectionMatrixExpired = true;
-
-	void updateProjectionMatrix();
 };
 

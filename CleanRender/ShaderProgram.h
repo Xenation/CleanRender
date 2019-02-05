@@ -17,6 +17,13 @@ public:
 	void use();
 	void unuse();
 
+	GLuint getUniformLocation(const char* str);
+	void loadFloat(GLuint location, float f);
+	void loadVec2f(GLuint location, Vec2f vec);
+	void loadVec4f(GLuint location, Vec4f vec);
+	void loadVec3f(GLuint location, Vec3f vec);
+	void loadMatrix(GLuint location, Matrix4x4f matrix);
+
 	void loadProjectionMatrix(Matrix4x4f projection);
 	void loadViewMatrix(Matrix4x4f view);
 	void loadModelMatrix(Matrix4x4f model);

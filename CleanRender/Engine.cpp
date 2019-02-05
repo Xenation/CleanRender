@@ -24,7 +24,7 @@ Entity* Engine::testCamera = nullptr;
 
 void Engine::initialize() {
 	window = new Window();
-	pipeline = new Pipeline();
+	pipeline = new Pipeline(window->getWidth(), window->getHeight());
 	entityManager = new EntityManager();
 	testEntity = new Entity();
 	MeshRenderer* mr = testEntity->addComponent<MeshRenderer>();
