@@ -44,6 +44,8 @@ const Vec4f Vec4f::up = {0, 1, 0, 0};
 const Vec4f Vec4f::down = {0, -1, 0, 0};
 const Vec4f Vec4f::forward = {0, 0, 1, 0};
 const Vec4f Vec4f::backward = {0, 0, -1, 0};
+// Rotor3f
+const Rotor3f Rotor3f::identity = {1, {0, 0, 0}};
 // Matrix4x4f
 const Matrix4x4f Matrix4x4f::identity = {{
 	1, 0, 0, 0,

@@ -108,7 +108,7 @@ public:
 
 	/* ---- CONSTRUCTORS ---- */
 	inline Vec2i() : x(0), y(0) { }
-	inline Vec2i(const int &x, const int &y) : x(x), y(y) { }
+	inline Vec2i(int x, int y) : x(x), y(y) { }
 
 	/* ---- OPERATORS ---- */
 	// Add/Sub
@@ -118,27 +118,27 @@ public:
 	inline Vec2i  operator-(const Vec2i &other) const {
 		return {this->x - other.x, this->y - other.y};
 	}
-	inline void operator+=(Vec2i other) {
+	inline void operator+=(const Vec2i &other) {
 		this->x += other.x;
 		this->y += other.y;
 	}
-	inline void operator-=(Vec2i other) {
+	inline void operator-=(const Vec2i &other) {
 		this->x -= other.x;
 		this->y -= other.y;
 	}
 
 	// Mul/Div
-	inline friend Vec2i operator*(const Vec2i &vec, const int &mult) {
+	inline friend Vec2i operator*(const Vec2i &vec, int mult) {
 		return {vec.x * mult, vec.y * mult};
 	}
-	inline friend Vec2i operator*(const int &mult, const Vec2i &vec) {
+	inline friend Vec2i operator*(int mult, const Vec2i &vec) {
 		return {vec.x * mult, vec.y * mult};
 	}
 
-	inline friend Vec2i operator/(const Vec2i &vec, const int &mult) {
+	inline friend Vec2i operator/(const Vec2i &vec, int mult) {
 		return {vec.x / mult, vec.y / mult};
 	}
-	inline friend Vec2i operator/(const int &mult, const Vec2i &vec) {
+	inline friend Vec2i operator/(int mult, const Vec2i &vec) {
 		return {mult / vec.x, mult / vec.y};
 	}
 
@@ -154,14 +154,14 @@ public:
 		return (this->x == other.x) && (this->y == other.y);
 	}
 	inline bool operator!=(const Vec2i &other) const {
-		return !(*this == other);
+		return (this->x != other.x) || (this->y != other.y);
 	}
 
 	// Index
-	inline const int& operator[](const int &index) const {
+	inline const int& operator[](int index) const {
 		return *((&x) + index);
 	}
-	inline int& operator[](const int &index) {
+	inline int& operator[](int index) {
 		return *((&x) + index);
 	}
 };
@@ -188,7 +188,7 @@ public:
 
 	/* ---- CONSTRUCTORS ---- */
 	inline Vec3i() : x(0), y(0), z(0) {}
-	inline Vec3i(const int &x, const int &y, const int &z) : x(x), y(y), z(z) {}
+	inline Vec3i(int x, int y, int z) : x(x), y(y), z(z) {}
 	inline Vec3i(__m128i emm) : _emm(emm) { }
 
 	/* ---- OPERATORS ---- */
@@ -207,17 +207,17 @@ public:
 	}
 
 	// Mul/Div
-	inline friend Vec3i operator*(const Vec3i &vec, const int &mult) {
+	inline friend Vec3i operator*(const Vec3i &vec, int mult) {
 		return Vec3i(_mm_mul_epi32(vec._emm, _mm_set1_epi32(mult)));
 	}
-	inline friend Vec3i operator*(const int &mult, const Vec3i &vec) {
+	inline friend Vec3i operator*(int mult, const Vec3i &vec) {
 		return Vec3i(_mm_mul_epi32(vec._emm, _mm_set1_epi32(mult)));
 	}
 
-	inline friend Vec3i operator/(const Vec3i &vec, const int &mult) {
+	inline friend Vec3i operator/(const Vec3i &vec, int mult) {
 		return {vec.x / mult, vec.y / mult, vec.z / mult};
 	}
-	inline friend Vec3i operator/(const int &mult, const Vec3i &vec) {
+	inline friend Vec3i operator/(int mult, const Vec3i &vec) {
 		return {mult / vec.x, mult / vec.y, mult / vec.z};
 	}
 
@@ -230,17 +230,17 @@ public:
 
 	// Comp
 	inline bool operator==(const Vec3i &other) const {
-		return (this->x == other.x) && (this->y == other.y);
+		return (this->x == other.x) && (this->y == other.y) && (this->z == other.z);
 	}
 	inline bool operator!=(const Vec3i &other) const {
-		return !(*this == other);
+		return (this->x != other.x) || (this->y != other.y) || (this->z != other.z);
 	}
 
 	// Index
-	inline const int& operator[](const int &index) const {
+	inline const int& operator[](int index) const {
 		return *((&x) + index);
 	}
-	inline int& operator[](const int &index) {
+	inline int& operator[](int index) {
 		return *((&x) + index);
 	}
 };
@@ -259,7 +259,7 @@ public:
 
 	/* ---- CONSTRUCTORS ---- */
 	inline Vec2f() : x(0.0f), y(0.0f) { }
-	inline Vec2f(const float &x, const float &y) : x(x), y(y) { }
+	inline Vec2f(float x, float y) : x(x), y(y) { }
 	
 	/* ---- OPERATORS ---- */
 	// Misc
@@ -275,27 +275,27 @@ public:
 		return {this->x - other.x, this->y - other.y};
 	}
 
-	inline void operator+=(Vec2f *other) {
-		this->x += other->x;
-		this->y += other->y;
+	inline void operator+=(const Vec2f &other) {
+		this->x += other.x;
+		this->y += other.y;
 	}
-	inline void operator-=(Vec2f *other) {
-		this->x -= other->x;
-		this->y -= other->y;
+	inline void operator-=(const Vec2f &other) {
+		this->x -= other.x;
+		this->y -= other.y;
 	}
 
 	// Mul/Div
-	inline friend Vec2f operator*(const Vec2f &vec, const float &scalar) {
+	inline friend Vec2f operator*(const Vec2f &vec, float scalar) {
 		return {vec.x * scalar, vec.y * scalar};
 	}
-	inline friend Vec2f operator*(const float &scalar, const Vec2f &vec) {
+	inline friend Vec2f operator*(float scalar, const Vec2f &vec) {
 		return {vec.x * scalar, vec.y * scalar};
 	}
 
-	inline friend Vec2f operator/(const Vec2f &vec, const float &scalar) {
+	inline friend Vec2f operator/(const Vec2f &vec, float scalar) {
 		return {vec.x / scalar, vec.y / scalar};
 	}
-	inline friend Vec2f operator/(const float &scalar, const Vec2f &vec) {
+	inline friend Vec2f operator/(float scalar, const Vec2f &vec) {
 		return {scalar / vec.x, scalar / vec.y};
 	}
 
@@ -311,14 +311,14 @@ public:
 		return (this->x == other.x) && (this->y == other.y);
 	}
 	inline bool operator!=(const Vec2f &other) const {
-		return !(*this == other);
+		return (this->x != other.x) || (this->y != other.y);
 	}
 
 	// Index
-	inline const float& operator[](const int &index) const {
+	inline const float& operator[](int index) const {
 		return *((&x) + index);
 	}
-	inline float& operator[](const int &index) {
+	inline float& operator[](int index) {
 		return *((&x) + index);
 	}
 };
@@ -346,7 +346,7 @@ public:
 
 	/* ---- CONSTRUCTORS ---- */
 	inline Vec3f() : x(0.0f), y(0.0f), z(0.0f) { }
-	inline Vec3f(const float &x, const float &y, const float &z) : x(x), y(y), z(z) { }
+	inline Vec3f(float x, float y, float z) : x(x), y(y), z(z) { }
 	inline Vec3f(__m128 xmm) : _xmm(xmm) { }
 	
 	/* ---- OPERATORS ---- */
@@ -363,25 +363,25 @@ public:
 		return Vec3f(_mm_sub_ps(_xmm, other._xmm));
 	}
 
-	inline void operator+=(Vec3f *other) {
-		_xmm = _mm_add_ps(_xmm, other->_xmm);
+	inline void operator+=(const Vec3f &other) {
+		_xmm = _mm_add_ps(_xmm, other._xmm);
 	}
-	inline void operator-=(Vec3f *other) {
-		_xmm = _mm_sub_ps(_xmm, other->_xmm);
+	inline void operator-=(const Vec3f &other) {
+		_xmm = _mm_sub_ps(_xmm, other._xmm);
 	}
 
 	// Mul/Div
-	inline friend Vec3f operator*(const Vec3f &vec, const float &scalar) {
+	inline friend Vec3f operator*(const Vec3f &vec, float scalar) {
 		return Vec3f(_mm_mul_ps(vec._xmm, _mm_set1_ps(scalar)));
 	}
-	inline friend Vec3f operator*(const float &scalar, const Vec3f &vec) {
+	inline friend Vec3f operator*(float scalar, const Vec3f &vec) {
 		return Vec3f(_mm_mul_ps(vec._xmm, _mm_set1_ps(scalar)));
 	}
 
-	inline friend Vec3f operator/(const Vec3f &vec, const float &scalar) {
+	inline friend Vec3f operator/(const Vec3f &vec, float scalar) {
 		return Vec3f(_mm_div_ps(vec._xmm, _mm_set1_ps(scalar)));
 	}
-	inline friend Vec3f operator/(const float &scalar, const Vec3f &vec) {
+	inline friend Vec3f operator/(float scalar, const Vec3f &vec) {
 		return Vec3f(_mm_div_ps(_mm_set1_ps(scalar), vec._xmm));
 	}
 
@@ -397,14 +397,14 @@ public:
 		return (this->x == other.x) && (this->y == other.y) && (this->z == other.z);
 	}
 	inline bool operator!=(const Vec3f &other) const {
-		return !(*this == other);
+		return (this->x != other.x) || (this->y != other.y) || (this->z != other.z);
 	}
 
 	// Index
-	inline const float& operator[](const int &index) const {
+	inline const float& operator[](int index) const {
 		return *((&x) + index);
 	}
-	inline float& operator[](const int &index) {
+	inline float& operator[](int index) {
 		return *((&x) + index);
 	}
 
@@ -434,7 +434,7 @@ public:
 	inline Vec3f step(const Vec3f &edge) const {
 		return Vec3f(_mm_or_ps(_mm_and_ps(_mm_sub_ps(edge._xmm, _xmm), _mm_mask_signf), _mm_one));
 	}
-	inline static Vec3f lerp(const Vec3f &a, const Vec3f &b, const float &t) {
+	inline static Vec3f lerp(const Vec3f &a, const Vec3f &b, float t) {
 		return {lerpf(a.x, b.x, t), lerpf(a.y, b.y, t), lerpf(a.z, b.z, t)};
 	}
 	inline Vec3f inverse() const {
@@ -483,31 +483,31 @@ public:
 		return {this->x - other.x, this->y - other.y, this->z - other.z, this->w - other.w};
 	}
 
-	inline void operator+=(Vec4f *other) {
-		this->x += other->x;
-		this->y += other->y;
-		this->z += other->z;
-		this->w += other->w;
+	inline void operator+=(const Vec4f &other) {
+		this->x += other.x;
+		this->y += other.y;
+		this->z += other.z;
+		this->w += other.w;
 	}
-	inline void operator-=(Vec4f *other) {
-		this->x -= other->x;
-		this->y -= other->y;
-		this->z -= other->z;
-		this->w -= other->w;
+	inline void operator-=(const Vec4f &other) {
+		this->x -= other.x;
+		this->y -= other.y;
+		this->z -= other.z;
+		this->w -= other.w;
 	}
 
 	// Mul/Div
-	inline friend Vec4f operator*(const Vec4f &vec, const float &scalar) {
+	inline friend Vec4f operator*(const Vec4f &vec, float scalar) {
 		return Vec4f(_mm_mul_ps(vec._xmm, _mm_set1_ps(scalar)));
 	}
-	inline friend Vec4f operator*(const float &scalar, const Vec4f &vec) {
+	inline friend Vec4f operator*(float scalar, const Vec4f &vec) {
 		return Vec4f(_mm_mul_ps(vec._xmm, _mm_set1_ps(scalar)));
 	}
 
-	inline friend Vec4f operator/(const Vec4f &vec, float &scalar) {
+	inline friend Vec4f operator/(const Vec4f &vec, float scalar) {
 		return Vec4f(_mm_div_ps(vec._xmm, _mm_set1_ps(scalar)));
 	}
-	inline friend Vec4f operator/(float &scalar, const Vec4f &vec) {
+	inline friend Vec4f operator/(float scalar, const Vec4f &vec) {
 		return Vec4f(_mm_div_ps(_mm_set1_ps(scalar), vec._xmm));
 	}
 
@@ -519,19 +519,132 @@ public:
 	}
 
 	// Comp
-	inline bool operator==(const Vec4f& other) const {
+	inline bool operator==(const Vec4f &other) const {
 		return (this->x == other.x) && (this->y == other.y) && (this->z == other.z) && (this->w == other.w);
 	}
-	inline bool operator!=(const Vec4f& other) const {
-		return !(*this == other);
+	inline bool operator!=(const Vec4f &other) const {
+		return (this->x != other.x) || (this->y != other.y) || (this->z != other.z) || (this->w != other.w);
 	}
 	
 	// Index
-	inline const float& operator[](const int &index) const {
+	inline const float& operator[](int index) const {
 		return *((&x) + index);
 	}
-	inline float& operator[](const int &index) {
+	inline float& operator[](int index) {
 		return *((&x) + index);
+	}
+};
+
+/* ==== BIVEC3f ==== */
+struct Bivec3f {
+	float xy, xz, yz;
+
+public:
+	inline Bivec3f() : xy(0), xz(0), yz(0) {}
+	inline Bivec3f(float xy, float xz, float yz) : xy(xy), xz(xz), yz(yz) {}
+
+	inline static Bivec3f wedge(const Vec3f& u, const Vec3f& v) {
+		return {
+			u.x * v.y - u.y * v.x,	// XY
+			u.x * v.z - u.z * v.x,	// XZ
+			u.y * v.z - u.z * v.y	// YZ
+		};
+	}
+};
+
+/* ==== ROTOR3f ==== */
+struct Rotor3f {
+	float a;
+	union {
+		Bivec3f bv;
+		struct {
+			float xy, xz, yz;
+		};
+	};
+
+public:
+	/* ---- CONSTANTS ---- */
+	static const Rotor3f identity;
+
+	/* ---- CONSTRUCTORS ---- */
+	inline Rotor3f() : a(1), bv() {}
+	inline Rotor3f(float a, float xy, float xz, float yz) : a(a), xy(xy), xz(xz), yz(yz) {}
+	inline Rotor3f(float a, const Bivec3f& bv) : a(a), bv(bv) {}
+	inline Rotor3f(const Vec3f& from, const Vec3f& to) : a(1 + to.dot(from)), bv(Bivec3f::wedge(to, from)) {
+		normalize();
+	}
+
+	/* ---- OPERATORS ---- */
+	inline Rotor3f operator*(const Rotor3f& r) const {
+		const Rotor3f& p = *this;
+		return {
+			p.a * r.a - p.xy * r.xy - p.xz * r.xz - p.yz * r.yz,
+			{
+				p.xy * r.a + p.a * r.xy + p.yz * r.xz - p.xz * r.yz,
+				p.xz * r.a + p.a * r.xz - p.yz * r.xy + p.xy * r.yz,
+				p.yz * r.a + p.a * r.yz + p.xz * r.xy - p.xy * r.xz
+			}
+		};
+	}
+	inline friend void operator*=(Rotor3f& a, const Rotor3f& b) {
+		a = a * b;
+	}
+
+	/* ----- METHODS ---- */
+	inline static Rotor3f AnglePlane(float angleRad, const Bivec3f& bvPlane) {
+		float sina = sinf(angleRad / 2.f);
+		return {
+			cosf(angleRad / 2.f),
+			{
+				Bivec3f(-sina * bvPlane.xy, -sina * bvPlane.xz, -sina * bvPlane.yz)
+			}
+		};
+	}
+	inline Vec3f rotate(const Vec3f& v) const {
+		const Rotor3f& p = *this;
+
+		Vec3f q;
+		q.x = p.a * v.x + v.y * p.xy + v.z * p.xz;
+		q.y = p.a * v.y - v.x * p.xy + v.z * p.yz;
+		q.z = p.a * v.z - v.x * p.xz - v.y * p.yz;
+
+		float q012 = -v.x * p.yz + v.y * p.xz - v.z * p.xy;
+
+		return  {
+			p.a * q.x + q.y * p.xy + q.z * p.xz - q012 * p.yz,
+			p.a * q.y - q.x * p.xy + q012 * p.xz + q.z * p.yz,
+			p.a * q.z - q012 * p.xy - q.x * p.xz - q.y * p.yz
+		};
+	}
+	inline Rotor3f rotate(const Rotor3f& r) const {
+		return (*this) * r * reverse();
+	}
+	inline Rotor3f reverse() const {
+		return Rotor3f(a, -xy, -xz, -yz);
+	}
+	inline float magnitudeSqr() const {
+		return a * a + xy * xy + xz * xz + yz * yz;
+	}
+	inline float magnitude() const {
+		return sqrtfInline(magnitudeSqr());
+	}
+	inline void normalize() {
+		float isqrt = invsqrt(magnitudeSqr());
+		a *= isqrt;
+		xy *= isqrt;
+		xz *= isqrt;
+		yz *= isqrt;
+	}
+	inline Rotor3f normalized() const {
+		float isqrt = invsqrt(magnitudeSqr());
+		return {
+			a * isqrt,
+			{
+				xy * isqrt,
+				xz * isqrt,
+				yz * isqrt
+			}
+		};
 	}
 };
 
@@ -557,10 +670,7 @@ public:
 		};
 	}
 	inline friend void operator*=(Quaternion& a, const Quaternion& b) {
-		a.x = b.w * a.x + b.x * a.w - b.y * a.z + b.z * a.y;
-		a.y = b.w * a.y + b.x * a.z + b.y * a.w - b.z * a.x;
-		a.z = b.w * a.z - b.x * a.y + b.y * a.x + b.z * a.w;
-		a.w = b.w * a.w - b.x * a.x - b.y * a.y - b.z * a.z;
+		a = a * b;
 	}
 
 	/* ---- METHODS ---- */
@@ -711,6 +821,18 @@ public:
 			transVec.x, transVec.y, transVec.z, 1
 		}};
 	}
+	static Matrix4x4f rotation(Rotor3f rot) {
+		// TODO optimize
+		Vec3f vx = rot.rotate(Vec3f(1, 0, 0));
+		Vec3f vy = rot.rotate(Vec3f(0, 1, 0));
+		Vec3f vz = rot.rotate(Vec3f(0, 0, 1));
+		return {{
+			vx.x, vy.x, vz.x,	0,
+			vx.y, vy.y, vz.y,	0,
+			vx.z, vy.z, vz.z,	0,
+			0,		0,		0,	1
+		}};
+	}
 	static Matrix4x4f rotation(Quaternion rot) {
 		return {{
 			1.0f - 2.0f * rot.y * rot.y - 2.0f * rot.z * rot.z,		2.0f * rot.x * rot.y + 2.0f * rot.z * rot.w,		2.0f * rot.x * rot.z - 2.0f * rot.y * rot.w,		0,
@@ -732,6 +854,9 @@ public:
 			cx * sz + cz * sx * sy,		sx * sz - cx * cz * sy,		cy * cz,		0,
 			0,							0,							0,				1
 		}};
+	}
+	static Matrix4x4f transformation(Vec3f translationVec, Vec3f scaleVec, Rotor3f rotor) {
+		return translationScale(translationVec, scaleVec) * rotation(rotor);
 	}
 	static Matrix4x4f transformation(Vec3f translationVec, Vec3f scaleVec, Quaternion rotationQuat) {
 		return translationScale(translationVec, scaleVec) * rotation(rotationQuat);
@@ -784,7 +909,7 @@ inline float edge(const Vec4f &a, const Vec4f &b, const Vec4f &c) {
 }
 
 inline bool triangleBarycentric(const Vec4f &v0, const Vec4f &v1, const Vec4f &v2, const Vec4f &p, Vec3f &bary) {
-	float area = edge(v0, v1, v2); // TODO compute it once only for each triangle to avoid recomputing for each pixel
+	float area = edge(v0, v1, v2);
 	bary.x = edge(v1, v2, p) / area;
 	bary.y = edge(v2, v0, p) / area;
 	bary.z = edge(v0, v1, p) / area;
