@@ -8,6 +8,8 @@
 
 
 
+bool Input::mouseLocked = false;
+
 bool Input::mouseLeftPressed = false;
 bool Input::mouseRightPressed = false;
 
@@ -26,6 +28,14 @@ bool Input::lShiftPressed = false;
 
 void Input::PollEvents() {
 	glfwPollEvents();
+}
+
+void Input::LockMouse() {
+	glfwSetInputMode(Engine::window->glfwWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+}
+
+void Input::UnlockMouse() {
+	glfwSetInputMode(Engine::window->glfwWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 }
 
 void Input::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
@@ -100,8 +110,10 @@ void Input::mouseButtonCallback(GLFWwindow* window, int button, int action, int 
 	case GLFW_MOUSE_BUTTON_RIGHT:
 		if (action == GLFW_PRESS) {
 			mouseRightPressed = true;
+			LockMouse(); // TODO remove from here
 		} else if (action == GLFW_RELEASE) {
 			mouseRightPressed = false;
+			UnlockMouse(); // TODO remove from here
 		}
 		break;
 	}

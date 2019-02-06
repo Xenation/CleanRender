@@ -5,6 +5,7 @@
 #include "Entity.h"
 #include "Transform.h"
 #include "Input.h"
+#include "Time.h"
 
 
 
@@ -21,31 +22,32 @@ void Camera::onEnable() {
 }
 
 void Camera::onUpdate() {
+	float dt = Time::deltaTime;
 	float speed = noclipSpeed;
 	if (Input::lShiftPressed) {
 		speed *= 4;
 	}
 	if (Input::wPressed) {
-		entity->transform->setPosition(entity->transform->getPosition() + entity->transform->forward() * speed);
+		entity->transform->setPosition(entity->transform->getPosition() + entity->transform->forward() * speed * dt);
 	}
 	if (Input::sPressed) {
-		entity->transform->setPosition(entity->transform->getPosition() + entity->transform->backward() * speed);
+		entity->transform->setPosition(entity->transform->getPosition() + entity->transform->backward() * speed * dt);
 	}
 	if (Input::dPressed) {
-		entity->transform->setPosition(entity->transform->getPosition() + entity->transform->right() * speed);
+		entity->transform->setPosition(entity->transform->getPosition() + entity->transform->right() * speed * dt);
 	}
 	if (Input::aPressed) {
-		entity->transform->setPosition(entity->transform->getPosition() + entity->transform->left() * speed);
+		entity->transform->setPosition(entity->transform->getPosition() + entity->transform->left() * speed * dt);
 	}
 	if (Input::qPressed) {
-		entity->transform->setPosition(entity->transform->getPosition() + entity->transform->down() * speed);
+		entity->transform->setPosition(entity->transform->getPosition() + entity->transform->down() * speed * dt);
 	}
 	if (Input::ePressed) {
-		entity->transform->setPosition(entity->transform->getPosition() + entity->transform->up() * speed);
+		entity->transform->setPosition(entity->transform->getPosition() + entity->transform->up() * speed * dt);
 	}
 	if (Input::mouseRightPressed) {
-		eulerRot.y += Input::mouseDelta.x * 0.01f;
-		eulerRot.x += Input::mouseDelta.y * 0.01f;
+		eulerRot.y += Input::mouseDelta.x * lookSensivity * dt;
+		eulerRot.x += Input::mouseDelta.y * lookSensivity * dt;
 		Input::mouseDelta = Vec2f::zero; // TODO remove when input system better
 		entity->transform->setRotation(Quaternion::euler(eulerRot));
 	}

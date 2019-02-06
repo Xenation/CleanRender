@@ -13,6 +13,7 @@ public:
 
 	inline int getWidth() { return width; }
 	inline int getHeight() { return height; }
+	inline GLFWwindow* glfwWindow() { return window; }
 
 private:
 	static bool isGLFWinitialized;

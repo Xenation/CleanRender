@@ -9,10 +9,6 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="Source Files\Engine">
       <UniqueIdentifier>{ccd53e4c-eb55-49a0-8c2b-f34f7b73dff1}</UniqueIdentifier>
     </Filter>
@@ -30,12 +26,6 @@
     </Filter>
     <Filter Include="Header Files\Engine\Render\Core">
       <UniqueIdentifier>{e65c0470-014a-4374-8619-7d9424d7d02f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resource Files\shaders">
-      <UniqueIdentifier>{10bd47f0-a4c3-438a-bce0-f6f3fbed9462}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resource Files\shaders\test">
-      <UniqueIdentifier>{974d30db-888a-4214-9f0f-12ae891f177c}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Engine\Entity">
       <UniqueIdentifier>{5900b9b1-f528-4da8-976d-9eeaa1997990}</UniqueIdentifier>
@@ -60,6 +50,16 @@
     </Filter>
     <Filter Include="Source Files\Engine\Utils">
       <UniqueIdentifier>{ec2c53cb-76f7-44ad-88a6-0684b21a7bb2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;glsl</Extensions>
+    </Filter>
+    <Filter Include="Resource Files\shaders">
+      <UniqueIdentifier>{10bd47f0-a4c3-438a-bce0-f6f3fbed9462}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\shaders\test">
+      <UniqueIdentifier>{974d30db-888a-4214-9f0f-12ae891f177c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -110,6 +110,9 @@
     </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files\Engine\Entity\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Time.cpp">
+      <Filter>Source Files\Engine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -169,6 +172,9 @@
     </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Header Files\Engine\Entity\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Time.h">
+      <Filter>Header Files\Engine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

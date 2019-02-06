@@ -4,7 +4,8 @@
 class Entity;
 class Camera : public Component {
 public:
-	float noclipSpeed = 0.01f;
+	float noclipSpeed = 4.f;
+	float lookSensivity = 5.f;
 
 	Camera(Entity* entity);
 	~Camera();

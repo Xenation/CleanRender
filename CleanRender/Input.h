@@ -6,6 +6,8 @@ typedef void (*GLFWmouseButtonFunction)(GLFWwindow* window, int button, int acti
 typedef void (*GLFWmousePositionFunction)(GLFWwindow* window, double xpos, double ypos);
 class Input {
 public:
+	static bool mouseLocked;
+
 	static bool mouseLeftPressed;
 	static bool mouseRightPressed;
 
@@ -22,6 +24,8 @@ public:
 	static bool lShiftPressed;
 
 	static void PollEvents();
+	static void LockMouse();
+	static void UnlockMouse();
 
 	static GLFWkeyFunction getKeyCallback();
 	static GLFWmouseButtonFunction getMouseButtonCallback();

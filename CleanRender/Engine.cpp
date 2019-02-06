@@ -3,11 +3,13 @@
 #include "Window.h"
 #include "Pipeline.h"
 #include "Input.h"
+#include "Time.h"
 #include "EntityManager.h"
 #include "Entity.h"
 #include "MeshRenderer.h"
 #include "Camera.h" // TODO remove when not testing
 #include "Transform.h"
+#include <string>
 
 
 
@@ -38,6 +40,8 @@ void Engine::initialize() {
 
 void Engine::loop() {
 	while (!window->shouldClose()) {
+		Time::ComputeFrameTimes();
+		//Debug::log("Time", std::to_string(Time::deltaTime).c_str());
 		// INPUT
 		Input::PollEvents();
 		// UPDATE
