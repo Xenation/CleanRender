@@ -178,7 +178,11 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CopyFileToFolders Include="res\shaders\test\fs.glsl" />
-    <CopyFileToFolders Include="res\shaders\test\vs.glsl" />
+    <CopyFileToFolders Include="res\shaders\test\fs.glsl">
+      <Filter>Resource Files\shaders\test</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="res\shaders\test\vs.glsl">
+      <Filter>Resource Files\shaders\test</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
 </Project>
