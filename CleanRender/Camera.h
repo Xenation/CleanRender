@@ -4,14 +4,10 @@
 class Entity;
 class Camera : public Component {
 public:
-	float noclipSpeed = 4.f;
-	float lookSensivity = 5.f;
-
 	Camera(Entity* entity);
 	~Camera();
 
 	virtual void onEnable() override;
-	virtual void onUpdate() override;
 	virtual void onDisable() override;
 
 	inline float getFov() { return fov; }
@@ -28,8 +24,6 @@ public:
 
 private:
 	unsigned int id;
-
-	Vec3f eulerRot = Vec3f::zero;
 
 	float fov = 90.0f;
 	float nearPlane = 0.01f;

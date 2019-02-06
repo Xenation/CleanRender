@@ -6,10 +6,6 @@ class Renderer;
 class Camera;
 class Pipeline {
 public:
-	Mesh* testMesh;
-	Mesh* testMesh2;
-	ShaderProgram* testShader;
-
 	Pipeline(int width, int height);
 	Pipeline(const Pipeline&) = delete;
 	~Pipeline();

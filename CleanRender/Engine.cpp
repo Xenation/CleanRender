@@ -5,11 +5,7 @@
 #include "Input.h"
 #include "Time.h"
 #include "EntityManager.h"
-#include "Entity.h"
-#include "MeshRenderer.h"
-#include "Camera.h" // TODO remove when not testing
-#include "Transform.h"
-#include <string>
+#include "TestScene.h"
 
 
 
@@ -21,27 +17,20 @@ Engine::~Engine() {}
 Window* Engine::window = nullptr;
 Pipeline* Engine::pipeline = nullptr;
 EntityManager* Engine::entityManager = nullptr;
-Entity* Engine::testEntity = nullptr;
-Entity* Engine::testCamera = nullptr;
+Scene* Engine::scene = nullptr;
 
 
 void Engine::initialize() {
 	window = new Window();
 	pipeline = new Pipeline(window->getWidth(), window->getHeight());
 	entityManager = new EntityManager();
-	testEntity = new Entity();
-	MeshRenderer* mr = testEntity->addComponent<MeshRenderer>();
-	mr->setMesh(pipeline->testMesh);
-	mr->setShaderProgram(pipeline->testShader);
-	testCamera = new Entity();
-	testCamera->transform->setPosition({0, 0, -3});
-	testCamera->addComponent<Camera>();
+	scene = new TestScene();
+	scene->load();
 }
 
 void Engine::loop() {
 	while (!window->shouldClose()) {
 		Time::ComputeFrameTimes();
-		//Debug::log("Time", std::to_string(Time::deltaTime).c_str());
 		// INPUT
 		Input::PollEvents();
 		// UPDATE
@@ -54,7 +43,8 @@ void Engine::loop() {
 }
 
 void Engine::destroy() {
+	delete scene;
+	delete entityManager;
 	delete pipeline;
 	delete window;
-	delete testEntity;
 }

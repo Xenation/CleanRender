@@ -39,12 +39,6 @@
     <Filter Include="Header Files\Engine\Entity\Components">
       <UniqueIdentifier>{bc7fb3a2-7630-4577-b555-149498967beb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Engine\Entity\Systems">
-      <UniqueIdentifier>{79604659-c5d0-44b6-ba5d-db61ce1b5cd4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Engine\Entity\Systems">
-      <UniqueIdentifier>{705b62fe-1386-49c1-86c3-c3e5c3d1adc6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Engine\Utils">
       <UniqueIdentifier>{36b7da28-2fb9-411c-8841-a3542d4d7d62}</UniqueIdentifier>
     </Filter>
@@ -60,6 +54,12 @@
     </Filter>
     <Filter Include="Resource Files\shaders\test">
       <UniqueIdentifier>{974d30db-888a-4214-9f0f-12ae891f177c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Entity\Scenes">
+      <UniqueIdentifier>{79604659-c5d0-44b6-ba5d-db61ce1b5cd4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Entity\Scenes">
+      <UniqueIdentifier>{705b62fe-1386-49c1-86c3-c3e5c3d1adc6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -113,6 +113,15 @@
     </ClCompile>
     <ClCompile Include="Time.cpp">
       <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Source Files\Engine\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="TestScene.cpp">
+      <Filter>Source Files\Engine\Entity\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="NoclipController.cpp">
+      <Filter>Source Files\Engine\Entity\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -175,6 +184,15 @@
     </ClInclude>
     <ClInclude Include="Time.h">
       <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Header Files\Engine\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="TestScene.h">
+      <Filter>Header Files\Engine\Entity\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="NoclipController.h">
+      <Filter>Header Files\Engine\Entity\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
