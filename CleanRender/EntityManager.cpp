@@ -13,8 +13,12 @@ EntityManager::EntityManager()
 }
 
 EntityManager::~EntityManager() {
-	for (unsigned int i = 0; i < entities.count; i++) {
+	unsigned int deleted = 0;
+	for (unsigned int i = 0; i < entities.capacity; i++) {
+		if (deleted == entities.count) break;
+		if (entities[i] == nullptr) continue;
 		delete entities[i];
+		deleted++;
 	}
 }
 

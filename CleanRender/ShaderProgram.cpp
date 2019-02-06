@@ -44,7 +44,8 @@ void ShaderProgram::initializeAll() {
 }
 
 void ShaderProgram::reloadAll() {
-	for (unsigned int i = 0; i < shaderCount; i++) {
+	// Skip first as it is the fallback
+	for (unsigned int i = 1; i < shaderCount; i++) {
 		shaders[i]->reload();
 	}
 }
@@ -72,19 +73,31 @@ void ShaderProgram::load() {
 	std::string vertexFile = std::string("vs.glsl");
 	std::string fragmentFile = std::string("fs.glsl");
 
-	GLuint vs = loadShader(GL_VERTEX_SHADER, vertexFile);
-	GLuint fs = loadShader(GL_FRAGMENT_SHADER, fragmentFile);
+	vertex = loadShader(GL_VERTEX_SHADER, vertexFile);
+	fragment = loadShader(GL_FRAGMENT_SHADER, fragmentFile);
 
-	if (vs == 0 || fs == 0) {
-		vs = loadShaderFromSource(GL_VERTEX_SHADER, SHADER_CODE_ERROR_VS, true);
-		fs = loadShaderFromSource(GL_FRAGMENT_SHADER, SHADER_CODE_ERROR_FS, true);
+	if (vertex == 0 || fragment == 0) {
+		vertex = loadShaderFromSource(GL_VERTEX_SHADER, SHADER_CODE_ERROR_VS, true);
+		fragment = loadShaderFromSource(GL_FRAGMENT_SHADER, SHADER_CODE_ERROR_FS, true);
 	}
 
-	load(vs, fs);
+	load(vertex, fragment);
 }
 
 void ShaderProgram::reload() {
 	if (!loaded) return;
+	if (program != 0) {
+		if (vertex != 0) {
+			glDetachShader(program, vertex);
+			glDeleteShader(vertex);
+		}
+		if (fragment != 0) {
+			glDetachShader(program, fragment);
+			glDeleteShader(fragment);
+		}
+		glDeleteProgram(program);
+	}
+	load();
 }
 
 void ShaderProgram::use() {
@@ -141,52 +154,51 @@ void ShaderProgram::getAllLocations() {
 }
 
 void ShaderProgram::load(GLuint vs, GLuint fs, bool silent) {
-	if (vs > 0 || fs > 0) {
-		program = glCreateProgram();
-		if (vs > 0) {
-			glAttachShader(program, vs);
-		}
-		if (fs > 0) {
-			glAttachShader(program, fs);
-		}
+	if (vs <= 0 || fs <= 0) return;
 
-		glLinkProgram(program);
-
-		GLint isLinked = 0;
-		glGetProgramiv(program, GL_LINK_STATUS, &isLinked);
-		if (isLinked == GL_FALSE) {
-			if (!silent) {
-				GLint maxLength = 0;
-				glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
-
-				char* infoLog = new char[maxLength];
-				memset(infoLog, 0, maxLength * sizeof(char));
-
-				glGetProgramInfoLog(program, maxLength, &maxLength, infoLog);
-
-				std::string error = "Could not link";
-				if (vs != 0) {
-					error += " [vertex shader]";
-				}
-				if (fs != 0) {
-					error += " [fragment shader]";
-				}
-
-				error += ", log is: " + std::string(infoLog);
-				Debug::logError("ShaderProgram", error.c_str());
-
-				delete[] infoLog;
-			}
-
-			glDeleteProgram(program);
-			program = 0;
-			return;
-		}
-		Debug::log("ShaderProgram", "Program load and link done!");
-		getAllLocations();
-		return;
+	program = glCreateProgram();
+	if (vs > 0) {
+		glAttachShader(program, vs);
+	}
+	if (fs > 0) {
+		glAttachShader(program, fs);
 	}
 
+	glLinkProgram(program);
+
+	GLint isLinked = 0;
+	glGetProgramiv(program, GL_LINK_STATUS, &isLinked);
+	if (isLinked == GL_FALSE) {
+		if (!silent) {
+			GLint maxLength = 0;
+			glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
+
+			char* infoLog = new char[maxLength];
+			memset(infoLog, 0, maxLength * sizeof(char));
+
+			glGetProgramInfoLog(program, maxLength, &maxLength, infoLog);
+
+			std::string error = "Could not link";
+			if (vs != 0) {
+				error += " [vertex shader]";
+			}
+			if (fs != 0) {
+				error += " [fragment shader]";
+			}
+
+			error += ", log is: " + std::string(infoLog);
+			Debug::logError("ShaderProgram", error.c_str());
+
+			delete[] infoLog;
+		}
+
+		glDeleteProgram(program);
+		program = 0;
+		return;
+	}
+	Debug::log("ShaderProgram", "Program load and link done!");
+	getAllLocations();
+	loaded = true;
 }
 
 GLuint ShaderProgram::loadShader(GLenum type, std::string fileName, bool silent) {

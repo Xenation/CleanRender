@@ -38,6 +38,8 @@ private:
 	std::string path;
 	bool loaded = false;
 	GLuint program = 0;
+	GLuint vertex = 0;
+	GLuint fragment = 0;
 
 	GLuint locationProjectionMatrix;
 	GLuint locationViewMatrix;

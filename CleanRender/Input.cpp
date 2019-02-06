@@ -1,6 +1,7 @@
 #include "Input.h"
 
 #include <string>
+#include "ShaderProgram.h"
 #include <GLFW\glfw3.h>
 #include "Engine.h"
 #include "Window.h"
@@ -41,6 +42,9 @@ void Input::UnlockMouse() {
 void Input::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
 		Engine::window->closeWindow();
+	}
+	if (key == GLFW_KEY_F5 && action == GLFW_PRESS) {
+		ShaderProgram::reloadAll();
 	}
 
 	//Debug::log("Input", ("Key Event: key=" + std::to_string(key) + " action=" + std::to_string(action)).c_str());
