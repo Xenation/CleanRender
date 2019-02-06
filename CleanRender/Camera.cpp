@@ -21,23 +21,27 @@ void Camera::onEnable() {
 }
 
 void Camera::onUpdate() {
+	float speed = noclipSpeed;
+	if (Input::lShiftPressed) {
+		speed *= 4;
+	}
 	if (Input::wPressed) {
-		entity->transform->setPosition(entity->transform->getPosition() + entity->transform->forward() * 0.01f);
+		entity->transform->setPosition(entity->transform->getPosition() + entity->transform->forward() * speed);
 	}
 	if (Input::sPressed) {
-		entity->transform->setPosition(entity->transform->getPosition() + entity->transform->backward() * 0.01f);
+		entity->transform->setPosition(entity->transform->getPosition() + entity->transform->backward() * speed);
 	}
 	if (Input::dPressed) {
-		entity->transform->setPosition(entity->transform->getPosition() + entity->transform->right() * 0.01f);
+		entity->transform->setPosition(entity->transform->getPosition() + entity->transform->right() * speed);
 	}
 	if (Input::aPressed) {
-		entity->transform->setPosition(entity->transform->getPosition() + entity->transform->left() * 0.01f);
+		entity->transform->setPosition(entity->transform->getPosition() + entity->transform->left() * speed);
 	}
 	if (Input::qPressed) {
-		entity->transform->setPosition(entity->transform->getPosition() + entity->transform->down() * 0.01f);
+		entity->transform->setPosition(entity->transform->getPosition() + entity->transform->down() * speed);
 	}
 	if (Input::ePressed) {
-		entity->transform->setPosition(entity->transform->getPosition() + entity->transform->up() * 0.01f);
+		entity->transform->setPosition(entity->transform->getPosition() + entity->transform->up() * speed);
 	}
 	if (Input::mouseRightPressed) {
 		eulerRot.y += Input::mouseDelta.x * 0.01f;

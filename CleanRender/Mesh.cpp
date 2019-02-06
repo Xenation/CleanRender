@@ -66,7 +66,7 @@ void Mesh::uploadToGL() {
 	unsigned int vboVerticesSize = vertexCount * vertexFloatSize * sizeof(float);
 	glBufferData(GL_ARRAY_BUFFER, vboVerticesSize, vertices, GL_STATIC_DRAW);
 	for (int i = 0; i < attributeCount; i++) {
-		glVertexAttribPointer(i, attributeSizes[i], GL_FLOAT, GL_TRUE, vertexFloatSize * sizeof(float), (void*) (attributeFloatOffsets[i] * sizeof(float)));
+		glVertexAttribPointer(i, attributeSizes[i], GL_FLOAT, GL_FALSE, vertexFloatSize * sizeof(float), (void*) (attributeFloatOffsets[i] * sizeof(float)));
 	}
 
 	if (vboIndices == 0) {
@@ -102,7 +102,7 @@ void Mesh::render() {
 
 	glBindVertexArray(vao);
 
-	glDrawElements(GL_TRIANGLES, vertexCount, GL_UNSIGNED_INT, NULL);
+	glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, NULL);
 
 	glBindVertexArray(0);
 }

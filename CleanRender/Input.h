@@ -19,6 +19,10 @@ public:
 	static bool qPressed;
 	static bool ePressed;
 
+	static bool lShiftPressed;
+
+	static void PollEvents();
+
 	static GLFWkeyFunction getKeyCallback();
 	static GLFWmouseButtonFunction getMouseButtonCallback();
 	static GLFWmousePositionFunction getMousePosCallback();

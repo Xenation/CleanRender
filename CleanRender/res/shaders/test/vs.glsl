@@ -6,6 +6,9 @@ uniform mat4x4 projectionMatrix;
 uniform mat4x4 viewMatrix;
 uniform mat4x4 modelMatrix;
 
+out vec4 worldPos;
+
 void main() {
-	gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(vertexPos, 1.0);
+	worldPos = modelMatrix * vec4(vertexPos, 1.0);
+	gl_Position = projectionMatrix * viewMatrix * worldPos;
 }

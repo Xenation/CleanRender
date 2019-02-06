@@ -22,10 +22,33 @@ Pipeline::Pipeline(int width, int height)
 	}
 	resizeFrameBuffer(width, height);
 	glClearColor(0.5f, 0, 0, 1);
-	testMesh = new Mesh(3, 3);
+	glEnable(GL_CULL_FACE);
+	testMesh = new Mesh(8, 36);
 	testMesh->setAttributesDefinition(1, new int[1] {3});
-	testMesh->setAttribute(0, new float[9] {0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f});
-	testMesh->setIndices(new unsigned int[3] {0, 1, 2});
+	testMesh->setAttribute(0, new float[24] {
+		-0.5f, 0.5f, -0.5f,
+		-0.5f, 0.5f, 0.5f,
+		0.5f, 0.5f, 0.5f,
+		0.5f, 0.5f, -0.5f,
+		-0.5f, -0.5f, -0.5f,
+		-0.5f, -0.5f, 0.5f,
+		0.5f, -0.5f, 0.5f,
+		0.5f, -0.5f, -0.5f,
+	});
+	testMesh->setIndices(new unsigned int[36] {
+		0, 2, 1,
+		0, 3, 2,
+		4, 3, 0,
+		4, 7, 3,
+		5, 0, 1,
+		5, 4, 0,
+		6, 1, 2,
+		6, 5, 1,
+		7, 2, 3,
+		7, 6, 2,
+		5, 7, 4,
+		5, 6, 7
+	});
 	testMesh->uploadToGL();
 	testMesh2 = new Mesh(4, 3);
 	testMesh2->setAttributesDefinition(1, new int[1]{3});

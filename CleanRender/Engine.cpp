@@ -2,6 +2,7 @@
 
 #include "Window.h"
 #include "Pipeline.h"
+#include "Input.h"
 #include "EntityManager.h"
 #include "Entity.h"
 #include "MeshRenderer.h"
@@ -31,13 +32,14 @@ void Engine::initialize() {
 	mr->setMesh(pipeline->testMesh);
 	mr->setShaderProgram(pipeline->testShader);
 	testCamera = new Entity();
-	testCamera->transform->setPosition({0, 0, -10});
+	testCamera->transform->setPosition({0, 0, -3});
 	testCamera->addComponent<Camera>();
 }
 
 void Engine::loop() {
 	while (!window->shouldClose()) {
 		// INPUT
+		Input::PollEvents();
 		// UPDATE
 		entityManager->updateEntities();
 		// RENDER
