@@ -12,8 +12,10 @@ public:
 	inline Quaternion getRotation() { return rotation; }
 
 	inline void setPosition(Vec3f pos) { position = pos; invalidateMatrices(); }
+	inline void translate(Vec3f translation) { position += translation; invalidateMatrices(); }
 	inline void setScale(Vec3f sca) { scale = sca; invalidateMatrices(); }
 	inline void setRotation(Quaternion rot) { rotation = rot; invalidateMatrices(); }
+	inline void rotate(Quaternion rot) { rotation *= rot; invalidateMatrices(); }
 
 	Matrix4x4f getLocalToWorldMatrix();
 	Matrix4x4f getWorldToLocalMatrix();
@@ -32,8 +34,7 @@ public:
 	inline Vec3f up() { return localToWorldDir(Vec3f::up).normalized(); }
 	inline Vec3f down() { return localToWorldDir(Vec3f::down).normalized(); }
 
-	void setParent(Transform* parent);
-	inline Transform* getParent() { return parent; }
+	void parentChanged();
 
 private:
 	Vec3f position = Vec3f::zero;
@@ -50,12 +51,5 @@ private:
 	void recalculateModelMatrix();
 	void recalculateLTWMatrix();
 	void recalculateWTLMatrix();
-	void notifyChildrenLocalToWorldChange();
-
-	Transform* parent = nullptr;
-	unsigned int childIndex = 0;
-	SimpleList<Transform*> children;
-	void addChild(Transform* child);
-	void removeChild(unsigned int index);
 };
 

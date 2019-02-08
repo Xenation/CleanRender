@@ -9,10 +9,13 @@ public:
 	~TestScene();
 
 	virtual void load() override;
+	virtual void update() override;
 	virtual void destroy() override;
 private:
 	Entity* camera;
 	Entity* testCube;
+	Entity* noTransfParent;
+	Entity* transfChild;
 	Mesh* cubeMesh;
 	ShaderProgram* testShader;
 };

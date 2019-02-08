@@ -3,36 +3,29 @@
 #include <typeinfo>
 #include "Component.h"
 #include "HollowSet.h"
+#include "SimpleList.h"
 class Transform;
 class Entity {
 public:
 	typedef unsigned int Id;
 	Id id;
-	Transform* transform;
+	Transform* transform = nullptr;
 	bool isDying = false;
 
-	Entity();
+	Entity(bool hasTransform = true);
 	Entity(const Entity&) = delete;
 	~Entity();
-
-	// Adds a component
-	template<typename T, typename std::enable_if<std::is_base_of<Component, T>::value>::type* = nullptr>
-	T* addComponent(T* comp) {
-		components.add(comp);
-
-		comp->onStart();
-		if (comp->isEnabled()) {
-			comp->onEnable();
-		}
-		return comp;
-	}
 
 	// Adds a component by creating a new
 	template<typename T, typename std::enable_if<std::is_base_of<Component, T>::value>::type* = nullptr>
 	T* addComponent() {
 		T* nComponent = new T(this);
 		components.add(nComponent);
-		nComponent->entity = this;
+
+		if (typeid(T) == typeid(Transform)) {
+			transform = (Transform*) nComponent;
+			updateTransformPointers();
+		}
 
 		nComponent->onStart();
 		if (nComponent->isEnabled()) {
@@ -94,7 +87,32 @@ public:
 
 	void updateComponents();
 
+	void setParent(Entity* parent);
+	inline Entity* getParent() const { return parent; }
+	void ltwChangeNotifyChildren();
+
 private:
 	HollowSet<Component*> components;
+	SimpleList<Entity*> children;
+	Entity* parent = nullptr;
+	unsigned int childIndex = 0;
+
+	void addChild(Entity* entity);
+	void removeChild(unsigned int index);
+	void parentChangeNotifyChildren();
+
+	// Adds a component
+	template<typename T, typename std::enable_if<std::is_base_of<Component, T>::value>::type* = nullptr>
+	T* addComponent(T* comp) {
+		components.add(comp);
+
+		comp->onStart();
+		if (comp->isEnabled()) {
+			comp->onEnable();
+		}
+		return comp;
+	}
+
+	void updateTransformPointers();
 };
 

@@ -9,8 +9,8 @@ public:
 
 	SimpleList() = delete;
 	SimpleList(const SimpleList<T>&) = delete;
-	SimpleList(unsigned int capacity, unsigned int growAmount) 
-		: capacity(capacity), arr(new T[capacity]), count(0), growAmount(growAmount) {
+	SimpleList(unsigned int capacity, unsigned int growAmount, bool lazyInit = false) 
+		: capacity(capacity), arr((lazyInit) ? nullptr : new T[capacity]), count(0), growAmount(growAmount) {
 
 	}
 	~SimpleList() {
@@ -18,6 +18,9 @@ public:
 	}
 
 	unsigned int add(T elem) {
+		if (arr == nullptr) { // Lazy initialize
+			arr = new T[capacity];
+		}
 		if (count == capacity) {
 			growArray();
 		}

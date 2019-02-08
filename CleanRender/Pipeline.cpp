@@ -19,6 +19,7 @@ Pipeline::Pipeline(int width, int height)
 	resizeFrameBuffer(width, height);
 	glClearColor(0.5f, 0, 0, 1);
 	glEnable(GL_CULL_FACE);
+	glEnable(GL_DEPTH_TEST);
 }
 
 Pipeline::~Pipeline() {

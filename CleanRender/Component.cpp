@@ -1,11 +1,16 @@
 #include "Component.h"
 
 #include "Entity.h"
+#include "Transform.h"
 
 
 
-Component::Component(Entity* entity) {
-	this->entity = entity;
+Component::Component(Entity* entity) : entity(entity), transform(entity->transform) {
+
+}
+
+Component::Component(Entity* entity, Transform* transform) : entity(entity), transform(transform) {
+
 }
 
 Component::~Component() {

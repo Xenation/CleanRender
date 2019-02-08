@@ -16,28 +16,29 @@ NoclipController::~NoclipController() {
 }
 
 void NoclipController::onUpdate() {
+	if (transform == nullptr) return;
 	float dt = Time::deltaTime;
 	float currentSpeed = speed;
 	if (Input::lShiftPressed) {
 		currentSpeed *= 4;
 	}
 	if (Input::wPressed) {
-		entity->transform->setPosition(entity->transform->getPosition() + entity->transform->forward() * currentSpeed * dt);
+		transform->translate(transform->forward() * currentSpeed * dt);
 	}
 	if (Input::sPressed) {
-		entity->transform->setPosition(entity->transform->getPosition() + entity->transform->backward() * currentSpeed * dt);
+		transform->translate(transform->backward() * currentSpeed * dt);
 	}
 	if (Input::dPressed) {
-		entity->transform->setPosition(entity->transform->getPosition() + entity->transform->right() * currentSpeed * dt);
+		transform->translate(transform->right() * currentSpeed * dt);
 	}
 	if (Input::aPressed) {
-		entity->transform->setPosition(entity->transform->getPosition() + entity->transform->left() * currentSpeed * dt);
+		transform->translate(transform->left() * currentSpeed * dt);
 	}
 	if (Input::qPressed) {
-		entity->transform->setPosition(entity->transform->getPosition() + entity->transform->down() * currentSpeed * dt);
+		transform->translate(transform->down() * currentSpeed * dt);
 	}
 	if (Input::ePressed) {
-		entity->transform->setPosition(entity->transform->getPosition() + entity->transform->up() * currentSpeed * dt);
+		transform->translate(transform->up() * currentSpeed * dt);
 	}
 	if (Input::mouseRightPressed) {
 		eulerRot.y += Input::mouseDelta.x * lookSensivity * dt;

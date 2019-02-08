@@ -1,6 +1,7 @@
 #include "Transform.h"
 
 #include "Debug.h"
+#include "Entity.h"
 
 #define CHILD_ARRAY_START_SIZE 4
 #define CHILD_ARRAY_INCREASE 4
@@ -8,17 +9,12 @@
 
 
 Transform::Transform(Entity* entity)
-	: Component(entity), children(SimpleList<Transform*>(CHILD_ARRAY_START_SIZE, CHILD_ARRAY_INCREASE)) {
+	: Component(entity, this) {
 
 }
 
 Transform::~Transform() {
-	if (parent != nullptr) {
-		parent->removeChild(childIndex);
-	}
-	for (unsigned int i = 0; i < children.count; i++) {
-		delete children[i]->entity;
-	}
+	
 }
 
 
@@ -78,18 +74,9 @@ Vec3f Transform::worldToLocalDir(Vec3f dir) {
 	return worldToLocalMatrix.multDirection(dir);
 }
 
-void Transform::setParent(Transform* parent) {
-	if (this->parent == parent) return;
-	if (this->parent != nullptr) {
-		this->parent->removeChild(childIndex);
-	}
-	this->parent = parent;
-	if (this->parent != nullptr) {
-		this->parent->addChild(this);
-	}
+void Transform::parentChanged() {
 	localToWorldMatrixExpired = true;
 	worldToLocalMatrixExpired = true;
-
 }
 
 void Transform::invalidateMatrices() {
@@ -109,10 +96,20 @@ void Transform::recalculateLTWMatrix() {
 	if (modelMatrixExpired) {
 		recalculateModelMatrix();
 	}
-	localToWorldMatrix = (parent == nullptr) ? modelMatrix : parent->getLocalToWorldMatrix() * modelMatrix;
+	localToWorldMatrix = modelMatrix;
+	if (entity->getParent() != nullptr) {
+		Entity* currentParent = entity->getParent();
+		while (currentParent != nullptr) {
+			if (currentParent->transform != nullptr) {
+				localToWorldMatrix = currentParent->transform->getLocalToWorldMatrix() * modelMatrix;
+				break;
+			}
+			currentParent = currentParent->getParent();
+		}
+	}
+	entity->ltwChangeNotifyChildren();
 	localToWorldMatrixExpired = false;
 	worldToLocalMatrixExpired = true;
-	notifyChildrenLocalToWorldChange();
 }
 
 void Transform::recalculateWTLMatrix() {
@@ -121,24 +118,4 @@ void Transform::recalculateWTLMatrix() {
 	}
 	worldToLocalMatrix = localToWorldMatrix.inverseAffine();
 	worldToLocalMatrixExpired = false;
-}
-
-void Transform::notifyChildrenLocalToWorldChange() {
-	if (children.count == 0) return;
-	for (unsigned int i = 0; i < children.count; i++) {
-		children[i]->localToWorldMatrixExpired = true;
-		children[i]->worldToLocalMatrixExpired = true;
-		children[i]->notifyChildrenLocalToWorldChange();
-	}
-}
-
-void Transform::addChild(Transform* child) {
-	child->childIndex = children.add(child);
-}
-
-void Transform::removeChild(unsigned int index) {
-	children.remove(index);
-	for (unsigned int i = index; i < children.count; i++) {
-		children[i]->childIndex--;
-	}
 }

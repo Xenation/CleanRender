@@ -1,12 +1,15 @@
 #pragma once
 class Entity;
+class Transform;
 class Component {
 public:
-	Entity* entity;
+	Entity*const entity;
+	Transform* transform;
 
 	Component() = delete;
 	Component(const Component&) = delete;
 	Component(Entity* entity);
+	Component(Entity* entity, Transform* transform);
 	~Component();
 
 	virtual void onStart() {};
