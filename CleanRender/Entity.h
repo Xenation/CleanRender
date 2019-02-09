@@ -4,7 +4,7 @@
 #include "Component.h"
 #include "HollowSet.h"
 #include "SimpleList.h"
-class Transform;
+#include "Transform.h"
 class Entity {
 public:
 	typedef unsigned int Id;
