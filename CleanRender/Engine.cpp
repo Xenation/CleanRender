@@ -5,7 +5,7 @@
 #include "Input.h"
 #include "Time.h"
 #include "EntityManager.h"
-#include "TestScene.h"
+#include "Scene.h"
 
 
 
@@ -24,8 +24,6 @@ void Engine::initialize() {
 	window = new Window();
 	pipeline = new Pipeline(window->getWidth(), window->getHeight());
 	entityManager = new EntityManager();
-	scene = new TestScene();
-	scene->load();
 }
 
 void Engine::loop() {

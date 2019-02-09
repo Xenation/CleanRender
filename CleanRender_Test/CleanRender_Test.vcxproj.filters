@@ -19,10 +19,19 @@
     <Filter Include="Resource Files\shaders\test">
       <UniqueIdentifier>{7244f9b8-4996-4f55-83be-91ebbc4ef32d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Scenes">
+      <UniqueIdentifier>{959ce7a3-aef8-4b18-a9b7-ea1cb5bc85e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Scenes">
+      <UniqueIdentifier>{659ca7fd-d3b1-4cca-8e77-f6f7ab98b082}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TestScene.cpp">
+      <Filter>Source Files\Scenes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -32,5 +41,10 @@
     <None Include="res\shaders\test\vs.glsl">
       <Filter>Resource Files\shaders\test</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="TestScene.h">
+      <Filter>Header Files\Scenes</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
