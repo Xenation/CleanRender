@@ -49,12 +49,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;glsl</Extensions>
     </Filter>
-    <Filter Include="Resource Files\shaders">
-      <UniqueIdentifier>{10bd47f0-a4c3-438a-bce0-f6f3fbed9462}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resource Files\shaders\test">
-      <UniqueIdentifier>{974d30db-888a-4214-9f0f-12ae891f177c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Engine\Entity\Scenes">
       <UniqueIdentifier>{79604659-c5d0-44b6-ba5d-db61ce1b5cd4}</UniqueIdentifier>
     </Filter>
@@ -63,9 +57,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="gl3w.c">
       <Filter>Source Files\Engine\Render\Core</Filter>
     </ClCompile>
@@ -86,9 +77,6 @@
     </ClCompile>
     <ClCompile Include="ShaderProgram.cpp">
       <Filter>Source Files\Engine\Render</Filter>
-    </ClCompile>
-    <ClCompile Include="Math.cpp">
-      <Filter>Source Files\Engine</Filter>
     </ClCompile>
     <ClCompile Include="EntityManager.cpp">
       <Filter>Source Files\Engine\Entity</Filter>
@@ -123,6 +111,9 @@
     <ClCompile Include="NoclipController.cpp">
       <Filter>Source Files\Engine\Entity\Components</Filter>
     </ClCompile>
+    <ClCompile Include="XMath.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gl3w.h">
@@ -151,9 +142,6 @@
     </ClInclude>
     <ClInclude Include="ShaderProgram.h">
       <Filter>Header Files\Engine\Render</Filter>
-    </ClInclude>
-    <ClInclude Include="Math.h">
-      <Filter>Header Files\Engine</Filter>
     </ClInclude>
     <ClInclude Include="Entity.h">
       <Filter>Header Files\Engine\Entity</Filter>
@@ -194,13 +182,8 @@
     <ClInclude Include="NoclipController.h">
       <Filter>Header Files\Engine\Entity\Components</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <CopyFileToFolders Include="res\shaders\test\fs.glsl">
-      <Filter>Resource Files\shaders\test</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="res\shaders\test\vs.glsl">
-      <Filter>Resource Files\shaders\test</Filter>
-    </CopyFileToFolders>
+    <ClInclude Include="XMath.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

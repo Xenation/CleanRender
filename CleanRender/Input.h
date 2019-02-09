@@ -1,5 +1,5 @@
 #pragma once
-#include "Math.h"
+#include "XMath.h"
 struct GLFWwindow;
 typedef void (*GLFWkeyFunction)(GLFWwindow* window, int key, int scancode, int action, int mods);
 typedef void (*GLFWmouseButtonFunction)(GLFWwindow* window, int button, int action, int mods);

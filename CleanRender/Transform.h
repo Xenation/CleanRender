@@ -1,6 +1,6 @@
 #pragma once
 #include "Component.h"
-#include "Math.h"
+#include "XMath.h"
 #include "SimpleList.h"
 class Transform : public Component {
 public:

@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include "gl3w.h"
-#include "Math.h"
+#include "XMath.h"
 class ShaderProgram {
 public:
 	static ShaderProgram* errorShader;

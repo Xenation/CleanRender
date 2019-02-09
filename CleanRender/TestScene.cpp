@@ -89,7 +89,7 @@ void TestScene::load() {
 
 void TestScene::update() {
 	testCube->transform->rotate(Quaternion::euler(Vec3f(0, 5 * Time::deltaTime, 0)));
-	transfChild->transform->rotate(Quaternion::euler(Vec3f(3 * Time::deltaTime, 0, 0)));
+	transfChild->transform->rotate(Quaternion::euler(Vec3f(2.5f * Time::deltaTime, 0, 0)));
 }
 
 void TestScene::destroy() {

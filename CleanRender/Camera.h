@@ -1,6 +1,6 @@
 #pragma once
 #include "Component.h"
-#include "Math.h"
+#include "XMath.h"
 class Entity;
 class Camera : public Component {
 public:
