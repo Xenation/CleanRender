@@ -33,7 +33,9 @@ void Engine::loop() {
 		Input::PollEvents();
 		// UPDATE
 		entityManager->updateEntities();
-		scene->update();
+		if (scene != nullptr) {
+			scene->update();
+		}
 		// RENDER
 		pipeline->render();
 		// DISPLAY
