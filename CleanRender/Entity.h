@@ -38,7 +38,7 @@ public:
 	template<typename T, typename std::enable_if<std::is_base_of<Component, T>::value>::type* = nullptr>
 	T* getComponent() {
 		for (unsigned int i = 0; i < components.capacity; i++) {
-			if (components[i] != nullptr && typeid(components[i]) == T) return components[i];
+			if (components[i] != nullptr && typeid(*components[i]) == typeid(T)) return (T*) components[i];
 		}
 		return nullptr;
 	}
@@ -49,7 +49,7 @@ public:
 		unsigned int count = 0;
 		for (unsigned int i = 0; i < components.capacity; i++) {
 			if (count == components.count) break;
-			if (components[i] != nullptr && typeid(components[i]) == T) count++;
+			if (components[i] != nullptr && typeid(*components[i]) == typeid(T)) count++;
 		}
 		T** comps = new Component*[count];
 		getComponents(comps, count);
@@ -62,7 +62,7 @@ public:
 		unsigned int arrIndex = 0;
 		for (unsigned int i = 0; i < components.capacity && arrIndex < arrSize; i++) {
 			if (arrIndex == components.count) break;
-			if (components[i] != nullptr && typeid(components[i]) == T) {
+			if (components[i] != nullptr && typeid(*components[i]) == typeid(T)) {
 				arr[arrIndex++] = components[i];
 			}
 		}

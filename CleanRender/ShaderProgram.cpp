@@ -18,7 +18,7 @@ GLuint ShaderProgram::usedProgram = 0;
 void ShaderProgram::initializeAll() {
 	// Loading Error shader
 	errorShader = new ShaderProgram("Error");
-	errorShader->load(errorShader->loadShaderFromSource(GL_VERTEX_SHADER, SHADER_CODE_ERROR_VS), errorShader->loadShaderFromSource(GL_FRAGMENT_SHADER, SHADER_CODE_ERROR_FS));
+	errorShader->load(errorShader->loadShaderFromSource(GL_VERTEX_SHADER, SHADER_CODE_ERROR_VS), 0, errorShader->loadShaderFromSource(GL_FRAGMENT_SHADER, SHADER_CODE_ERROR_FS));
 
 
 	// Searching for shaders
@@ -40,6 +40,7 @@ void ShaderProgram::initializeAll() {
 		if (!entry.is_directory()) continue; // Keep directories only
 		shaders[index] = new ShaderProgram(entry.path().filename().string()); // TODO be carefull of UTF8 names
 		Debug::log("ShaderInit", ("    " + shaders[index]->path).c_str());
+		index++;
 	}
 }
 
@@ -52,6 +53,7 @@ void ShaderProgram::reloadAll() {
 
 ShaderProgram* ShaderProgram::find(std::string name) {
 	for (int i = 0; i < shaderCount; i++) {
+		ShaderProgram* sp = shaders[i];
 		if (shaders[i]->path == name) {
 			return shaders[i];
 		}
@@ -71,9 +73,13 @@ ShaderProgram::~ShaderProgram() {
 
 void ShaderProgram::load() {
 	std::string vertexFile = std::string("vs.glsl");
+	std::string geometryFile = std::string("gs.glsl");
 	std::string fragmentFile = std::string("fs.glsl");
 
+	Debug::log("ShaderProgram", ("Loading Program " + path + "...").c_str());
+
 	vertex = loadShader(GL_VERTEX_SHADER, vertexFile);
+	geometry = loadShader(GL_GEOMETRY_SHADER, geometryFile, true);
 	fragment = loadShader(GL_FRAGMENT_SHADER, fragmentFile);
 
 	if (vertex == 0 || fragment == 0) {
@@ -81,11 +87,14 @@ void ShaderProgram::load() {
 		fragment = loadShaderFromSource(GL_FRAGMENT_SHADER, SHADER_CODE_ERROR_FS, true);
 	}
 
-	load(vertex, fragment);
+	load(vertex, geometry, fragment);
 }
 
 void ShaderProgram::reload() {
-	if (!loaded) return;
+	if (!loaded) {
+		load();
+		return;
+	}
 	if (program != 0) {
 		if (vertex != 0) {
 			glDetachShader(program, vertex);
@@ -153,12 +162,15 @@ void ShaderProgram::getAllLocations() {
 	locationModelMatrix = glGetUniformLocation(program, "modelMatrix");
 }
 
-void ShaderProgram::load(GLuint vs, GLuint fs, bool silent) {
+void ShaderProgram::load(GLuint vs, GLuint gs, GLuint fs, bool silent) {
 	if (vs <= 0 || fs <= 0) return;
 
 	program = glCreateProgram();
 	if (vs > 0) {
 		glAttachShader(program, vs);
+	}
+	if (gs > 0) {
+		glAttachShader(program, gs);
 	}
 	if (fs > 0) {
 		glAttachShader(program, fs);
@@ -181,6 +193,9 @@ void ShaderProgram::load(GLuint vs, GLuint fs, bool silent) {
 			std::string error = "Could not link";
 			if (vs != 0) {
 				error += " [vertex shader]";
+			}
+			if (gs != 0) {
+				error += " [geometry shader]";
 			}
 			if (fs != 0) {
 				error += " [fragment shader]";

@@ -1,6 +1,7 @@
 #pragma once
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include <unordered_map>
 //#include <xmmintrin.h> // SSE
 //#include <emmintrin.h> // SSE2
 //#include <pmmintrin.h> // SSE3
@@ -71,8 +72,20 @@ inline void minmax3f(const float &a, const float &b, const float &c, float &min,
 	}
 }
 
-inline float lerpf(const float &a, const float &b, const float &t) {
+inline double lerpd(double a, double b, double t) {
 	return (1 - t) * a + t * b;
+}
+
+inline float lerpf(float a, float b, float t) {
+	return (1 - t) * a + t * b;
+}
+
+inline double faded(double t) {
+	return t * t * t * (t * (t * 6 - 15) + 10);
+}
+
+inline float fadef(float t) {
+	return t * t * t * (t * (t * 6 - 15) + 10);
 }
 
 inline float invsqrt(const float &n) {
@@ -89,6 +102,14 @@ inline float invsqrt(const float &n) {
 	conv.i = 0x5f3759df - (conv.i >> 1);
 	conv.f = conv.f * (threehalfs - (conv.f * x2 * x2));
 	return conv.f;
+}
+
+inline int floorToInt(double d) {
+	return (d > 0) ? (int) d : (int) (d - 1);
+}
+
+inline int floorToInt(float f) {
+	return (f > 0) ? (int) f : (int) (f - 1);
 }
 #pragma endregion
 
@@ -242,6 +263,11 @@ public:
 	}
 	inline int& operator[](int index) {
 		return *((&x) + index);
+	}
+};
+struct Vec3iHash {
+	size_t operator()(const Vec3i& v) const {
+		return (size_t) (v.x + v.y + v.z);
 	}
 };
 

@@ -39,6 +39,7 @@ private:
 	bool loaded = false;
 	GLuint program = 0;
 	GLuint vertex = 0;
+	GLuint geometry = 0;
 	GLuint fragment = 0;
 
 	GLuint locationProjectionMatrix;
@@ -47,7 +48,7 @@ private:
 
 	void getAllLocations();
 
-	void load(GLuint vs, GLuint fs, bool silent = false);
+	void load(GLuint vs, GLuint gs, GLuint fs, bool silent = false);
 	GLuint loadShader(GLenum type, std::string fileName, bool silent = false);
 	GLuint loadShaderFromSource(GLenum type, const char* src, bool silent = false);
 	char* loadSource(std::string fileName, bool silent = false);
