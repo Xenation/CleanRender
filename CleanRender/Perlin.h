@@ -111,3 +111,15 @@ float perlinf(float x, float y, float z) {
 				gradf(perlinPermutationDoubled[BB + 1], x - 1, y - 1, z - 1), u), v),
 		w);
 }
+
+float perlinFBM(float x, float y, float z, int octaves, float lacunarity, float gain) {
+	float noise = perlinf(x, y, z);
+	float amp = gain;
+	float freq = lacunarity;
+	for (int i = 1; i < octaves; i++) {
+		noise += perlinf(x * freq, y * freq, z * freq) * amp;
+		amp *= gain;
+		freq *= lacunarity;
+	}
+	return noise;
+}

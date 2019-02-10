@@ -12,16 +12,9 @@ Mesh::~Mesh() {
 	if (loadedToGL) {
 		deleteFromGL();
 	}
-	if (attributeSizes != nullptr) {
-		delete[] attributeSizes;
+	if (cachedInLocal) {
+		deleteLocal();
 	}
-	if (attributeFloatOffsets != nullptr) {
-		delete[] attributeFloatOffsets;
-	}
-	if (vertices != nullptr) {
-		delete[] vertices;
-	}
-	delete[] indices;
 }
 
 void Mesh::setAttributesDefinition(int count, int* sizes) {
@@ -34,6 +27,7 @@ void Mesh::setAttributesDefinition(int count, int* sizes) {
 		vertexFloatSize += attributeSizes[i];
 	}
 	vertices = new float[vertexCount * vertexFloatSize];
+	cachedInLocal = true;
 }
 
 void Mesh::setAttribute(int index, float* values) {
@@ -48,6 +42,26 @@ void Mesh::setAttribute(int index, float* values) {
 
 void Mesh::setIndices(unsigned int* indices) {
 	this->indices = indices;
+}
+
+void Mesh::deleteLocal() {
+	if (attributeSizes != nullptr) {
+		delete[] attributeSizes;
+		attributeSizes = nullptr;
+	}
+	if (attributeFloatOffsets != nullptr) {
+		delete[] attributeFloatOffsets;
+		attributeFloatOffsets = nullptr;
+	}
+	if (vertices != nullptr) {
+		delete[] vertices;
+		vertices = nullptr;
+	}
+	if (indices != nullptr) {
+		delete[] indices;
+		indices = nullptr;
+	}
+	cachedInLocal = false;
 }
 
 void Mesh::uploadToGL() {
@@ -97,7 +111,7 @@ void Mesh::deleteFromGL() {
 	}
 }
 
-void Mesh::render() {
+void Mesh::render() const {
 	if (!loadedToGL) return;
 
 	glBindVertexArray(vao);
