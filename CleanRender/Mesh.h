@@ -6,7 +6,16 @@ public:
 	~Mesh();
 
 	void setAttributesDefinition(int count, int* sizes);
+	void setAttributesDefinition(int count, int* sizes, GLenum* types);
+	void setAttribute(int index, signed char* values);
+	void setAttribute(int index, char* values);
+	void setAttribute(int index, short* values);
+	void setAttribute(int index, unsigned short* values);
+	void setAttribute(int index, int* values);
+	void setAttribute(int index, unsigned int* values);
 	void setAttribute(int index, float* values);
+	void setAttribute(int index, double* values);
+	void setAttributeData(int index, char* bytes);
 	void setIndices(unsigned int* indices);
 	void deleteLocal();
 	void uploadToGL();
@@ -23,10 +32,11 @@ private:
 	bool cachedInLocal = false;
 	int attributeCount;
 	int* attributeSizes = nullptr;
-	int* attributeFloatOffsets = nullptr;
-	int vertexFloatSize;
+	GLenum* attributeTypes = nullptr;
+	unsigned int* attributeByteOffsets = nullptr;
+	int vertexByteSize;
 	int vertexCount;
-	float* vertices = nullptr;
+	char* vertices = nullptr;
 	int indexCount;
 	unsigned int* indices = nullptr;
 };

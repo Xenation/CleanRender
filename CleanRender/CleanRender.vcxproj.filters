@@ -176,5 +176,8 @@
     <ClInclude Include="Perlin.h">
       <Filter>Header Files\Engine</Filter>
     </ClInclude>
+    <ClInclude Include="GLUtils.h">
+      <Filter>Header Files\Engine\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

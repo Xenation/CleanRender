@@ -178,6 +178,7 @@
     <ClInclude Include="EntityManager.h" />
     <ClInclude Include="gl3w.h" />
     <ClInclude Include="glcorearb.h" />
+    <ClInclude Include="GLUtils.h" />
     <ClInclude Include="HollowSet.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Perlin.h" />
