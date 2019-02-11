@@ -466,6 +466,9 @@ public:
 	inline Vec3f inverse() const {
 		return {1.0f / x, 1.0f / y, 1.0f / z};
 	}
+	inline Vec3i floor() const {
+		return {floorToInt(x), floorToInt(y), floorToInt(z)};
+	}
 };
 
 /* ==== VEC4f ==== */
@@ -909,6 +912,7 @@ public:
 #pragma region OtherStructures
 struct Box {
 	Vec3f center, extents;
+
 public:
 	inline static Box fromMinMax(Vec3f min, Vec3f max) {
 		return {{(min.x + max.x) / 2.0f, (min.y + max.y) / 2.0f, (min.z + max.z) / 2.0f}, {(max.x - min.x) / 2.0f, (max.y - min.y) / 2.0f, (max.z - min.z) / 2.0f}};
@@ -917,6 +921,10 @@ public:
 
 struct Ray {
 	Vec3f origin, direction;
+
+public:
+	Ray() : origin(Vec3f(0, 0, 0)), direction(Vec3f(0, 1, 0)) {}
+	Ray(Vec3f origin, Vec3f dir) : origin(origin), direction(dir) {}
 };
 
 struct Rect {
@@ -926,19 +934,101 @@ struct Rect {
 struct Recti {
 	Vec2i min, max;
 };
+
+struct Plane {
+	Vec4f normalDistance;
+
+public:
+	Plane() : normalDistance(0.0f, 1.0f, 0.0f, 0.0f) {}
+	Plane(Vec3f normal, float distance) : normalDistance(Vec4f(normal.x, normal.y, normal.z, distance)) {}
+	Plane(Vec4f normalDistance) : normalDistance(normalDistance) {}
+
+	inline bool intersectRay(const Ray& ray, Vec3f& intersect, float& t) const {
+		float denom = normalDistance.x * ray.direction.x + normalDistance.y * ray.direction.y + normalDistance.z * ray.direction.z;
+		t = (-normalDistance.x * ray.origin.x - normalDistance.y * ray.origin.y - normalDistance.z * ray.origin.z - normalDistance.w) / denom;
+		if (t <= 0) {
+			return false;
+		}
+		intersect = ray.origin + ray.direction * t;
+		return true;
+	}
+};
 #pragma endregion
 
 #pragma region Structures Math Functions
 // NDC Raster functions
-inline float edge(const Vec4f &a, const Vec4f &b, const Vec4f &c) {
+inline float edge2D(const Vec4f &a, const Vec4f &b, const Vec4f &c) {
 	return (c.x - a.x) * (b.y - a.y) - (c.y - a.y) * (b.x - a.x);
 }
 
-inline bool triangleBarycentric(const Vec4f &v0, const Vec4f &v1, const Vec4f &v2, const Vec4f &p, Vec3f &bary) {
-	float area = edge(v0, v1, v2);
-	bary.x = edge(v1, v2, p) / area;
-	bary.y = edge(v2, v0, p) / area;
-	bary.z = edge(v0, v1, p) / area;
+inline bool triangleBarycentric2D(const Vec4f &v0, const Vec4f &v1, const Vec4f &v2, const Vec4f &p, Vec3f &bary) {
+	float area = edge2D(v0, v1, v2);
+	bary.x = edge2D(v1, v2, p) / area;
+	bary.y = edge2D(v2, v0, p) / area;
+	bary.z = edge2D(v0, v1, p) / area;
 	return bary.x >= 0 && bary.y >= 0 && bary.z >= 0;
+}
+
+inline bool triangleBarycentric(const Vec3f& v0, const Vec3f& v1, const Vec3f& v2, const Vec3f& p, Vec3f& bary) {
+	float divider = (v2.z - v1.z) * (v0.x - v1.x) + (v1.x - v2.x) * (v0.z - v1.z);
+	if (divider == 0) return false;
+	float weightV0 = ((v2.z - v1.z) * (p.x - v1.x) + (v1.x - v2.x) * (p.y - v1.z)) / divider;
+	float weightV2 = ((v1.z - v0.z) * (p.x - v1.x) + (v0.x - v1.x) * (p.y - v1.z)) / divider;
+	float weightV1 = 1.0f - weightV0 - weightV2;
+	bary = Vec3f(weightV0, weightV1, weightV2);
+	return weightV0 >= 0 && weightV1 >= 0 && weightV2 >= 0;
+}
+
+inline bool intersectTriangle(const Vec3f& v0, const Vec3f& v1, const Vec3f& v2, const Ray& ray, Vec3f& intersect, float& t) {
+	Vec3f v01 = v1 - v0;
+	Vec3f v02 = v2 - v0;
+	Vec3f normal = v01.cross(v02).normalized();
+	Plane triPlane = Plane(normal, -normal.x * v0.x - normal.y * v0.y - normal.z * v0.z);
+	if (!triPlane.intersectRay(ray, intersect, t)) {
+		return false;
+	}
+	Vec3f bary;
+	return triangleBarycentric(v0, v1, v2, intersect, bary);
+}
+
+inline bool intersectQuad(const Vec3f& v0, const Vec3f& v1, const Vec3f& v2, const Vec3f& v3, const Ray& ray, Vec3f& intersect, float& t) {
+	Vec3f v01 = v1 - v0;
+	Vec3f v12 = v2 - v1;
+	Vec3f v23 = v3 - v2;
+	Vec3f v30 = v0 - v3;
+	Vec3f normal = v01.cross(v2 - v0).normalized();
+	if (normal.dot(ray.direction) < 0) return false;
+	Plane triPlane = Plane(normal, -normal.x * v0.x - normal.y * v0.y - normal.z * v0.z);
+	if (!triPlane.intersectRay(ray, intersect, t)) {
+		return false;
+	}
+	Vec3f v0i = intersect - v0;
+	Vec3f v1i = intersect - v1;
+	Vec3f v2i = intersect - v2;
+	Vec3f v3i = intersect - v3;
+	Vec3f c0 = v01.cross(v0i);
+	Vec3f c1 = v12.cross(v1i);
+	Vec3f c2 = v23.cross(v2i);
+	Vec3f c3 = v30.cross(v3i);
+	return c0.dot(c1) > 0 && c1.dot(c2) > 0 && c2.dot(c3) > 0;
+}
+
+inline void swapToMinMax(Vec3i& min, Vec3i& max) {
+	float tmp;
+	if (min.x > max.x) {
+		tmp = min.x;
+		min.x = max.x;
+		max.x = tmp;
+	}
+	if (min.y > max.y) {
+		tmp = min.y;
+		min.y = max.y;
+		max.y = tmp;
+	}
+	if (min.z > max.z) {
+		tmp = min.z;
+		min.z = max.z;
+		max.z = tmp;
+	}
 }
 #pragma endregion
