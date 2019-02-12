@@ -17,6 +17,10 @@ const Vec3i Vec3i::up = {0, 1, 0};
 const Vec3i Vec3i::down = {0, -1, 0};
 const Vec3i Vec3i::forward = {0, 0, 1};
 const Vec3i Vec3i::backward = {0, 0, -1};
+const Vec3i Vec3i::north = {0, 0, 1};
+const Vec3i Vec3i::east = {1, 0, 0};
+const Vec3i Vec3i::south = {0, 0, -1};
+const Vec3i Vec3i::west = {-1, 0, 0};
 // Vec2f
 const Vec2f Vec2f::zero = {0, 0};
 const Vec2f Vec2f::one = {1, 1};

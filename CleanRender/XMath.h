@@ -207,6 +207,11 @@ public:
 	static const Vec3i forward;
 	static const Vec3i backward;
 
+	static const Vec3i north;
+	static const Vec3i east;
+	static const Vec3i south;
+	static const Vec3i west;
+
 	/* ---- CONSTRUCTORS ---- */
 	inline Vec3i() : x(0), y(0), z(0) {}
 	inline Vec3i(int x, int y, int z) : x(x), y(y), z(z) {}
