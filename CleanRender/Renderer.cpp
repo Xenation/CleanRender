@@ -15,9 +15,13 @@ Renderer::~Renderer() {
 }
 
 void Renderer::setShaderProgram(ShaderProgram* program) {
+	if (shaderProgram != nullptr) {
+		shaderProgram->renderers.remove(spID);
+	}
 	if (program == nullptr) {
 		shaderProgram = ShaderProgram::errorShader;
 	} else {
 		shaderProgram = program;
+		spID = shaderProgram->renderers.add(this);
 	}
 }

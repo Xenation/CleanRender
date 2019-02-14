@@ -36,7 +36,7 @@ private:
 	unsigned int* attributeByteOffsets = nullptr;
 	int vertexByteSize;
 	int vertexCount;
-	char* vertices = nullptr;
+	void* vertices = nullptr;
 	int indexCount;
 	unsigned int* indices = nullptr;
 };

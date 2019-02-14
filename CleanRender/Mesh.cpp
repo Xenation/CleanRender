@@ -114,7 +114,7 @@ void Mesh::setAttributeData(int index, char* bytes) {
 	for (int vi = 0; vi < vertexCount; vi++) {
 		for (int i = 0; i < attrSize; i++) {
 			for (int bi = 0; bi < typeSize; bi++) {
-				vertices[vi * vertexByteSize + attrByteOffset + i * typeSize + bi] = bytes[vi * attrSize * typeSize + i * typeSize + bi];
+				((char*) vertices)[vi * vertexByteSize + attrByteOffset + i * typeSize + bi] = bytes[vi * attrSize * typeSize + i * typeSize + bi];
 			}
 		}
 	}

@@ -3,6 +3,8 @@
 class ShaderProgram;
 class Renderer : public Component {
 public:
+	bool isTransparent = false;
+
 	Renderer(Entity* entity);
 	~Renderer();
 
@@ -16,5 +18,6 @@ protected:
 
 private:
 	unsigned int id;
+	unsigned int spID;
 };
 

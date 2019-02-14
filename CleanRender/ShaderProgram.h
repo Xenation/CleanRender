@@ -2,13 +2,19 @@
 #include <string>
 #include "gl3w.h"
 #include "XMath.h"
+#include "HollowSet.h"
+class Renderer;
 class ShaderProgram {
 public:
 	static ShaderProgram* errorShader;
+	static unsigned int shaderCount;
+	static ShaderProgram** shaders;
 	
 	static void initializeAll();
 	static void reloadAll();
 	static ShaderProgram* find(std::string name);
+
+	HollowSet<Renderer*> renderers;
 
 	ShaderProgram(std::string path);
 	ShaderProgram(const ShaderProgram&) = delete;
@@ -29,12 +35,9 @@ public:
 	void loadProjectionMatrix(Matrix4x4f projection);
 	void loadViewMatrix(Matrix4x4f view);
 	void loadModelMatrix(Matrix4x4f model);
+	void loadTime(float time);
 
 private:
-	static unsigned int shaderCount;
-	static ShaderProgram** shaders;
-	static GLuint usedProgram;
-
 	std::string path;
 	bool loaded = false;
 	GLuint program = 0;
@@ -45,6 +48,7 @@ private:
 	GLuint locationProjectionMatrix;
 	GLuint locationViewMatrix;
 	GLuint locationModelMatrix;
+	GLuint locationTime;
 
 	void getAllLocations();
 

@@ -105,6 +105,9 @@
     <ClCompile Include="XMath.cpp">
       <Filter>Source Files\Engine</Filter>
     </ClCompile>
+    <ClCompile Include="FrameBuffer.cpp">
+      <Filter>Source Files\Engine\Render</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gl3w.h">
@@ -178,6 +181,9 @@
     </ClInclude>
     <ClInclude Include="GLUtils.h">
       <Filter>Header Files\Engine\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameBuffer.h">
+      <Filter>Header Files\Engine\Render</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -13,7 +13,6 @@ namespace fs = std::filesystem;
 ShaderProgram* ShaderProgram::errorShader = nullptr;
 unsigned int ShaderProgram::shaderCount = 0;
 ShaderProgram** ShaderProgram::shaders = nullptr;
-GLuint ShaderProgram::usedProgram = 0;
 
 void ShaderProgram::initializeAll() {
 	// Loading Error shader
@@ -63,7 +62,7 @@ ShaderProgram* ShaderProgram::find(std::string name) {
 }
 
 
-ShaderProgram::ShaderProgram(std::string path) {
+ShaderProgram::ShaderProgram(std::string path) : renderers(4, 16) {
 	this->path = path;
 }
 
@@ -110,13 +109,10 @@ void ShaderProgram::reload() {
 }
 
 void ShaderProgram::use() {
-	/*if (program == usedProgram) return;
-	usedProgram = program;*/
 	glUseProgram(program);
 }
 
 void ShaderProgram::unuse() {
-	//usedProgram = 0;
 	glUseProgram(0);
 }
 
@@ -156,10 +152,15 @@ void ShaderProgram::loadModelMatrix(Matrix4x4f mat) {
 	glUniformMatrix4fv(locationModelMatrix, 1, false, mat.data);
 }
 
+void ShaderProgram::loadTime(float time) {
+	loadFloat(locationTime, time);
+}
+
 void ShaderProgram::getAllLocations() {
 	locationProjectionMatrix = glGetUniformLocation(program, "projectionMatrix");
 	locationViewMatrix = glGetUniformLocation(program, "viewMatrix");
 	locationModelMatrix = glGetUniformLocation(program, "modelMatrix");
+	locationTime = glGetUniformLocation(program, "time");
 }
 
 void ShaderProgram::load(GLuint vs, GLuint gs, GLuint fs, bool silent) {

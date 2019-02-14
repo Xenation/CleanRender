@@ -18,10 +18,7 @@ MeshRenderer::~MeshRenderer() {
 void MeshRenderer::render() {
 	if (mesh == nullptr) return;
 
-	shaderProgram->use();
 	shaderProgram->loadModelMatrix(entity->transform->getLocalToWorldMatrix());
 
 	mesh->render();
-
-	shaderProgram->unuse();
 }
