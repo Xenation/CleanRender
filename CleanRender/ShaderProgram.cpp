@@ -51,7 +51,7 @@ void ShaderProgram::reloadAll() {
 }
 
 ShaderProgram* ShaderProgram::find(std::string name) {
-	for (int i = 0; i < shaderCount; i++) {
+	for (unsigned int i = 0; i < shaderCount; i++) {
 		ShaderProgram* sp = shaders[i];
 		if (shaders[i]->path == name) {
 			return shaders[i];

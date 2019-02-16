@@ -1,5 +1,9 @@
 #include "XMath.h"
 
+#include <string>
+
+
+
 /* ==== CONSTANTS ==== */
 // Vec2i
 const Vec2i Vec2i::zero = {0, 0};
@@ -21,6 +25,16 @@ const Vec3i Vec3i::north = {0, 0, 1};
 const Vec3i Vec3i::east = {1, 0, 0};
 const Vec3i Vec3i::south = {0, 0, -1};
 const Vec3i Vec3i::west = {-1, 0, 0};
+// Vec4i
+const Vec4i Vec4i::zero = {0, 0, 0, 0};
+const Vec4i Vec4i::one = {1, 1, 1, 1};
+const Vec4i Vec4i::one3 = {1, 1, 1, 0};
+const Vec4i Vec4i::right = {1, 0, 0, 0};
+const Vec4i Vec4i::left = {-1, 0, 0, 0};
+const Vec4i Vec4i::up = {0, 1, 0, 0};
+const Vec4i Vec4i::down = {0, -1, 0, 0};
+const Vec4i Vec4i::forward = {0, 0, 1, 0};
+const Vec4i Vec4i::backward = {0, 0, -1, 0};
 // Vec2f
 const Vec2f Vec2f::zero = {0, 0};
 const Vec2f Vec2f::one = {1, 1};
@@ -59,9 +73,75 @@ const Matrix4x4f Matrix4x4f::identity = {{
 }};
 // Quaternion
 const Quaternion Quaternion::identity = {0.0f, 0.0f, 0.0f, 1.0f};
+// Color
+const Color Color::clear		= Color(0, 0, 0, 0);
+const Color Color::white		= Color(1, 1, 1, 1);
+const Color Color::black		= Color(0, 0, 0, 1);
+const Color Color::lightGray	= Color(.666f, .666f, .666f, 1);
+const Color Color::darkGray		= Color(.333f, .333f, .333f, 1);
+const Color Color::blue			= Color(0, 0, 1, 1);
+const Color Color::green		= Color(0, 1, 0, 1);
+const Color Color::cyan			= Color(0, 1, 1, 1);
+const Color Color::red			= Color(1, 0, 0, 1);
+const Color Color::magenta		= Color(1, 0, 1, 1);
+const Color Color::yellow		= Color(1, 1, 0, 1);
+const Color Color::orange		= Color(1, .5f, 0, 1);
+const Color Color::lime			= Color(.5f, 1, 0, 1);
+const Color Color::turquoise	= Color(0, 1, .5f, 1);
+const Color Color::sky			= Color(0, .5f, 1, 1);
+const Color Color::purple		= Color(.5f, 0, 1, 1);
+const Color Color::pink			= Color(1, 0, .5f, 1);
 
 
 /* ==== METHODS ==== */
+/* ---- Vectors ---- */
+// Vec2i
+const char* Vec2i::toString() {
+	return ("(" + std::to_string(x) + ", " + std::to_string(y) + ")").c_str();
+}
+
+// Vec3i
+const char* Vec3i::toString() {
+	return ("(" + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + ")").c_str();
+}
+
+// Vec4i
+const char* Vec4i::toString() {
+	return ("(" + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + ", " + std::to_string(w) + ")").c_str();
+}
+
+// Vec2f
+const char* Vec2f::toString() {
+	return ("(" + std::to_string(x) + ", " + std::to_string(y) + ")").c_str();
+}
+
+// Vec3f
+const char* Vec3f::toString() {
+	return ("(" + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + ")").c_str();
+}
+
+// Vec4f
+const char* Vec4f::toString() {
+	return ("(" + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + ", " + std::to_string(w) + ")").c_str();
+}
+
+// Bivec3f
+const char* Bivec3f::toString() {
+	return ("(xy = " + std::to_string(xy) + ", xz = " + std::to_string(xz) + ", yz = " + std::to_string(yz) + ")").c_str();
+}
+
+// Rotor3f
+const char* Rotor3f::toString() {
+	return ("Rotor3f(a = " + std::to_string(a) + ", bv = " + std::string(bv.toString()) + ")").c_str();
+}
+
+// Quaternion
+const char* Quaternion::toString() {
+	return ("Quaternion(" + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + ", " + std::to_string(w) + ")").c_str();
+}
+
+
+/* ---- Matrices ----*/
 // Matrix4x4f
 void Matrix4x4f::luDecomposition(Matrix4x4f &lu) {
 
@@ -108,4 +188,49 @@ Vec4f Matrix4x4f::solve(Matrix4x4f &lu, Vec4f toSolve) {
 	}
 
 	return x;
+}
+
+const char* Matrix4x4f::toString() {
+	return (
+		std::to_string(m00) + ", " + std::to_string(m01) + ", " + std::to_string(m02) + ", " + std::to_string(m03) + ",\n" +
+		std::to_string(m10) + ", " + std::to_string(m11) + ", " + std::to_string(m12) + ", " + std::to_string(m13) + ",\n" +
+		std::to_string(m20) + ", " + std::to_string(m21) + ", " + std::to_string(m22) + ", " + std::to_string(m23) + ",\n" +
+		std::to_string(m30) + ", " + std::to_string(m31) + ", " + std::to_string(m32) + ", " + std::to_string(m33) + "\n"
+	).c_str();
+}
+
+/* ---- Others ---- */
+// Color
+const char* Color::toString() {
+	return ("(" + std::to_string(r) + ", " + std::to_string(g) + ", " + std::to_string(b) + ", " + std::to_string(a) + ")").c_str();
+}
+
+// Boxi
+const char* Boxi::toString() {
+	return ("Boxi(min" + std::string(min.toString()) + ", max" + std::string(max.toString()) + ")").c_str();
+}
+
+// Boxf
+const char* Boxf::toString() {
+	return ("Boxf(center" + std::string(center.toString()) + ", extents" + std::string(extents.toString()) + ")").c_str();
+}
+
+// Recti
+const char* Recti::toString() {
+	return ("Recti(min" + std::string(min.toString()) + ", max" + std::string(max.toString()) + ")").c_str();
+}
+
+// Rectf
+const char* Rectf::toString() {
+	return ("Rectf(min" + std::string(min.toString()) + ", max" + std::string(max.toString()) + ")").c_str();
+}
+
+// Ray
+const char* Ray::toString() {
+	return ("Ray(origin" + std::string(origin.toString()) + ", direction" + std::string(direction.toString()) + ")").c_str();
+}
+
+// Plane
+const char* Plane::toString() {
+	return ("Plane(normal" + std::string(normal.toString()) + ", distance = " + std::to_string(distance) + ")").c_str();
 }

@@ -18,6 +18,7 @@ unsigned int glTypeSize(GLenum type) {
 	case GL_DOUBLE:
 		return 8;
 	}
+	return 4;
 }
 
 bool glTypeIsInteger(GLenum type) {
@@ -35,4 +36,5 @@ bool glTypeIsInteger(GLenum type) {
 	case GL_DOUBLE:
 		return false;
 	}
+	return false;
 }
