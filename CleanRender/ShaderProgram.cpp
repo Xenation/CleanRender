@@ -140,6 +140,10 @@ void ShaderProgram::loadMatrix(GLuint location, Matrix4x4f matrix) {
 	glUniformMatrix4fv(location, 1, false, matrix.data);
 }
 
+void ShaderProgram::setTextureUnit(GLuint location, unsigned int unit) {
+	glUniform1ui(location, unit);
+}
+
 void ShaderProgram::loadProjectionMatrix(Matrix4x4f mat) {
 	glUniformMatrix4fv(locationProjectionMatrix, 1, false, mat.data);
 }

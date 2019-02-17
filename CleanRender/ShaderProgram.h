@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "gl3w.h"
+#include <gl3w.h>
 #include "XMath.h"
 #include "HollowSet.h"
 class Renderer;
@@ -28,9 +28,10 @@ public:
 	GLuint getUniformLocation(const char* str);
 	void loadFloat(GLuint location, float f);
 	void loadVec2f(GLuint location, Vec2f vec);
-	void loadVec4f(GLuint location, Vec4f vec);
 	void loadVec3f(GLuint location, Vec3f vec);
+	void loadVec4f(GLuint location, Vec4f vec);
 	void loadMatrix(GLuint location, Matrix4x4f matrix);
+	void setTextureUnit(GLuint location, unsigned int unit);
 
 	void loadProjectionMatrix(Matrix4x4f projection);
 	void loadViewMatrix(Matrix4x4f view);

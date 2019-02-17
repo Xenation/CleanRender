@@ -3,15 +3,16 @@ class Window;
 class Pipeline;
 class EntityManager;
 class Scene;
-class Entity;
+class Gui;
 class Engine {
 public:
 	static Window* window;
 	static Pipeline* pipeline;
 	static EntityManager* entityManager;
+	static Gui* gui;
 	static Scene* scene;
 
-	static void initialize();
+	static void initialize(Pipeline* pipeline = nullptr, Gui* gui = nullptr);
 	static void loop();
 	static void destroy();
 private:

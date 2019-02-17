@@ -5,6 +5,7 @@
 #include "Input.h"
 #include "Time.h"
 #include "EntityManager.h"
+#include "Gui.h"
 #include "Scene.h"
 
 
@@ -17,13 +18,23 @@ Engine::~Engine() {}
 Window* Engine::window = nullptr;
 Pipeline* Engine::pipeline = nullptr;
 EntityManager* Engine::entityManager = nullptr;
+Gui* Engine::gui = nullptr;
 Scene* Engine::scene = nullptr;
 
 
-void Engine::initialize() {
+void Engine::initialize(Pipeline* pipelinePt, Gui* guiPt) {
 	window = new Window();
-	pipeline = new Pipeline(window->getWidth(), window->getHeight());
 	entityManager = new EntityManager();
+	if (pipelinePt == nullptr) {
+		pipeline = new Pipeline(window->getWidth(), window->getHeight());
+	} else {
+		pipeline = pipelinePt;
+	}
+	if (guiPt == nullptr) {
+		gui = new Gui(window);
+	} else {
+		gui = guiPt;
+	}
 }
 
 void Engine::loop() {
@@ -36,8 +47,10 @@ void Engine::loop() {
 		if (scene != nullptr) {
 			scene->update();
 		}
+		gui->update();
 		// RENDER
 		pipeline->render();
+		gui->render();
 		// DISPLAY
 		window->display();
 	}
@@ -46,6 +59,7 @@ void Engine::loop() {
 void Engine::destroy() {
 	delete scene;
 	delete entityManager;
+	delete gui;
 	delete pipeline;
 	delete window;
 }

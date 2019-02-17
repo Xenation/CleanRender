@@ -29,6 +29,7 @@ Pipeline::~Pipeline() {
 
 
 void Pipeline::render() {
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	unsigned int rendered = 0;
 	for (unsigned int i = 0; i < cameras.capacity && rendered < cameras.count; i++) {
 		if (cameras[i] == nullptr) continue;
@@ -38,7 +39,6 @@ void Pipeline::render() {
 }
 
 void Pipeline::render(Camera* camera) {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	// Opaque Pass
 	glDisable(GL_BLEND);
 	for (unsigned int shaderIndex = 0; shaderIndex < ShaderProgram::shaderCount; shaderIndex++) {
