@@ -9,7 +9,7 @@
 Mesh::Mesh(int vCount, int iCount) {
 	vertexCount = vCount;
 	indexCount = iCount;
-	indices = new unsigned int[indexCount];
+	indices = nullptr;
 }
 
 Mesh::~Mesh() {
@@ -38,6 +38,9 @@ void Mesh::setAttributesDefinition(int count, int* sizes, GLenum* types) {
 	for (int i = 0; i < attributeCount; i++) {
 		attributeByteOffsets[i] = vertexByteSize;
 		vertexByteSize += attributeSizes[i] * glTypeSize(types[i]);
+	}
+	if (vertices != nullptr) {
+		delete[] vertices;
 	}
 	vertices = new char[vertexCount * vertexByteSize];
 	cachedInLocal = true;
@@ -121,6 +124,9 @@ void Mesh::setAttributeData(int index, char* bytes) {
 }
 
 void Mesh::setIndices(unsigned int* indices) {
+	if (this->indices != nullptr) {
+		delete[] this->indices;
+	}
 	this->indices = indices;
 }
 
