@@ -33,7 +33,7 @@ void Gui::update() {
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 
-	if (Input::f1Down) {
+	if (Input::getKeyDown(KeyCode::F1)) {
 		debugDisplayed = !debugDisplayed;
 	}
 

@@ -9,29 +9,28 @@
 
 
 
-bool Input::mouseLocked = false;
+bool Input::keyDownStates[KEY_STATES_SIZE];
+bool Input::keyPressedStates[KEY_STATES_SIZE];
+bool Input::keyUpStates[KEY_STATES_SIZE];
+bool Input::mouseDownStates[MOUSE_STATES_SIZE];
+bool Input::mousePressedStates[MOUSE_STATES_SIZE];
+bool Input::mouseUpStates[MOUSE_STATES_SIZE];
 
-bool Input::mouseLeftPressed = false;
-bool Input::mouseRightPressed = false;
+bool Input::mouseLocked = false;
 
 Vec2f Input::mousePosition = Vec2f::zero;
 Vec2f Input::mouseDelta = {INFINITY, INFINITY};
 
-bool Input::wPressed = false;
-bool Input::sPressed = false;
-bool Input::aPressed = false;
-bool Input::dPressed = false;
-bool Input::qPressed = false;
-bool Input::ePressed = false;
-
-bool Input::lShiftPressed = false;
-
-bool Input::f1Down = false;
-bool Input::f1Pressed = false;
-
 
 void Input::PollEvents() {
-	f1Down = false;
+	for (unsigned int i = 0; i < KEY_STATES_SIZE; i++) {
+		keyDownStates[i] = false;
+		keyUpStates[i] = false;
+	}
+	for (unsigned int i = 0; i < MOUSE_STATES_SIZE; i++) {
+		mouseDownStates[i] = false;
+		mouseUpStates[i] = false;
+	}
 	glfwPollEvents();
 }
 
@@ -43,6 +42,39 @@ void Input::UnlockMouse() {
 	glfwSetInputMode(Engine::window->glfwWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 }
 
+bool Input::getKeyDown(KeyCode keyCode) {
+	return keyDownStates[keyCode];
+}
+
+bool Input::getKeyPressed(KeyCode keyCode) {
+	return keyPressedStates[keyCode];
+}
+
+bool Input::getKeyUp(KeyCode keyCode) {
+	return keyUpStates[keyCode];
+}
+
+bool Input::getMouseDown(MouseButton btn) {
+	return getMouseDown((int) btn);
+}
+bool Input::getMouseDown(int btnCode) {
+	return mouseDownStates[btnCode];
+}
+
+bool Input::getMousePressed(MouseButton btn) {
+	return getMousePressed((int) btn);
+}
+bool Input::getMousePressed(int btnCode) {
+	return mousePressedStates[btnCode];
+}
+
+bool Input::getMouseUp(MouseButton btn) {
+	return getMouseUp((int) btn);
+}
+bool Input::getMouseUp(int btnCode) {
+	return mouseUpStates[btnCode];
+}
+
 void Input::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
 		Engine::window->closeWindow();
@@ -51,87 +83,26 @@ void Input::keyCallback(GLFWwindow* window, int key, int scancode, int action, i
 		ShaderProgram::reloadAll();
 	}
 
-	//Debug::log("Input", ("Key Event: key=" + std::to_string(key) + " action=" + std::to_string(action)).c_str());
-	switch (key) {
-	case GLFW_KEY_W:
-		if (action == GLFW_PRESS) {
-			wPressed = true;
-		} else if (action == GLFW_RELEASE) {
-			wPressed = false;
-		}
-		break;
-	case GLFW_KEY_S:
-		if (action == GLFW_PRESS) {
-			sPressed = true;
-		} else if (action == GLFW_RELEASE) {
-			sPressed = false;
-		}
-		break;
-	case GLFW_KEY_A:
-		if (action == GLFW_PRESS) {
-			aPressed = true;
-		} else if (action == GLFW_RELEASE) {
-			aPressed = false;
-		}
-		break;
-	case GLFW_KEY_D:
-		if (action == GLFW_PRESS) {
-			dPressed = true;
-		} else if (action == GLFW_RELEASE) {
-			dPressed = false;
-		}
-		break;
-	case GLFW_KEY_Q:
-		if (action == GLFW_PRESS) {
-			qPressed = true;
-		} else if (action == GLFW_RELEASE) {
-			qPressed = false;
-		}
-		break;
-	case GLFW_KEY_E:
-		if (action == GLFW_PRESS) {
-			ePressed = true;
-		} else if (action == GLFW_RELEASE) {
-			ePressed = false;
-		}
-		break;
-	case GLFW_KEY_LEFT_SHIFT:
-		if (action == GLFW_PRESS) {
-			lShiftPressed = true;
-		} else if (action == GLFW_RELEASE) {
-			lShiftPressed = false;
-		}
-		break;
-	case GLFW_KEY_F1:
-		if (action == GLFW_PRESS) {
-			f1Pressed = true;
-			f1Down = true;
-		} else if (action == GLFW_RELEASE) {
-			f1Pressed = false;
-		}
-		break;
+	if (action == GLFW_PRESS) {
+		keyPressedStates[key] = true;
+		keyDownStates[key] = true;
+	} else if (action == GLFW_RELEASE) {
+		keyPressedStates[key] = false;
+		keyUpStates[key] = true;
 	}
+
+	//Debug::log("Input", ("Key Event: key=" + std::to_string(key) + " action=" + std::to_string(action)).c_str());
 }
 
 void Input::mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
 	//Debug::log("Input", ("Mouse Button Event: button=" + std::to_string(button) + " action=" + std::to_string(action)).c_str());
-	switch (button) {
-	case GLFW_MOUSE_BUTTON_LEFT:
-		if (action == GLFW_PRESS) {
-			mouseLeftPressed = true;
-		} else if (action == GLFW_RELEASE) {
-			mouseLeftPressed = false;
-		}
-		break;
-	case GLFW_MOUSE_BUTTON_RIGHT:
-		if (action == GLFW_PRESS) {
-			mouseRightPressed = true;
-			LockMouse(); // TODO remove from here
-		} else if (action == GLFW_RELEASE) {
-			mouseRightPressed = false;
-			UnlockMouse(); // TODO remove from here
-		}
-		break;
+
+	if (action == GLFW_PRESS) {
+		mousePressedStates[button] = true;
+		mouseDownStates[button] = true;
+	} else if (action == GLFW_RELEASE) {
+		mousePressedStates[button] = false;
+		mouseUpStates[button] = true;
 	}
 }
 
