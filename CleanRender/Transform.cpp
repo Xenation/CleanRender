@@ -125,5 +125,5 @@ void Transform::recalculateWorldPosition() {
 	if (localToWorldMatrixExpired) {
 		recalculateLTWMatrix();
 	}
-	worldPosition = localToWorldMatrix.multPoint(position);
+	worldPosition = localToWorldMatrix.multPoint(Vec3f::zero);
 }

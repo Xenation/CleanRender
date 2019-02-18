@@ -1362,13 +1362,13 @@ inline Vec2i toVec2i(const Vec4i& v) {
 	return Vec2i(v.x, v.y);
 }
 inline Vec2i toVec2i(const Vec2f& v) {
-	return Vec2i((int) v.x, (int) v.y);
+	return Vec2i(floorToInt(v.x), floorToInt(v.y));
 }
 inline Vec2i toVec2i(const Vec3f& v) {
-	return Vec2i((int) v.x, (int) v.y);
+	return Vec2i(floorToInt(v.x), floorToInt(v.y));
 }
 inline Vec2i toVec2i(const Vec4f& v) {
-	return Vec2i((int) v.x, (int) v.y);
+	return Vec2i(floorToInt(v.x), floorToInt(v.y));
 }
 
 // Vec3i
@@ -1379,13 +1379,13 @@ inline Vec3i toVec3i(const Vec4i& v) {
 	return Vec3i(v.x, v.y, v.z);
 }
 inline Vec3i toVec3i(const Vec2f& v) {
-	return Vec3i((int) v.x, (int) v.y, 0);
+	return Vec3i(floorToInt(v.x), floorToInt(v.y), 0);
 }
 inline Vec3i toVec3i(const Vec3f& v) {
-	return Vec3i((int) v.x, (int) v.y, (int) v.z);
+	return Vec3i(floorToInt(v.x), floorToInt(v.y), floorToInt(v.z));
 }
 inline Vec3i toVec3i(const Vec4f& v) {
-	return Vec3i((int) v.x, (int) v.y, (int) v.z);
+	return Vec3i(floorToInt(v.x), floorToInt(v.y), floorToInt(v.z));
 }
 
 // Vec4i
@@ -1396,13 +1396,13 @@ inline Vec4i toVec4i(const Vec3i& v) {
 	return Vec4i(v.x, v.y, v.z, 0);
 }
 inline Vec4i toVec4i(const Vec2f& v) {
-	return Vec4i((int) v.x, (int) v.y, 0, 0);
+	return Vec4i(floorToInt(v.x), floorToInt(v.y), 0, 0);
 }
 inline Vec4i toVec4i(const Vec3f& v) {
-	return Vec4i((int) v.x, (int) v.y, (int) v.z, 0);
+	return Vec4i(floorToInt(v.x), floorToInt(v.y), floorToInt(v.z), 0);
 }
 inline Vec4i toVec4i(const Vec4f& v) {
-	return Vec4i((int) v.x, (int) v.y, (int) v.z, (int) v.w);
+	return Vec4i(floorToInt(v.x), floorToInt(v.y), floorToInt(v.z), floorToInt(v.w));
 }
 
 // Vec2f
