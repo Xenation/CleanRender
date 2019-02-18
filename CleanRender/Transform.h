@@ -8,6 +8,7 @@ public:
 	~Transform();
 
 	inline Vec3f getPosition() { return position; }
+	inline Vec3f getWorldPosition() { if (worldPositionExpired) { recalculateWorldPosition(); } return worldPosition; }
 	inline Vec3f getScale() { return scale; }
 	inline Quaternion getRotation() { return rotation; }
 
@@ -46,10 +47,13 @@ private:
 	bool localToWorldMatrixExpired = true;
 	Matrix4x4f worldToLocalMatrix;
 	bool worldToLocalMatrixExpired = true;
+	Vec3f worldPosition = Vec3f::zero;
+	bool worldPositionExpired = true;
 
 	void invalidateMatrices();
 	void recalculateModelMatrix();
 	void recalculateLTWMatrix();
 	void recalculateWTLMatrix();
+	void recalculateWorldPosition();
 };
 

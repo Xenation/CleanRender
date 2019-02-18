@@ -83,6 +83,7 @@ void Transform::invalidateMatrices() {
 	modelMatrixExpired = true;
 	localToWorldMatrixExpired = true;
 	worldToLocalMatrixExpired = true;
+	worldPositionExpired = true;
 }
 
 void Transform::recalculateModelMatrix() {
@@ -118,4 +119,11 @@ void Transform::recalculateWTLMatrix() {
 	}
 	worldToLocalMatrix = localToWorldMatrix.inverseAffine();
 	worldToLocalMatrixExpired = false;
+}
+
+void Transform::recalculateWorldPosition() {
+	if (localToWorldMatrixExpired) {
+		recalculateLTWMatrix();
+	}
+	worldPosition = localToWorldMatrix.multPoint(position);
 }
