@@ -8,6 +8,7 @@
 #include "EntityManager.h"
 #include "Input.h"
 #include "Time.h"
+#include "Mesh.h"
 
 
 
@@ -37,6 +38,7 @@ void Gui::update() {
 	}
 
 	onUpdate();
+	Mesh::triangleCount = 0;
 }
 
 void Gui::onUpdate() {
@@ -59,6 +61,7 @@ void Gui::onUpdate() {
 			ImGui::Unindent();
 			ImGui::Text("Average Frame time: %.3fms", 1000.0f / ImGui::GetIO().Framerate);
 			ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
+			ImGui::Text("Triangles: %i", Mesh::triangleCount);
 			ImGui::End();
 		}
 

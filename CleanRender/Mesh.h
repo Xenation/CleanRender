@@ -2,6 +2,8 @@
 #include "gl3w.h"
 class Mesh {
 public:
+	static unsigned int triangleCount;
+
 	Mesh(int vCount, int iCount);
 	~Mesh();
 
