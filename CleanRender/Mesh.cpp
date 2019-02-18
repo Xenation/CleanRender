@@ -6,6 +6,9 @@
 
 
 
+unsigned int Mesh::triangleCount = 0;
+
+
 Mesh::Mesh(int vCount, int iCount) {
 	vertexCount = vCount;
 	indexCount = iCount;
@@ -201,6 +204,8 @@ void Mesh::deleteFromGL() {
 
 void Mesh::render() const {
 	if (!loadedToGL) return;
+
+	triangleCount += indexCount / 3;
 
 	glBindVertexArray(vao);
 
