@@ -17,7 +17,7 @@ TestScene::~TestScene() {}
 
 void TestScene::load() {
 	Scene::load();
-	camera = new Entity();
+	camera = new Entity("Camera");
 	camera->addComponent<Camera>();
 	camera->addComponent<NoclipController>();
 	camera->transform->setPosition({0, 0, -5});
@@ -55,31 +55,31 @@ void TestScene::load() {
 		testShader->load();
 	}
 
-	testCube = new Entity();
+	testCube = new Entity("TestCube");
 	testCube->transform->setPosition(Vec3f(5, 0, 0));
 	MeshRenderer* cubeRend = testCube->addComponent<MeshRenderer>();
 	cubeRend->setShaderProgram(testShader);
 	cubeRend->setMesh(cubeMesh);
 
-	Entity* testCubeChild = new Entity();
+	Entity* testCubeChild = new Entity("TestCubeChild");
 	testCubeChild->setParent(testCube);
 	testCubeChild->transform->setPosition(Vec3f(2, 0, 0));
 	MeshRenderer* cubeRend2 = testCubeChild->addComponent<MeshRenderer>();
 	cubeRend2->setShaderProgram(testShader);
 	cubeRend2->setMesh(cubeMesh);
 
-	noTransfParent = new Entity(false);
-	transfChild = new Entity();
+	noTransfParent = new Entity("NoTransfParent", false);
+	transfChild = new Entity("TransfChild");
 	transfChild->setParent(noTransfParent);
 	transfChild->transform->setPosition(Vec3f(-5, 2, 0));
 	MeshRenderer* transfRend = transfChild->addComponent<MeshRenderer>();
 	transfRend->setShaderProgram(testShader);
 	transfRend->setMesh(cubeMesh);
 
-	Entity* subNoTransfChild = new Entity(false);
+	Entity* subNoTransfChild = new Entity("SubNoTransfChild", false);
 	subNoTransfChild->setParent(transfChild);
 
-	Entity* subTransfChild = new Entity();
+	Entity* subTransfChild = new Entity("SubTransfChild");
 	subTransfChild->setParent(subNoTransfChild);
 	subTransfChild->transform->setPosition(Vec3f(0, 2, 0));
 	MeshRenderer* subTransfRend = subTransfChild->addComponent<MeshRenderer>();

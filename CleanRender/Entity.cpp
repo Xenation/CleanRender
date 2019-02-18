@@ -12,8 +12,8 @@
 
 
 
-Entity::Entity(bool hasTransform)
-	: components(HollowSet<Component*>(COMPONENTS_ARRAY_START_SIZE, COMPONENTS_ARRAY_INCREASE)), children(CHILDREN_ARRAY_START_SIZE, CHILDREN_ARRAY_INCREASE, true) {
+Entity::Entity(const char* name, bool hasTransform)
+	: name(name), components(HollowSet<Component*>(COMPONENTS_ARRAY_START_SIZE, COMPONENTS_ARRAY_INCREASE)), children(CHILDREN_ARRAY_START_SIZE, CHILDREN_ARRAY_INCREASE, true) {
 	if (hasTransform) {
 		transform = addComponent(new Transform(this));
 	}
@@ -72,6 +72,11 @@ void Entity::setParent(Entity* parent) {
 		this->parent->addChild(this);
 	}
 	parentChangeNotifyChildren();
+}
+
+Entity* Entity::getChild(unsigned int index) {
+	if (index < 0 || index >= children.count) return nullptr;
+	return children[index];
 }
 
 void Entity::addChild(Entity* child) {

@@ -11,7 +11,15 @@ public:
 
 	void updateEntities();
 
+	void gui();
+
 private:
 	HollowSet<Entity*> entities;
+
+	float updateTimes[300];
+	float maxUpdateTime = 0;
+
+	void gui(Entity* entity);
+	void addUpdateTime(float time);
 };
 

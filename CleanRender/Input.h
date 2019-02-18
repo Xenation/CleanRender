@@ -23,6 +23,9 @@ public:
 
 	static bool lShiftPressed;
 
+	static bool f1Down;
+	static bool f1Pressed;
+
 	static void PollEvents();
 	static void LockMouse();
 	static void UnlockMouse();

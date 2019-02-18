@@ -39,7 +39,7 @@ void Engine::initialize(Pipeline* pipelinePt, Gui* guiPt) {
 
 void Engine::loop() {
 	while (!window->shouldClose()) {
-		Time::ComputeFrameTimes();
+		Time::computeFrameTimes();
 		// INPUT
 		Input::PollEvents();
 		// UPDATE

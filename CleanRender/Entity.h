@@ -9,10 +9,11 @@ class Entity {
 public:
 	typedef unsigned int Id;
 	Id id;
+	const char* name;
 	Transform* transform = nullptr;
 	bool isDying = false;
 
-	Entity(bool hasTransform = true);
+	Entity(const char* name = "Entity", bool hasTransform = true);
 	Entity(const Entity&) = delete;
 	~Entity();
 
@@ -90,6 +91,9 @@ public:
 	void setParent(Entity* parent);
 	inline Entity* getParent() const { return parent; }
 	void ltwChangeNotifyChildren();
+
+	unsigned int childCount() { return children.count; }
+	Entity* getChild(unsigned int index);
 
 private:
 	HollowSet<Component*> components;

@@ -26,8 +26,12 @@ bool Input::ePressed = false;
 
 bool Input::lShiftPressed = false;
 
+bool Input::f1Down = false;
+bool Input::f1Pressed = false;
+
 
 void Input::PollEvents() {
+	f1Down = false;
 	glfwPollEvents();
 }
 
@@ -96,6 +100,14 @@ void Input::keyCallback(GLFWwindow* window, int key, int scancode, int action, i
 			lShiftPressed = true;
 		} else if (action == GLFW_RELEASE) {
 			lShiftPressed = false;
+		}
+		break;
+	case GLFW_KEY_F1:
+		if (action == GLFW_PRESS) {
+			f1Pressed = true;
+			f1Down = true;
+		} else if (action == GLFW_RELEASE) {
+			f1Pressed = false;
 		}
 		break;
 	}
