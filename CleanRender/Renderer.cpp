@@ -3,10 +3,11 @@
 #include "Engine.h"
 #include "Pipeline.h"
 #include "ShaderProgram.h"
+#include "Material.h"
 
 
 
-Renderer::Renderer(Entity* entity) : Component(entity), shaderProgram(ShaderProgram::errorShader) {
+Renderer::Renderer(Entity* entity) : Component(entity), material(Material::errorMaterial) {
 	id = Engine::pipeline->registerRenderer(this);
 }
 
@@ -14,14 +15,14 @@ Renderer::~Renderer() {
 	Engine::pipeline->unregisterRenderer(id);
 }
 
-void Renderer::setShaderProgram(ShaderProgram* program) {
-	if (shaderProgram != nullptr) {
-		shaderProgram->renderers.remove(spID);
+void Renderer::setMaterial(Material* mat) {
+	if (material != nullptr) {
+		material->renderers.remove(matID);
 	}
-	if (program == nullptr) {
-		shaderProgram = ShaderProgram::errorShader;
+	if (mat == nullptr) {
+		material = Material::errorMaterial;
 	} else {
-		shaderProgram = program;
-		spID = shaderProgram->renderers.add(this);
+		material = mat;
+		matID = material->renderers.add(this);
 	}
 }

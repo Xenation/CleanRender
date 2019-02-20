@@ -1,5 +1,6 @@
 #include "TestScene.h"
 
+#include <Material.h>
 #include "Mesh.h"
 #include "Entity.h"
 #include "MeshRenderer.h"
@@ -54,18 +55,19 @@ void TestScene::load() {
 	if (testShader != nullptr) {
 		testShader->load();
 	}
+	testMaterial = new Material(testShader);
 
 	testCube = new Entity("TestCube");
 	testCube->transform->setPosition(Vec3f(5, 0, 0));
 	MeshRenderer* cubeRend = testCube->addComponent<MeshRenderer>();
-	cubeRend->setShaderProgram(testShader);
+	cubeRend->setMaterial(testMaterial);
 	cubeRend->setMesh(cubeMesh);
 
 	Entity* testCubeChild = new Entity("TestCubeChild");
 	testCubeChild->setParent(testCube);
 	testCubeChild->transform->setPosition(Vec3f(2, 0, 0));
 	MeshRenderer* cubeRend2 = testCubeChild->addComponent<MeshRenderer>();
-	cubeRend2->setShaderProgram(testShader);
+	cubeRend2->setMaterial(testMaterial);
 	cubeRend2->setMesh(cubeMesh);
 
 	noTransfParent = new Entity("NoTransfParent", false);
@@ -73,7 +75,7 @@ void TestScene::load() {
 	transfChild->setParent(noTransfParent);
 	transfChild->transform->setPosition(Vec3f(-5, 2, 0));
 	MeshRenderer* transfRend = transfChild->addComponent<MeshRenderer>();
-	transfRend->setShaderProgram(testShader);
+	transfRend->setMaterial(testMaterial);
 	transfRend->setMesh(cubeMesh);
 
 	Entity* subNoTransfChild = new Entity("SubNoTransfChild", false);
@@ -83,7 +85,7 @@ void TestScene::load() {
 	subTransfChild->setParent(subNoTransfChild);
 	subTransfChild->transform->setPosition(Vec3f(0, 2, 0));
 	MeshRenderer* subTransfRend = subTransfChild->addComponent<MeshRenderer>();
-	subTransfRend->setShaderProgram(testShader);
+	subTransfRend->setMaterial(testMaterial);
 	subTransfRend->setMesh(cubeMesh);
 }
 

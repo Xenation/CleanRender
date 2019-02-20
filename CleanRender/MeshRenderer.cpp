@@ -1,9 +1,9 @@
 #include "MeshRenderer.h"
 
-#include "ShaderProgram.h"
 #include "Mesh.h"
 #include "Entity.h"
 #include "Transform.h"
+#include "Material.h"
 
 
 
@@ -18,7 +18,8 @@ MeshRenderer::~MeshRenderer() {
 void MeshRenderer::render() {
 	if (mesh == nullptr) return;
 
-	shaderProgram->loadModelMatrix(entity->transform->getLocalToWorldMatrix());
+	material->setField(0, entity->transform->getLocalToWorldMatrix());
+	material->updateFields();
 
 	mesh->render();
 }

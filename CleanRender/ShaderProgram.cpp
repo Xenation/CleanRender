@@ -1,15 +1,268 @@
 #include "ShaderProgram.h"
 
 #include <filesystem>
+#include <sstream>
+#include <fstream>
+#include <string>
+#include "Pipeline.h"
 #include "Debug.h"
+#include "Material.h"
+#include "RenderPass.h"
 
 #define SHADER_DIRECTORY "res/shaders/"
-#define SHADER_CODE_ERROR_VS "#version 330 core\nlayout (location = 0) in vec3 vp;\nuniform mat4x4 projectionMatrix;\nuniform mat4x4 viewMatrix;\nuniform mat4x4 modelMatrix;\nvoid main() { gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(vp, 1.0); }\n\0"
-#define SHADER_CODE_ERROR_FS "#version 330 core\nout vec4 fc;\nvoid main() { fc = vec4(1.0, 0.0, 1.0, 1.0); }\n\0"
+#define SHADER_CODE_ERROR_VS "#version 420 core\n//meta pass opaque\nlayout (location = 0) in vec3 vp;\nlayout (std140, binding = 1) uniform CameraMatrices {\nmat4x4 projectionMatrix;\nmat4x4 viewMatrix;\n};\nlayout (std140, binding = 10) uniform Material {\nmat4x4 modelMatrix;\n};\nvoid main() { gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(vp, 1.0); }\n\0"
+#define SHADER_CODE_ERROR_FS "#version 420 core\nout vec4 fc;\nvoid main() { fc = vec4(1.0, 0.0, 1.0, 1.0); }\n\0"
 
 
 namespace fs = std::filesystem;
 
+const char ShaderMetaInfo::separators[SHADER_META_SEPARATOR_COUNT]{' ', '\t', '\n', '(', ')', ',', ';'};
+
+ShaderMetaInfo::ShaderMetaInfo() {}
+
+ShaderMetaInfo::ShaderMetaInfo(RenderPass* pass, GLSLType* fieldTypes, const char** fieldNames, unsigned int fieldCount)
+	: renderPass(pass), materialFieldTypes(fieldTypes), materialFieldNames(fieldNames), materialFieldCount(fieldCount) {}
+
+ShaderMetaInfo::~ShaderMetaInfo() {
+	if (materialFieldTypes != nullptr) {
+		delete[] materialFieldTypes;
+		materialFieldTypes = nullptr;
+	}
+	if (materialFieldNames != nullptr) {
+		for (unsigned int i = 0; i < materialFieldCount; i++) {
+			delete[] materialFieldNames[i];
+		}
+		delete[] materialFieldNames;
+		materialFieldNames = nullptr;
+	}
+}
+
+ShaderMetaInfo* ShaderMetaInfo::extractFromSource(const char* src) {
+	char* passName = new char[1]{'\0'};
+	SimpleList<GLSLType> fieldTypesList(1, 1);
+	SimpleList<char*> fieldNamesList(1, 1);
+
+	bool passFound = false;
+	bool materialFound = false;
+
+	char* fieldName;
+	char* word = new char[1]{'\0'};
+	int wordSize;
+	int currentIndex = 0;
+	while (nextWord(src, currentIndex, word, wordSize)) {
+		if (compareWords(word, wordSize, "//meta")) {
+			if (!nextWord(src, currentIndex, word, wordSize)) break;
+			if (compareWords(word, wordSize, "pass")) {
+				if (!nextWord(src, currentIndex, word, wordSize)) break;
+				copyWord(word, wordSize, passName);
+				passFound = true;
+			}
+		} else if (compareWords(word, wordSize, "layout")) {
+			if (!nextWord(src, currentIndex, word, wordSize)) break;
+			if (compareWords(word, wordSize, "std140") || compareWords(word, wordSize, "shared") || compareWords(word, wordSize, "packed")) {
+				if (!nextWord(src, currentIndex, word, wordSize)) break;
+				if (compareWords(word, wordSize, "binding")) {
+					if (!nextWord(src, currentIndex, word, wordSize)) break;
+					if (compareWords(word, wordSize, "=")) {
+						if (!nextWord(src, currentIndex, word, wordSize)) break;
+						if (compareWords(word, wordSize, "10")) {
+							if (!nextWord(src, currentIndex, word, wordSize)) break; //uniform
+							if (!nextWord(src, currentIndex, word, wordSize)) break; //Material
+							if (!nextWord(src, currentIndex, word, wordSize)) break; //{
+							materialFound = true;
+							while (true) {
+								if (!nextWord(src, currentIndex, word, wordSize)) break;
+								if (compareWords(word, wordSize, "}")) break;
+								fieldTypesList.add(getTypeFromWord(word, wordSize));
+								if (!nextWord(src, currentIndex, word, wordSize)) break;
+								if (compareWords(word, wordSize, "}")) break;
+								copyWord(word, wordSize, fieldName);
+								fieldNamesList.add(fieldName);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	RenderPass* pass = nullptr;
+	if (passFound) {
+		pass = ShaderProgram::defaultPipeline->getRenderPass(std::string(passName));
+		delete[] passName;
+	}
+
+	GLSLType* fieldTypes = nullptr;
+	const char** fieldNames = nullptr;
+	unsigned int fieldCount = 0;
+	if (materialFound) {
+		fieldTypes = new GLSLType[fieldTypesList.count];
+		for (int i = 0; i < fieldTypesList.count; i++) {
+			fieldTypes[i] = fieldTypesList[i];
+		}
+		fieldNames = new const char*[fieldNamesList.count];
+		for (int i = 0; i < fieldNamesList.count; i++) {
+			fieldNames[i] = fieldNamesList[i];
+		}
+
+		fieldCount = fieldNamesList.count;
+	}
+
+	return new ShaderMetaInfo(pass, fieldTypes, fieldNames, fieldCount);
+}
+
+bool ShaderMetaInfo::isSeparator(const char c) {
+	for (int i = 0; i < SHADER_META_SEPARATOR_COUNT; i++) {
+		if (c == separators[i]) return true;
+	}
+	return false;
+}
+
+bool ShaderMetaInfo::nextWord(const char* src, int& index, char*& word, int& wordSize) {
+	delete[] word;
+
+	// Trim start separators
+	int startIndex = index;
+	while (isSeparator(src[startIndex])) {
+		if (src[startIndex] == '\0') return false;
+		startIndex++;
+	}
+
+	// Find next separator
+	int sepIndex = startIndex;
+	while (!isSeparator(src[sepIndex])) {
+		if (src[sepIndex] == '\0') return false;
+		sepIndex++;
+	}
+
+	// Allocate and copy word
+	wordSize = sepIndex - startIndex;
+	word = new char[wordSize + 1];
+	for (int i = 0; i < wordSize; i++) {
+		word[i] = src[startIndex + i];
+	}
+	word[wordSize] = '\0';
+
+	index = startIndex + wordSize;
+	return true;
+}
+
+bool ShaderMetaInfo::compareWords(char* word, int wordSize, const char* refWord) {
+	int refWordSize = 0;
+	while (refWord[refWordSize] != '\0') {
+		refWordSize++;
+	}
+	if (refWordSize != wordSize) return false;
+	for (int i = 0; i < wordSize; i++) {
+		if (word[i] != refWord[i]) return false;
+	}
+	return true;
+}
+
+void ShaderMetaInfo::copyWord(char* word, int wordSize, char*& nWord) {
+	nWord = new char[wordSize + 1];
+	for (int i = 0; i < wordSize; i++) {
+		nWord[i] = word[i];
+	}
+	nWord[wordSize] = '\0';
+}
+
+GLSLType ShaderMetaInfo::getTypeFromWord(char* word, int wordSize) {
+	if (compareWords(word, wordSize, "bool")) {
+		return GLSL_BOOL;
+	} else if (compareWords(word, wordSize, "int")) {
+		return GLSL_INT;
+	} else if (compareWords(word, wordSize, "uint")) {
+		return GLSL_UINT;
+	} else if (compareWords(word, wordSize, "float")) {
+		return GLSL_FLOAT;
+	} else if (compareWords(word, wordSize, "double")) {
+		return GLSL_DOUBLE;
+	} else if (compareWords(word, wordSize, "bvec2")) {
+		return GLSL_BVEC2;
+	} else if (compareWords(word, wordSize, "ivec2")) {
+		return GLSL_IVEC2;
+	} else if (compareWords(word, wordSize, "uvec2")) {
+		return GLSL_UVEC2;
+	} else if (compareWords(word, wordSize, "vec2")) {
+		return GLSL_VEC2;
+	} else if (compareWords(word, wordSize, "dvec2")) {
+		return GLSL_DVEC2;
+	} else if (compareWords(word, wordSize, "bvec3")) {
+		return GLSL_BVEC3;
+	} else if (compareWords(word, wordSize, "ivec3")) {
+		return GLSL_IVEC3;
+	} else if (compareWords(word, wordSize, "uvec3")) {
+		return GLSL_UVEC3;
+	} else if (compareWords(word, wordSize, "vec3")) {
+		return GLSL_VEC3;
+	} else if (compareWords(word, wordSize, "dvec3")) {
+		return GLSL_DVEC3;
+	} else if (compareWords(word, wordSize, "bvec4")) {
+		return GLSL_BVEC4;
+	} else if (compareWords(word, wordSize, "ivec4")) {
+		return GLSL_IVEC4;
+	} else if (compareWords(word, wordSize, "uvec4")) {
+		return GLSL_UVEC4;
+	} else if (compareWords(word, wordSize, "vec4")) {
+		return GLSL_VEC4;
+	} else if (compareWords(word, wordSize, "dvec4")) {
+		return GLSL_DVEC4;
+	} else if (compareWords(word, wordSize, "mat2x2")) {
+		return GLSL_MAT2x2;
+	} else if (compareWords(word, wordSize, "mat2x3")) {
+		return GLSL_MAT2x3;
+	} else if (compareWords(word, wordSize, "mat2x4")) {
+		return GLSL_MAT2x4;
+	} else if (compareWords(word, wordSize, "mat3x2")) {
+		return GLSL_MAT3x2;
+	} else if (compareWords(word, wordSize, "mat3x3")) {
+		return GLSL_MAT3x3;
+	} else if (compareWords(word, wordSize, "mat3x4")) {
+		return GLSL_MAT3x4;
+	} else if (compareWords(word, wordSize, "mat4x2")) {
+		return GLSL_MAT4x2;
+	} else if (compareWords(word, wordSize, "mat4x3")) {
+		return GLSL_MAT4x3;
+	} else if (compareWords(word, wordSize, "mat4x4")) {
+		return GLSL_MAT4x4;
+	} else if (compareWords(word, wordSize, "mat2")) {
+		return GLSL_MAT2;
+	} else if (compareWords(word, wordSize, "mat3")) {
+		return GLSL_MAT3;
+	} else if (compareWords(word, wordSize, "mat4")) {
+		return GLSL_MAT4;
+	} else if (compareWords(word, wordSize, "dmat2x2")) {
+		return GLSL_DMAT2x2;
+	} else if (compareWords(word, wordSize, "dmat2x3")) {
+		return GLSL_DMAT2x3;
+	} else if (compareWords(word, wordSize, "dmat2x4")) {
+		return GLSL_DMAT2x4;
+	} else if (compareWords(word, wordSize, "dmat3x2")) {
+		return GLSL_DMAT3x2;
+	} else if (compareWords(word, wordSize, "dmat3x3")) {
+		return GLSL_DMAT3x3;
+	} else if (compareWords(word, wordSize, "dmat3x4")) {
+		return GLSL_DMAT3x4;
+	} else if (compareWords(word, wordSize, "dmat4x2")) {
+		return GLSL_DMAT4x2;
+	} else if (compareWords(word, wordSize, "dmat4x3")) {
+		return GLSL_DMAT4x3;
+	} else if (compareWords(word, wordSize, "dmat4x4")) {
+		return GLSL_DMAT4x4;
+	} else if (compareWords(word, wordSize, "dmat2")) {
+		return GLSL_DMAT2;
+	} else if (compareWords(word, wordSize, "dmat3")) {
+		return GLSL_DMAT3;
+	} else if (compareWords(word, wordSize, "dmat4")) {
+		return GLSL_DMAT4;
+	}
+	return GLSL_UNKNOWN;
+}
+
+
+
+Pipeline* ShaderProgram::defaultPipeline = nullptr;
 ShaderProgram* ShaderProgram::errorShader = nullptr;
 unsigned int ShaderProgram::shaderCount = 0;
 ShaderProgram** ShaderProgram::shaders = nullptr;
@@ -18,7 +271,7 @@ void ShaderProgram::initializeAll() {
 	// Loading Error shader
 	errorShader = new ShaderProgram("Error");
 	errorShader->load(errorShader->loadShaderFromSource(GL_VERTEX_SHADER, SHADER_CODE_ERROR_VS), 0, errorShader->loadShaderFromSource(GL_FRAGMENT_SHADER, SHADER_CODE_ERROR_FS));
-
+	Material::errorMaterial = new Material(errorShader);
 
 	// Searching for shaders
 	if (!fs::exists(SHADER_DIRECTORY)) {
@@ -62,7 +315,7 @@ ShaderProgram* ShaderProgram::find(std::string name) {
 }
 
 
-ShaderProgram::ShaderProgram(std::string path) : renderers(4, 16) {
+ShaderProgram::ShaderProgram(std::string path) : materials(4, 16) {
 	this->path = path;
 }
 
@@ -93,6 +346,9 @@ void ShaderProgram::reload() {
 	if (!loaded) {
 		load();
 		return;
+	}
+	if (info->renderPass != nullptr) {
+		info->renderPass->programs.remove(idInPass);
 	}
 	if (program != 0) {
 		if (vertex != 0) {
@@ -144,29 +400,6 @@ void ShaderProgram::setTextureUnit(GLuint location, unsigned int unit) {
 	glUniform1ui(location, unit);
 }
 
-void ShaderProgram::loadProjectionMatrix(Matrix4x4f mat) {
-	glUniformMatrix4fv(locationProjectionMatrix, 1, false, mat.data);
-}
-
-void ShaderProgram::loadViewMatrix(Matrix4x4f mat) {
-	glUniformMatrix4fv(locationViewMatrix, 1, false, mat.data);
-}
-
-void ShaderProgram::loadModelMatrix(Matrix4x4f mat) {
-	glUniformMatrix4fv(locationModelMatrix, 1, false, mat.data);
-}
-
-void ShaderProgram::loadTime(float time) {
-	loadFloat(locationTime, time);
-}
-
-void ShaderProgram::getAllLocations() {
-	locationProjectionMatrix = glGetUniformLocation(program, "projectionMatrix");
-	locationViewMatrix = glGetUniformLocation(program, "viewMatrix");
-	locationModelMatrix = glGetUniformLocation(program, "modelMatrix");
-	locationTime = glGetUniformLocation(program, "time");
-}
-
 void ShaderProgram::load(GLuint vs, GLuint gs, GLuint fs, bool silent) {
 	if (vs <= 0 || fs <= 0) return;
 
@@ -216,8 +449,10 @@ void ShaderProgram::load(GLuint vs, GLuint gs, GLuint fs, bool silent) {
 		program = 0;
 		return;
 	}
+	if (info->renderPass != nullptr) {
+		idInPass = info->renderPass->programs.add(this);
+	}
 	Debug::log("ShaderProgram", "Program load and link done!");
-	getAllLocations();
 	loaded = true;
 }
 
@@ -299,8 +534,11 @@ GLuint ShaderProgram::loadShaderFromSource(GLenum type, const char* src, bool si
 			if (logStr.length() > 0) {
 				Debug::log("ShaderLoad", ("Compile result " + typeStr + ":\n" + logStr).c_str());
 			}
+			delete[] log;
 		}
-		delete[] log;
+		if (type == GL_VERTEX_SHADER) {
+			info = ShaderMetaInfo::extractFromSource(src);
+		}
 	}
 
 	return shader;

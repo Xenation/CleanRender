@@ -1,8 +1,11 @@
 #pragma once
 #include "Scene.h"
+
 class Mesh;
 class Entity;
 class ShaderProgram;
+class Material;
+
 class TestScene : public Scene {
 public:
 	TestScene();
@@ -18,5 +21,6 @@ private:
 	Entity* transfChild;
 	Mesh* cubeMesh;
 	ShaderProgram* testShader;
+	Material* testMaterial;
 };
 

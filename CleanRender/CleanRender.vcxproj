@@ -179,7 +179,10 @@
     <ClCompile Include="ext\lodepng.cpp" />
     <ClCompile Include="Gui.cpp" />
     <ClCompile Include="Input.cpp" />
+    <ClCompile Include="Material.cpp" />
+    <ClCompile Include="RenderPass.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="UniformBuffer.cpp" />
     <ClCompile Include="XMath.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshRenderer.cpp" />
@@ -214,8 +217,11 @@
     <ClInclude Include="Gui.h" />
     <ClInclude Include="HollowSet.h" />
     <ClInclude Include="Input.h" />
+    <ClInclude Include="Material.h" />
     <ClInclude Include="Perlin.h" />
+    <ClInclude Include="RenderPass.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="UniformBuffer.h" />
     <ClInclude Include="XMath.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshRenderer.h" />

@@ -1,10 +1,16 @@
-#version 400
+#version 420
+//meta pass opaque
 
 layout (location = 0) in vec3 vertexPos;
 
-uniform mat4x4 projectionMatrix;
-uniform mat4x4 viewMatrix;
-uniform mat4x4 modelMatrix;
+layout (std140, binding = 1) uniform CameraMatrices {
+	mat4x4 projectionMatrix;
+	mat4x4 viewMatrix;
+};
+
+layout (std140, binding = 10) uniform Material {
+	mat4x4 modelMatrix;
+};
 
 out vec4 worldPos;
 

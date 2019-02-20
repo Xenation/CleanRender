@@ -3,9 +3,40 @@
 #include <gl3w.h>
 #include "XMath.h"
 #include "HollowSet.h"
-class Renderer;
+#include "GLUtils.h"
+
+#define SHADER_META_SEPARATOR_COUNT 16
+
+class Material;
+class RenderPass;
+class Pipeline;
+
+struct ShaderMetaInfo {
+	RenderPass* renderPass = nullptr;
+	GLSLType* materialFieldTypes = nullptr;
+	const char** materialFieldNames = nullptr;
+	unsigned int materialFieldCount = 0;
+
+public:
+	static ShaderMetaInfo* extractFromSource(const char* src);
+
+	ShaderMetaInfo();
+	ShaderMetaInfo(RenderPass* pass, GLSLType* fieldTypes, const char** fieldNames, unsigned int fieldCount);
+	~ShaderMetaInfo();
+
+private:
+	static const char separators[SHADER_META_SEPARATOR_COUNT];
+
+	static bool isSeparator(const char c);
+	static bool nextWord(const char* src, int& index, char*& word, int& wordSize);
+	static bool compareWords(char* word, int wordSize, const char* refWord);
+	static void copyWord(char* word, int wordSize, char*& nWord);
+	static GLSLType getTypeFromWord(char* word, int wordSize);
+};
+
 class ShaderProgram {
 public:
+	static Pipeline* defaultPipeline;
 	static ShaderProgram* errorShader;
 	static unsigned int shaderCount;
 	static ShaderProgram** shaders;
@@ -14,7 +45,8 @@ public:
 	static void reloadAll();
 	static ShaderProgram* find(std::string name);
 
-	HollowSet<Renderer*> renderers;
+	ShaderMetaInfo* info;
+	HollowSet<Material*> materials;
 
 	ShaderProgram(std::string path);
 	ShaderProgram(const ShaderProgram&) = delete;
@@ -46,12 +78,7 @@ private:
 	GLuint geometry = 0;
 	GLuint fragment = 0;
 
-	GLuint locationProjectionMatrix;
-	GLuint locationViewMatrix;
-	GLuint locationModelMatrix;
-	GLuint locationTime;
-
-	void getAllLocations();
+	unsigned int idInPass = 0;
 
 	void load(GLuint vs, GLuint gs, GLuint fs, bool silent = false);
 	GLuint loadShader(GLenum type, std::string fileName, bool silent = false);
