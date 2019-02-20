@@ -101,4 +101,5 @@ void TestScene::destroy() {
 	delete testCube;
 	delete cubeMesh;
 	delete testShader;
+	delete testMaterial;
 }
