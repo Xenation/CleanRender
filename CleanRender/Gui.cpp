@@ -33,8 +33,16 @@ void Gui::update() {
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 
-	if (Input::getKeyDown(KeyCode::F1)) {
+	if (Input::getKeyDown(KeyCode::GRAVE_ACCENT)) {
 		debugDisplayed = !debugDisplayed;
+	}
+	if (debugDisplayed) {
+		if (Input::getKeyDown(KeyCode::F1)) {
+			statsDisplayed = !statsDisplayed;
+		}
+		if (Input::getKeyDown(KeyCode::F2)) {
+			sceneDisplayed = !sceneDisplayed;
+		}
 	}
 
 	onUpdate();

@@ -57,7 +57,7 @@ enum KeyCode : int {
 	WORLD_1 = 161,
 	WORLD_2 = 162,
 	ESCAPE = 256,
-	ENTER = 256,
+	ENTER = 257,
 	TAB = 258,
 	BACKSPACE = 259,
 	INSERT = 260,
@@ -174,6 +174,8 @@ public:
 	static bool getMousePressed(int mouseBtn);
 	static bool getMouseUp(MouseButton mouseBtn);
 	static bool getMouseUp(int mouseBtn);
+
+	static const char* getKeyCodeString(KeyCode keyCode);
 
 	static GLFWkeyFunction getKeyCallback();
 	static GLFWmouseButtonFunction getMouseButtonCallback();
