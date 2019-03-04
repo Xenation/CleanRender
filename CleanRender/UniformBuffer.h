@@ -5,12 +5,6 @@
 
 class UniformBuffer;
 
-enum class UniformLayoutType {
-	STD140,
-	SHARED, // TODO Not yet supported
-	PACKED, // TODO Not yet supported
-};
-
 struct UniformLayout {
 	GLuint binding = 0;
 	UniformLayoutType type = UniformLayoutType::STD140;

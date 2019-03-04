@@ -10,6 +10,8 @@
 #include "UniformBuffer.h"
 #include "Material.h"
 #include "RenderPass.h"
+#include "FrameBuffer.h"
+#include "SpecializedShaderProgram.h"
 
 #define RENDERERS_START_SIZE 32
 #define RENDERERS_INCREASE 32
@@ -22,11 +24,29 @@
 
 Pipeline::Pipeline(int width, int height) 
 	: renderers(RENDERERS_START_SIZE, RENDERERS_INCREASE), cameras(CAMERAS_START_SIZE, CAMERAS_INCREASE), renderPasses(RENDERPASSES_START_SIZE, RENDERERS_INCREASE) {
+
 	renderPasses.add(new RenderPassOpaque("opaque"));
 	renderPasses.add(new RenderPassTransparent("transparent"));
-	ShaderProgram::defaultPipeline = this;
-	ShaderProgram::initializeAll();
+
+	renderBuffer = new FrameBuffer(width, height, 2);
+	renderBuffer->createColorAttachment(0, GL_RGBA8);
+	renderBuffer->createDepthStencilAttachment();
+
+	fullscreenQuad = new Mesh(4, 6);
+	fullscreenQuad->setAttributesDefinition(2, new int[2]{3, 2}, new GLenum[2]{GL_FLOAT, GL_FLOAT});
+	float* data = new float[12]{0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0};
+	fullscreenQuad->setAttribute(0, data);
+	delete[] data;
+	data = new float[8]{0, 0, 0, 1, 1, 1, 1, 0};
+	fullscreenQuad->setAttribute(0, data);
+	delete[] data;
+	fullscreenQuad->setIndices(new unsigned int[6]{1, 0, 3, 1, 3, 2});
+
+	SpecializedShaderProgram::initialize(this);
+	ShaderProgram::initializeAll(this);
+
 	resizeFrameBuffer(width, height);
+
 	globalUniformBuffer = new UniformBuffer();
 	globalUniformBuffer->setLayouts(2, new UniformLayout[2]{UniformLayout(1, 2, new GLSLType[2]{GLSL_MAT4, GLSL_MAT4}), UniformLayout(2, 1, new GLSLType[1]{GLSL_FLOAT})});
 	globalUniformBuffer->uploadToGL();
@@ -37,11 +57,12 @@ Pipeline::Pipeline(int width, int height)
 
 Pipeline::~Pipeline() {
 	delete globalUniformBuffer;
+	delete renderBuffer;
+	delete fullscreenQuad;
 }
 
 
 void Pipeline::render() {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	unsigned int rendered = 0;
 	for (unsigned int i = 0; i < cameras.capacity && rendered < cameras.count; i++) {
 		if (cameras[i] == nullptr) continue;
@@ -58,28 +79,22 @@ void Pipeline::render(Camera* camera) {
 	globalUniformBuffer->getLayout(1).setMember(0, Time::time);
 	globalUniformBuffer->updateLayout(1);
 
+	//renderBuffer->bind();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	for (unsigned int passIndex = 0; passIndex < renderPasses.count; passIndex++) {
 		RenderPass* renderPass = renderPasses[passIndex];
-		renderPass->preparePass();
-		unsigned int shadersRendered = 0;
-		for (unsigned int shaderIndex = 0; shaderIndex < renderPass->programs.capacity && shadersRendered < renderPass->programs.count; shaderIndex++) {
-			ShaderProgram* shaderProgram = renderPass->programs[shaderIndex];
-			if (shaderProgram == nullptr) continue;
-			shaderProgram->use();
-			unsigned int materialsRendered = 0;
-			for (unsigned int materialIndex = 0; materialIndex < shaderProgram->materials.capacity && materialsRendered < shaderProgram->materials.count; materialIndex++) {
-				Material* material = shaderProgram->materials[materialIndex];
-				if (material == nullptr) continue;
-				material->use();
-				unsigned int renderersRendered = 0;
-				for (unsigned int rendererIndex = 0; rendererIndex < material->renderers.capacity && rendererIndex < material->renderers.count; rendererIndex++) {
-					Renderer* renderer = material->renderers[rendererIndex];
-					if (renderer == nullptr) continue;
-					renderer->render();
-				}
-			}
-		}
+		renderPass->render();
 	}
+	//renderBuffer->unbind();
+
+	/*ShaderProgram::blitShader->use();
+	
+	glDisable(GL_DEPTH_TEST);
+	glClear(GL_COLOR_BUFFER_BIT);
+	
+	renderBuffer->blitTo(nullptr);
+	fullscreenQuad->render();
+	ShaderProgram::blitShader->unuse();*/
 
 }
 

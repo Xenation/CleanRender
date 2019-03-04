@@ -55,7 +55,7 @@ void TestScene::load() {
 	if (testShader != nullptr) {
 		testShader->load();
 	}
-	testMaterial = new Material(testShader);
+	testMaterial = new Material(testShader, "opaque");
 
 	testCube = new Entity("TestCube");
 	testCube->transform->setPosition(Vec3f(5, 0, 0));

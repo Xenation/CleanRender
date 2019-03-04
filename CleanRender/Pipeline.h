@@ -4,11 +4,11 @@
 #include "SimpleList.h"
 
 class Mesh;
-class ShaderProgram;
 class Renderer;
 class Camera;
 class UniformBuffer;
 class RenderPass;
+class FrameBuffer;
 
 class Pipeline {
 public:
@@ -33,7 +33,10 @@ private:
 	HollowSet<Renderer*> renderers;
 	HollowSet<Camera*> cameras;
 	UniformBuffer* globalUniformBuffer;
+	FrameBuffer* renderBuffer;
 	float aspectRatio = 1.0f;
+
+	Mesh* fullscreenQuad;
 
 	void render(Camera* camera);
 };

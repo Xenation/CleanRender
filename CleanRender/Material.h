@@ -1,9 +1,11 @@
 #pragma once
+#include <string>
 #include "XMath.h"
 #include "GLUtils.h"
 #include "HollowSet.h"
 
 class ShaderProgram;
+class SpecializedShaderProgram;
 class UniformBuffer;
 class UniformLayout;
 class Renderer;
@@ -13,10 +15,12 @@ class Material {
 public:
 	static Material* errorMaterial;
 
-	ShaderProgram*const shaderProgram;
+	SpecializedShaderProgram*const specializedProgram;
 	HollowSet<Renderer*> renderers;
 
-	Material(ShaderProgram* shaderProgram);
+	Material(ShaderProgram* shaderProgram, std::string renderPassName);
+	Material(ShaderProgram* shaderProgram, RenderPass* renderPass);
+	Material(SpecializedShaderProgram* specializedProgram);
 	~Material();
 
 	void setField(unsigned int index, bool value);

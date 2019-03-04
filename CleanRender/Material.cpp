@@ -1,6 +1,7 @@
 #include "Material.h"
 
 #include "ShaderProgram.h"
+#include "SpecializedShaderProgram.h"
 #include "UniformBuffer.h"
 #include "RenderPass.h"
 
@@ -9,19 +10,24 @@
 Material* Material::errorMaterial = nullptr;
 
 
-Material::Material(ShaderProgram* shaderProgram)
-	: shaderProgram(shaderProgram), uniformBuffer(new UniformBuffer()), renderers(4, 16) {
-	uniformBuffer->setLayouts(1, new UniformLayout[1]{UniformLayout(10, shaderProgram->info->materialFieldCount, shaderProgram->info->materialFieldTypes)});
+Material::Material(ShaderProgram* shaderProgram, std::string renderPassName) : Material(shaderProgram->getSpecializedProgram(renderPassName)) {}
+
+Material::Material(ShaderProgram* shaderProgram, RenderPass* renderPass) : Material(shaderProgram->getSpecializedProgram(renderPass)) {}
+
+Material::Material(SpecializedShaderProgram* specializedProgram)
+	: specializedProgram(specializedProgram), uniformBuffer(new UniformBuffer()), renderers(4, 16) {
+	ShaderUniformLayoutFieldInfo* uniformField = (ShaderUniformLayoutFieldInfo*) specializedProgram->parentShader->getMaterialFieldInfo();
+	uniformBuffer->setLayouts(1, new UniformLayout[1]{UniformLayout(10, uniformField->subFieldCount, uniformField->getMembersTypes())});
 	uniformBuffer->uploadToGL();
 	uniformLayout = &uniformBuffer->getLayout(0);
-	idInProgram = shaderProgram->materials.add(this);
+	idInProgram = specializedProgram->materials.add(this);
 }
 
 Material::~Material() {
 	if (uniformBuffer != nullptr) {
 		delete uniformBuffer;
 	}
-	shaderProgram->materials.remove(idInProgram);
+	specializedProgram->materials.remove(idInProgram);
 }
 
 

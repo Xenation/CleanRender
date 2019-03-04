@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 #include "gl3w.h"
 
 enum GLSLType : unsigned int {
@@ -70,6 +71,12 @@ enum GLSLType : unsigned int {
 	GLSL_DMAT4 = GLSL_DMAT4x4,
 };
 
+enum class UniformLayoutType {
+	STD140,
+	SHARED, // TODO Not yet supported
+	PACKED, // TODO Not yet supported
+};
+
 inline unsigned int glTypeSize(GLenum type) {
 	switch (type) {
 	case GL_BYTE:
@@ -121,6 +128,109 @@ inline unsigned int glGetUniformBufferAlignment(unsigned int currentOffset) {
 	} else {
 		return currentOffset;
 	}
+}
+
+inline unsigned int glFormatBitSize(GLenum format) {
+	switch (format) {
+		// 128
+	case GL_RGBA32I:
+	case GL_RGBA32UI:
+	case GL_RGBA32F:
+		return 128;
+
+		// 96
+	case GL_RGB32I:
+	case GL_RGB32UI:
+	case GL_RGB32F:
+		return 96;
+
+		// 64
+	case GL_RGBA16_SNORM:
+	case GL_RGBA16I:
+	case GL_RGBA16UI:
+	case GL_RGBA16F:
+	case GL_RGBA16:
+		return 64;
+
+		// 48
+	case GL_RGB16_SNORM:
+	case GL_RGB16I:
+	case GL_RGB16UI:
+	case GL_RGB16F:
+	case GL_RGB16:
+		return 48;
+
+		// 40
+	case GL_DEPTH32F_STENCIL8:
+		return 40;
+
+		// 32
+	case GL_RGB9_E5:
+	case GL_SRGB8_ALPHA8:
+	case GL_R11F_G11F_B10F:
+	case GL_RG16_SNORM:
+	case GL_RG16:
+	case GL_RGBA8_SNORM:
+	case GL_RGBA8I:
+	case GL_RGBA8UI:
+	case GL_RGBA8:
+	case GL_RGBA:
+	case GL_DEPTH24_STENCIL8:
+	case GL_DEPTH_STENCIL:
+	case GL_DEPTH_COMPONENT32:
+	case GL_DEPTH_COMPONENT32F:
+		return 32;
+
+		// 24
+	case GL_SRGB8:
+	case GL_RGB8_SNORM:
+	case GL_RGB8I:
+	case GL_RGB8UI:
+	case GL_RGB8:
+	case GL_RGB:
+	case GL_DEPTH_COMPONENT24:
+	case GL_DEPTH_COMPONENT:
+		return 24;
+
+		// 16
+	case GL_R16_SNORM:
+	case GL_R16:
+	case GL_RG8_SNORM:
+	case GL_RG8:
+	case GL_RG:
+	case GL_DEPTH_COMPONENT16:
+	case GL_STENCIL_INDEX16:
+		return 16;
+
+		// 12
+	case GL_RGB10_A2UI:
+	case GL_RGB10_A2:
+		return 12;
+
+		// 8
+	case GL_R8_SNORM:
+	case GL_R8:
+	case GL_RED:
+	case GL_STENCIL_INDEX8:
+		return 8;
+
+		// 4
+	case GL_STENCIL_INDEX4:
+		return 4;
+
+		// 1
+	case GL_STENCIL_INDEX1:
+		return 1;
+	}
+}
+
+inline unsigned int glFormatByteSize(GLenum format, unsigned int count) {
+	unsigned int bitSize = glFormatBitSize(format) * count;
+	unsigned int byteSize = bitSize / 8;
+	if (bitSize % 8 != 0) {
+		byteSize++;
+	}
+	return byteSize;
 }
 
 inline unsigned int glslTypeBaseAlignment(GLSLType type);
@@ -268,5 +378,110 @@ inline unsigned int glslTypeBaseAlignment(GLSLType type) {
 		} else {
 			return glslTypeBaseAlignment(GLSL_VEC4, 4);
 		}
+	}
+}
+
+inline GLSLType glslTypeFromString(std::string typeStr) {
+	// TODO more safety checks for wrong type strings?
+	uint type = GLSL_UNKNOWN;
+	uint shapeIndex = 1;
+	switch (typeStr[0]) {
+	case 'b':
+		type |= GLSL_IS_BOOL;
+		break;
+	case 'i':
+		type |= GLSL_IS_INT;
+		break;
+	case 'u':
+		type |= GLSL_IS_UINT;
+		break;
+	case 'd':
+		type |= GLSL_IS_DOUBLE;
+		break;
+	case 'f':
+		return GLSL_FLOAT;
+	case 'v':
+	case 'm':
+		shapeIndex = 0;
+		type |= GLSL_IS_FLOAT;
+		break;
+	}
+
+	switch (typeStr[shapeIndex]) {
+	case 'v':
+		switch (typeStr[shapeIndex + 3]) {
+		case '2':
+			type |= GLSL_IS_VEC2;
+			break;
+		case '3':
+			type |= GLSL_IS_VEC3;
+			break;
+		case '4':
+			type |= GLSL_IS_VEC4;
+			break;
+		}
+		break;
+	case 'm':
+		switch (typeStr[shapeIndex + 3]) {
+		case '2':
+			switch (typeStr[shapeIndex + 5]) {
+			case '2':
+				type |= GLSL_IS_MAT2x2;
+				break;
+			case '3':
+				type |= GLSL_IS_MAT2x3;
+				break;
+			case '4':
+				type |= GLSL_IS_MAT2x4;
+				break;
+			}
+			break;
+		case '3':
+			switch (typeStr[shapeIndex + 5]) {
+			case '2':
+				type |= GLSL_IS_MAT3x2;
+				break;
+			case '3':
+				type |= GLSL_IS_MAT3x3;
+				break;
+			case '4':
+				type |= GLSL_IS_MAT3x4;
+				break;
+			}
+			break;
+		case '4':
+			switch (typeStr[shapeIndex + 5]) {
+			case '2':
+				type |= GLSL_IS_MAT4x2;
+				break;
+			case '3':
+				type |= GLSL_IS_MAT4x3;
+				break;
+			case '4':
+				type |= GLSL_IS_MAT4x4;
+				break;
+			}
+			break;
+		}
+		break;
+	default:
+		type |= GLSL_IS_SCALAR;
+		break;
+	}
+	
+	return (GLSLType) type;
+}
+
+inline UniformLayoutType glslUniformLayoutTypeFromString(std::string typeStr) {
+	switch (typeStr[0]) {
+	case 'p':
+		return UniformLayoutType::PACKED;
+	case 's':
+		if (typeStr[1] == 't') {
+			return UniformLayoutType::STD140;
+		} else {
+			return UniformLayoutType::SHARED;
+		}
+		break;
 	}
 }

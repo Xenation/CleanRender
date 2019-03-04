@@ -1,5 +1,5 @@
 #version 420
-//meta pass opaque
+#pragma pass opaque
 
 layout (location = 0) in vec3 vertexPos;
 
