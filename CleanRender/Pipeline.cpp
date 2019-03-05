@@ -28,9 +28,9 @@ Pipeline::Pipeline(int width, int height)
 	renderPasses.add(new RenderPassOpaque("opaque"));
 	renderPasses.add(new RenderPassTransparent("transparent"));
 
-	renderBuffer = new FrameBuffer(width, height, 2);
-	renderBuffer->createColorAttachment(0, GL_RGBA8);
-	renderBuffer->createDepthStencilAttachment();
+	renderBuffer = new FrameBuffer("RenderBuffer", width, height);
+	renderBuffer->createAttachments(2, new FrameBuffer::Attachment[2]{FrameBuffer::Attachment(GL_COLOR_ATTACHMENT0, GL_RGBA), FrameBuffer::Attachment(GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT)});
+	renderBuffer->clearColor = Color(0.5f, 0, 0, 1);
 
 	fullscreenQuad = new Mesh(4, 6);
 	fullscreenQuad->setAttributesDefinition(2, new int[2]{3, 2}, new GLenum[2]{GL_FLOAT, GL_FLOAT});
@@ -50,7 +50,6 @@ Pipeline::Pipeline(int width, int height)
 	globalUniformBuffer = new UniformBuffer();
 	globalUniformBuffer->setLayouts(2, new UniformLayout[2]{UniformLayout(1, 2, new GLSLType[2]{GLSL_MAT4, GLSL_MAT4}), UniformLayout(2, 1, new GLSLType[1]{GLSL_FLOAT})});
 	globalUniformBuffer->uploadToGL();
-	glClearColor(0.5f, 0, 0, 1);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
 }
@@ -79,23 +78,14 @@ void Pipeline::render(Camera* camera) {
 	globalUniformBuffer->getLayout(1).setMember(0, Time::time);
 	globalUniformBuffer->updateLayout(1);
 
-	//renderBuffer->bind();
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	renderBuffer->bind();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	for (unsigned int passIndex = 0; passIndex < renderPasses.count; passIndex++) {
 		RenderPass* renderPass = renderPasses[passIndex];
 		renderPass->render();
 	}
-	//renderBuffer->unbind();
-
-	/*ShaderProgram::blitShader->use();
-	
-	glDisable(GL_DEPTH_TEST);
-	glClear(GL_COLOR_BUFFER_BIT);
-	
+	renderBuffer->unbind();
 	renderBuffer->blitTo(nullptr);
-	fullscreenQuad->render();
-	ShaderProgram::blitShader->unuse();*/
-
 }
 
 void Pipeline::resizeFrameBuffer(int width, int height) {

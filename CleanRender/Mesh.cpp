@@ -136,10 +136,8 @@ void Mesh::setIndices(unsigned int* indices) {
 
 void Mesh::setName(std::string n) {
 	name = n;
-	if (loadedToGL && !name.empty()) {
-		glObjectLabel(GL_VERTEX_ARRAY, vao, name.size(), name.c_str());
-		glObjectLabel(GL_ARRAY_BUFFER, vboVertices, name.size(), (name + "/Vertices").c_str());
-		glObjectLabel(GL_ARRAY_BUFFER, vboIndices, name.size(), (name + "/Indices").c_str());
+	if (loadedToGL) {
+		updateLabel();
 	}
 }
 
@@ -202,11 +200,7 @@ void Mesh::uploadToGL() {
 	// Not unbinding the element array since it is bound to the vao
 	loadedToGL = true;
 
-	if (!name.empty()) {
-		glObjectLabel(GL_VERTEX_ARRAY, vao, name.size(), name.c_str());
-		glObjectLabel(GL_ARRAY_BUFFER, vboVertices, name.size(), (name + "/Vertices").c_str());
-		glObjectLabel(GL_ARRAY_BUFFER, vboIndices, name.size(), (name + "/Indices").c_str());
-	}
+	updateLabel();
 }
 
 void Mesh::deleteFromGL() {
@@ -234,4 +228,15 @@ void Mesh::render() const {
 	glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, NULL);
 
 	glBindVertexArray(0);
+}
+
+void Mesh::updateLabel() {
+	if (!name.empty()) {
+		std::string fullName = "Mesh_VAO " + name;
+		std::string fullVerticesName = "Mesh_VBO " + name + "/Vertices";
+		std::string fullIndicesName = "Mesh_VBO " + name + "/Indices";
+		glObjectLabel(GL_VERTEX_ARRAY, vao, fullName.size(), fullName.c_str());
+		glObjectLabel(GL_BUFFER, vboVertices, fullVerticesName.size(), fullVerticesName.c_str());
+		glObjectLabel(GL_BUFFER, vboIndices, fullIndicesName.size(), fullIndicesName.c_str());
+	}
 }

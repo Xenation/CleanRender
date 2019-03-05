@@ -23,7 +23,7 @@ void TestScene::load() {
 	camera->addComponent<NoclipController>();
 	camera->transform->setPosition({0, 0, -5});
 
-	cubeMesh = new Mesh(8, 36);
+	cubeMesh = new Mesh("Cube", 8, 36);
 	cubeMesh->setAttributesDefinition(1, new int[1]{3});
 	cubeMesh->setAttribute(0, new float[24]{
 		-0.5f, 0.5f, -0.5f,

@@ -7,7 +7,7 @@
 
 
 
-Texture::Texture() {}
+Texture::Texture(std::string name) : name(name) {}
 
 Texture::~Texture() {
 	if (cachedInLocal) {
@@ -26,7 +26,7 @@ Texture* Texture::copy() {
 		texture->height = height;
 		texture->target = target;
 		// samples are 0 if texture has local data
-		texture->setTextureData(new unsigned char[textureDataSize], textureDataSize, pixelFormat);
+		texture->setTextureData(new unsigned char[textureDataSize], textureDataSize, pixelFormat, pixelInternalFormat);
 	} else {
 		texture->createEmpty(width, height, pixelFormat, samples, true);
 	}
@@ -36,13 +36,16 @@ Texture* Texture::copy() {
 	return texture;
 }
 
-void Texture::createEmpty(unsigned int width, unsigned int height, GLenum format, unsigned int multisamples, bool noalloc) {
+void Texture::createEmpty(unsigned int width, unsigned int height, GLenum format, GLenum internalFormat, unsigned int multisamples, bool noalloc, bool mipmapped) {
 	if (cachedInLocal) {
 		deleteLocal();
 	}
+	this->mipmapped = mipmapped;
+	pixelInternalFormat = internalFormat;
 	pixelFormat = format;
 	this->width = width;
 	this->height = height;
+	samples = multisamples;
 	if (multisamples != 0) {
 		target = GL_TEXTURE_2D_MULTISAMPLE;
 	} else {
@@ -53,7 +56,7 @@ void Texture::createEmpty(unsigned int width, unsigned int height, GLenum format
 	}
 }
 
-void Texture::loadFromFile(const char* filePath) {
+void Texture::loadFromFile(const char* filePath) { // TODO update with internalFormat
 	unsigned char* pngData;
 	size_t pngDataSize;
 
@@ -141,9 +144,10 @@ void Texture::loadFromFile(const char* filePath) {
 	cachedInLocal = true;
 }
 
-void Texture::setTextureData(unsigned char* data, unsigned int dataSize, GLenum format) {
+void Texture::setTextureData(unsigned char* data, unsigned int dataSize, GLenum format, GLenum internalFormat) {
 	textureData = data;
 	textureDataSize = dataSize;
+	pixelInternalFormat = internalFormat;
 	pixelFormat = format;
 	cachedInLocal = true;
 }
@@ -161,21 +165,28 @@ void Texture::uploadToGL() {
 
 	glBindTexture(target, textureID);
 
-	glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
 	if (target == GL_TEXTURE_2D_MULTISAMPLE) {
-		glTexImage2DMultisample(target, samples, pixelFormat, width, height, GL_FALSE);
+		glTexImage2DMultisample(target, samples, pixelInternalFormat, width, height, GL_FALSE);
 	} else {
-		glTexImage2D(target, 0, pixelFormat, width, height, 0, pixelFormat, GL_UNSIGNED_BYTE, textureData);
+		glTexImage2D(target, 0, pixelInternalFormat, width, height, 0, pixelFormat, GL_UNSIGNED_BYTE, textureData);
+		if (mipmapped) {
+			glGenerateMipmap(target);
+		}
 	}
-	glGenerateMipmap(target);
 
 	glBindTexture(target, 0);
 
 	loadedToGL = true;
+
+	if (!name.empty()) {
+		std::string fullName = "Texture " + name;
+		glObjectLabel(GL_TEXTURE, textureID, fullName.size(), fullName.c_str());
+	}
 }
 
 void Texture::deleteFromGL() {
@@ -184,4 +195,12 @@ void Texture::deleteFromGL() {
 		textureID = 0;
 	}
 	loadedToGL = false;
+}
+
+void Texture::setName(std::string n) {
+	name = n;
+	if (loadedToGL && !name.empty()) {
+		std::string fullName = "Texture " + name;
+		glObjectLabel(GL_TEXTURE, textureID, fullName.size(), fullName.c_str());
+	}
 }

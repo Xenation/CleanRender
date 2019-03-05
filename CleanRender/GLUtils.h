@@ -234,6 +234,53 @@ inline unsigned int glFormatByteSize(GLenum format, unsigned int count) {
 	return byteSize;
 }
 
+inline GLenum glGetDefaultInternalFormat(GLenum format) { // TODO add more
+	switch (format) {
+	case GL_RGBA:
+		return GL_RGBA8;
+	case GL_DEPTH_COMPONENT:
+		return GL_DEPTH_COMPONENT24;
+	case GL_STENCIL_INDEX:
+		return GL_STENCIL_INDEX8;
+	case GL_DEPTH_STENCIL:
+		return GL_DEPTH24_STENCIL8;
+	}
+}
+
+inline std::string glAttachmentString(GLenum attachPoint) {
+	switch (attachPoint) {
+	case GL_DEPTH_ATTACHMENT:
+		return "Depth";
+	case GL_STENCIL_ATTACHMENT:
+		return "Stencil";
+	case GL_DEPTH_STENCIL_ATTACHMENT:
+		return "DepthStencil";
+	default: //Assumes color
+		return "Color" + std::to_string(attachPoint - GL_COLOR_ATTACHMENT0);
+	}
+}
+
+inline std::string glFramebufferStatusString(GLenum status) {
+	switch (status) {
+	case GL_FRAMEBUFFER_UNDEFINED:
+		return "Undefined";
+	case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
+		return "Imcomplete Attachment";
+	case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
+		return "Imcomplete Missing Attachment";
+	case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
+		return "Imcomplete Draw Buffer";
+	case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
+		return "Imcomplete Read Buffer";
+	case GL_FRAMEBUFFER_UNSUPPORTED:
+		return "Unsupported";
+	case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:
+		return "Imcomplete Multisample";
+	case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS:
+		return "Imcomplete Layer Targets";
+	}
+}
+
 inline unsigned int glslTypeBaseAlignment(GLSLType type);
 inline unsigned int glslTypeBaseAlignment(GLSLType type, unsigned int arrSize) {
 	const unsigned int vec4Align = glslTypeBaseAlignment(GLSL_VEC4);

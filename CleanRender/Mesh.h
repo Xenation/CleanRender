@@ -45,5 +45,7 @@ private:
 	void* vertices = nullptr;
 	int indexCount;
 	unsigned int* indices = nullptr;
+
+	void updateLabel();
 };
 

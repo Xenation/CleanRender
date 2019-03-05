@@ -1,57 +1,62 @@
 #include "FrameBuffer.h"
 
+#include "Debug.h"
 #include "Texture.h"
+#include "GLUtils.h"
 
 
 
-FrameBuffer::FrameBuffer(unsigned int width, unsigned int height, unsigned int attachmentCount, unsigned int samples)
-	: width(width), height(height), samples(samples), attachmentCount(attachmentCount), attachments(new Texture*[attachmentCount]), attachmentFormats(new GLenum[attachmentCount]), attachmentPoints(new GLenum[attachmentCount]) {
+FrameBuffer::FrameBuffer(std::string name, uint width, uint height, uint samples)
+	: name(name), width(width), height(height), samples(samples), attachmentCount(attachmentCount) {
 	glGenFramebuffers(1, &fbo);
+	std::string fullName = "Framebuffer " + name;
+	glObjectLabel(GL_FRAMEBUFFER, fbo, fullName.size(), fullName.c_str());
 }
 
 FrameBuffer::~FrameBuffer() {
 	if (attachments != nullptr) {
 		for (unsigned int i = 0; i < attachmentCount; i++) {
-			delete attachments[i];
+			delete attachments[i].texture;
 		}
 		delete[] attachments;
-		delete[] attachmentFormats;
-		delete[] attachmentPoints;
 	}
 	glDeleteFramebuffers(1, &fbo);
 }
 
 
 FrameBuffer* FrameBuffer::copy() {
-	FrameBuffer* fb = new FrameBuffer(width, height, attachmentCount, samples);
-	for (unsigned int i = 0; i < attachmentCount; i++) {
-		fb->createAttachment(i, attachmentFormats[i], attachmentPoints[i]);
+	FrameBuffer* fb = new FrameBuffer(name, width, height, samples);
+	Attachment* fbAttachments = new Attachment[attachmentCount];
+	for (uint i = 0; i < attachmentCount; i++) {
+		fbAttachments[i] = attachments[i]; // Copies attachments definition
 	}
+	fb->createAttachments(attachmentCount, fbAttachments);
 	return fb;
 }
 
-void FrameBuffer::createColorAttachment(int index, GLenum format) {
-	createAttachment(index, format, GL_COLOR_ATTACHMENT0 + index);
-}
-
-void FrameBuffer::createDepthAttachment() {
-	createAttachment(attachmentCount - 1, GL_DEPTH_COMPONENT, GL_DEPTH_ATTACHMENT);
-}
-
-void FrameBuffer::createDepthStencilAttachment() {
-	createAttachment(attachmentCount - 1, GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT);
-}
-
-void FrameBuffer::createAttachment(int index, GLenum format, GLenum attachPoint) {
+void FrameBuffer::createAttachments(uint count, Attachment* attachments) {
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-	Texture* texture = new Texture();
-	texture->createEmpty(width, height, format, samples, true);
-	texture->uploadToGL();
-	attachments[index] = texture;
-	attachmentFormats[index] = format;
-	attachmentPoints[index] = attachPoint;
-	glFramebufferTexture2D(GL_FRAMEBUFFER, attachPoint, (samples == 0) ? GL_TEXTURE_2D : GL_TEXTURE_2D_MULTISAMPLE, texture->getTextureID(), 0);
+
+	this->attachmentCount = count;
+	this->attachments = attachments;
+	for (uint i = 0; i < attachmentCount; i++) {
+		createAttachment(i);
+	}
+
+	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+	if (status != GL_FRAMEBUFFER_COMPLETE) {
+		Debug::logError("FrameBuffer", "Framebuffer " + glFramebufferStatusString(status));
+	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void FrameBuffer::createAttachment(int index) {
+	Attachment& attachment = attachments[index];
+	Texture* texture = new Texture(name + "/Attachment/" + glAttachmentString(attachment.slot)); // TODO maybe add format to name?
+	texture->createEmpty(width, height, attachment.format, glGetDefaultInternalFormat(attachment.format), samples, true, false); // TODO implement a way to manually specify internal format
+	texture->uploadToGL();
+	attachment.texture = texture;
+	glFramebufferTexture2D(GL_FRAMEBUFFER, attachment.slot, (samples == 0) ? GL_TEXTURE_2D : GL_TEXTURE_2D_MULTISAMPLE, texture->getTextureID(), 0);
 }
 
 void FrameBuffer::bind() {
@@ -64,11 +69,12 @@ void FrameBuffer::unbind() {
 }
 
 void FrameBuffer::blitTo(FrameBuffer* frameBuffer) {
-	if (frameBuffer == nullptr) { // Blit to default
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, attachments[0]->getTextureID());
-		glBindTextureUnit(GL_TEXTURE0, attachments[0]->getTextureID());
-	} else {
-
+	GLuint otherFBO = 0; // 0 to blit to default when target framebuffer is null
+	if (frameBuffer != nullptr) { // Blit to default
+		otherFBO = frameBuffer->fbo;
 	}
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, otherFBO);
+	glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+	glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_DEPTH_BUFFER_BIT, GL_LINEAR);
 }
