@@ -101,7 +101,8 @@
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>ext;</AdditionalIncludeDirectories>
-      <ForcedIncludeFiles>XTypes.h</ForcedIncludeFiles>
+      <ForcedIncludeFiles>
+      </ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <AdditionalDependencies>win32/glfw3.lib;opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -117,7 +118,8 @@
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>ext;</AdditionalIncludeDirectories>
-      <ForcedIncludeFiles>XTypes.h</ForcedIncludeFiles>
+      <ForcedIncludeFiles>
+      </ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <AdditionalDependencies>win64/glfw3.lib;opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
