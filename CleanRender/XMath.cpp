@@ -96,48 +96,75 @@ const Color Color::pink			= Color(1, 0, .5f, 1);
 /* ==== METHODS ==== */
 /* ---- Vectors ---- */
 // Vec2i
-const char* Vec2i::toString() {
-	return ("(" + std::to_string(x) + ", " + std::to_string(y) + ")").c_str();
+const char* Vec2i::toCString() {
+	return toString().c_str();
+}
+std::string Vec2i::toString() {
+	return "(" + std::to_string(x) + ", " + std::to_string(y) + ")";
 }
 
 // Vec3i
-const char* Vec3i::toString() {
-	return ("(" + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + ")").c_str();
+const char* Vec3i::toCString() {
+	return toString().c_str();
+}
+std::string Vec3i::toString() {
+	return "(" + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + ")";
 }
 
 // Vec4i
-const char* Vec4i::toString() {
-	return ("(" + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + ", " + std::to_string(w) + ")").c_str();
+const char* Vec4i::toCString() {
+	return toString().c_str();
+}
+std::string Vec4i::toString() {
+	return "(" + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + ", " + std::to_string(w) + ")";
 }
 
 // Vec2f
-const char* Vec2f::toString() {
-	return ("(" + std::to_string(x) + ", " + std::to_string(y) + ")").c_str();
+const char* Vec2f::toCString() {
+	return toString().c_str();
+}
+std::string Vec2f::toString() {
+	return "(" + std::to_string(x) + ", " + std::to_string(y) + ")";
 }
 
 // Vec3f
-const char* Vec3f::toString() {
-	return ("(" + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + ")").c_str();
+const char* Vec3f::toCString() {
+	return toString().c_str();
+}
+std::string Vec3f::toString() {
+	return "(" + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + ")";
 }
 
 // Vec4f
-const char* Vec4f::toString() {
-	return ("(" + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + ", " + std::to_string(w) + ")").c_str();
+const char* Vec4f::toCString() {
+	return toString().c_str();
+}
+std::string Vec4f::toString() {
+	return "(" + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + ", " + std::to_string(w) + ")";
 }
 
 // Bivec3f
-const char* Bivec3f::toString() {
-	return ("(xy = " + std::to_string(xy) + ", xz = " + std::to_string(xz) + ", yz = " + std::to_string(yz) + ")").c_str();
+const char* Bivec3f::toCString() {
+	return toString().c_str();
+}
+std::string Bivec3f::toString() {
+	return "(xy = " + std::to_string(xy) + ", xz = " + std::to_string(xz) + ", yz = " + std::to_string(yz) + ")";
 }
 
 // Rotor3f
-const char* Rotor3f::toString() {
-	return ("Rotor3f(a = " + std::to_string(a) + ", bv = " + std::string(bv.toString()) + ")").c_str();
+const char* Rotor3f::toCString() {
+	return toString().c_str();
+}
+std::string Rotor3f::toString() {
+	return "Rotor3f(a = " + std::to_string(a) + ", bv = " + std::string(bv.toString()) + ")";
 }
 
 // Quaternion
-const char* Quaternion::toString() {
-	return ("Quaternion(" + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + ", " + std::to_string(w) + ")").c_str();
+const char* Quaternion::toCString() {
+	return toString().c_str();
+}
+std::string Quaternion::toString() {
+	return "Quaternion(" + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + ", " + std::to_string(w) + ")";
 }
 
 
@@ -190,7 +217,7 @@ Vec4f Matrix4x4f::solve(Matrix4x4f &lu, Vec4f toSolve) {
 	return x;
 }
 
-const char* Matrix4x4f::toString() {
+std::string Matrix4x4f::toString() {
 	return (
 		std::to_string(m00) + ", " + std::to_string(m01) + ", " + std::to_string(m02) + ", " + std::to_string(m03) + ",\n" +
 		std::to_string(m10) + ", " + std::to_string(m11) + ", " + std::to_string(m12) + ", " + std::to_string(m13) + ",\n" +
@@ -201,36 +228,57 @@ const char* Matrix4x4f::toString() {
 
 /* ---- Others ---- */
 // Color
-const char* Color::toString() {
-	return ("(" + std::to_string(r) + ", " + std::to_string(g) + ", " + std::to_string(b) + ", " + std::to_string(a) + ")").c_str();
+const char* Color::toCString() {
+	return toString().c_str();
+}
+std::string Color::toString() {
+	return "(" + std::to_string(r) + ", " + std::to_string(g) + ", " + std::to_string(b) + ", " + std::to_string(a) + ")";
 }
 
 // Boxi
-const char* Boxi::toString() {
-	return ("Boxi(min" + std::string(min.toString()) + ", max" + std::string(max.toString()) + ")").c_str();
+const char* Boxi::toCString() {
+	return toString().c_str();
+}
+std::string Boxi::toString() {
+	return "Boxi(min" + std::string(min.toString()) + ", max" + std::string(max.toString()) + ")";
 }
 
 // Boxf
-const char* Boxf::toString() {
-	return ("Boxf(center" + std::string(center.toString()) + ", extents" + std::string(extents.toString()) + ")").c_str();
+const char* Boxf::toCString() {
+	return toString().c_str();
+}
+std::string Boxf::toString() {
+	return "Boxf(center" + std::string(center.toString()) + ", extents" + std::string(extents.toString()) + ")";
 }
 
 // Recti
-const char* Recti::toString() {
-	return ("Recti(min" + std::string(min.toString()) + ", max" + std::string(max.toString()) + ")").c_str();
+const char* Recti::toCString() {
+	return toString().c_str();
+}
+std::string Recti::toString() {
+	return "Recti(min" + std::string(min.toString()) + ", max" + std::string(max.toString()) + ")";
 }
 
 // Rectf
-const char* Rectf::toString() {
-	return ("Rectf(min" + std::string(min.toString()) + ", max" + std::string(max.toString()) + ")").c_str();
+const char* Rectf::toCString() {
+	return toString().c_str();
+}
+std::string Rectf::toString() {
+	return "Rectf(min" + std::string(min.toString()) + ", max" + std::string(max.toString()) + ")";
 }
 
 // Ray
-const char* Ray::toString() {
-	return ("Ray(origin" + std::string(origin.toString()) + ", direction" + std::string(direction.toString()) + ")").c_str();
+const char* Ray::toCString() {
+	return toString().c_str();
+}
+std::string Ray::toString() {
+	return "Ray(origin" + std::string(origin.toString()) + ", direction" + std::string(direction.toString()) + ")";
 }
 
 // Plane
-const char* Plane::toString() {
-	return ("Plane(normal" + std::string(normal.toString()) + ", distance = " + std::to_string(distance) + ")").c_str();
+const char* Plane::toCString() {
+	return toString().c_str();
+}
+std::string Plane::toString() {
+	return "Plane(normal" + std::string(normal.toString()) + ", distance = " + std::to_string(distance) + ")";
 }

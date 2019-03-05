@@ -10,8 +10,11 @@ unsigned int Mesh::triangleCount = 0;
 
 
 Mesh::Mesh(int vCount, int iCount) {
-	vertexCount = vCount;
-	indexCount = iCount;
+
+}
+
+Mesh::Mesh(std::string name, int vCount, int iCount)
+	: name(name), vertexCount(vCount), indexCount(iCount) {
 	indices = nullptr;
 }
 
@@ -133,6 +136,15 @@ void Mesh::setIndices(unsigned int* indices) {
 	this->indices = indices;
 }
 
+void Mesh::setName(std::string n) {
+	name = n;
+	if (loadedToGL) {
+		glObjectLabel(GL_VERTEX_ARRAY, vao, name.size(), name.c_str());
+		glObjectLabel(GL_ARRAY_BUFFER, vboVertices, name.size(), (name + "/Vertices").c_str());
+		glObjectLabel(GL_ARRAY_BUFFER, vboIndices, name.size(), (name + "/Indices").c_str());
+	}
+}
+
 void Mesh::deleteLocal() {
 	if (attributeSizes != nullptr) {
 		delete[] attributeSizes;
@@ -191,6 +203,10 @@ void Mesh::uploadToGL() {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	// Not unbinding the element array since it is bound to the vao
 	loadedToGL = true;
+
+	glObjectLabel(GL_VERTEX_ARRAY, vao, name.size(), name.c_str());
+	glObjectLabel(GL_ARRAY_BUFFER, vboVertices, name.size(), (name + "/Vertices").c_str());
+	glObjectLabel(GL_ARRAY_BUFFER, vboIndices, name.size(), (name + "/Indices").c_str());
 }
 
 void Mesh::deleteFromGL() {

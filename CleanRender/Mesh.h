@@ -1,10 +1,12 @@
 #pragma once
+#include <string>
 #include "gl3w.h"
 class Mesh {
 public:
 	static unsigned int triangleCount;
 
 	Mesh(int vCount, int iCount);
+	Mesh(std::string name, int vCount, int iCount);
 	~Mesh();
 
 	void setAttributesDefinition(int count, int* sizes);
@@ -19,6 +21,7 @@ public:
 	void setAttribute(int index, double* values);
 	void setAttributeData(int index, char* bytes);
 	void setIndices(unsigned int* indices);
+	void setName(std::string n);
 	void deleteLocal();
 	void uploadToGL();
 	void deleteFromGL();
@@ -27,6 +30,7 @@ public:
 	inline bool isCachedInLocal() const { return cachedInLocal; }
 
 private:
+	std::string name;
 	GLuint vao = 0;
 	GLuint vboVertices = 0;
 	GLuint vboIndices = 0;

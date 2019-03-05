@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include "XTypes.h"
 #include "gl3w.h"
 
 enum GLSLType : unsigned int {

@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include "XTypes.h"
 #include "ShaderMetaInfo.h"
 
 class SpecializedShaderProgram;

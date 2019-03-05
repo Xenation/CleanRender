@@ -34,7 +34,6 @@ void ShaderProgram::initializeAll(Pipeline* pipeline) {
 	for (fs::directory_entry entry : fs::directory_iterator(SHADER_DIRECTORY)) {
 		if (!entry.is_directory()) continue;
 		shaders[index] = new ShaderProgram(entry.path().filename().string());
-		shaders[index]->load(); // TODO remove, only here for testing
 		Debug::log("ShaderInit", "    " + shaders[index]->name);
 		index++;
 	}
@@ -79,6 +78,7 @@ ShaderProgram::~ShaderProgram() {
 }
 
 void ShaderProgram::load() {
+	if (loaded) return;
 	ShaderReader* reader = readShaders();
 	if (reader == nullptr) return;
 	info = reader->programInfo;

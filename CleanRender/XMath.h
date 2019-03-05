@@ -6,6 +6,7 @@
 //#include <pmmintrin.h> // SSE3
 //#include <tmmintrin.h> // SSSE3
 #include <smmintrin.h> // SSE4.1
+#include <string> // TODO try to separate from this file
 
 #pragma region Constants
 const __m128 _mm_one = _mm_set1_ps(1.0f);
@@ -214,7 +215,8 @@ public:
 	}
 
 	/* ---- METHODS ---- */
-	const char* toString();
+	const char* toCString();
+	std::string toString();
 };
 
 /* ==== VEC3i ==== */
@@ -328,7 +330,8 @@ public:
 	}
 
 	/* ---- METHODS ---- */
-	const char* toString();
+	const char* toCString();
+	std::string toString();
 };
 
 /* ==== VEC4i ==== */
@@ -435,7 +438,8 @@ public:
 	}
 
 	/* ---- METHODS ---- */
-	const char* toString();
+	const char* toCString();
+	std::string toString();
 };
 
 /* ==== VEC2f ==== */
@@ -538,7 +542,8 @@ public:
 	}
 
 	/* ---- METHODS ---- */
-	const char* toString();
+	const char* toCString();
+	std::string toString();
 };
 
 /* ==== VEC3f ==== */
@@ -649,7 +654,8 @@ public:
 	}
 
 	/* ---- METHODS ---- */
-	const char* toString();
+	const char* toCString();
+	std::string toString();
 	inline float dot(const Vec3f &other) const {
 		return x * other.x + y * other.y + z * other.z;
 	}
@@ -786,7 +792,8 @@ public:
 	}
 
 	/* ---- METHODS ---- */
-	const char* toString();
+	const char* toCString();
+	std::string toString();
 };
 
 /* ==== BIVEC3f ==== */
@@ -805,7 +812,8 @@ public:
 		};
 	}
 
-	const char* toString();
+	const char* toCString();
+	std::string toString();
 };
 
 /* ==== ROTOR3f ==== */
@@ -847,7 +855,8 @@ public:
 	}
 
 	/* ----- METHODS ---- */
-	const char* toString();
+	const char* toCString();
+	std::string toString();
 	inline static Rotor3f AnglePlane(float angleRad, const Bivec3f& bvPlane) {
 		float sina = sinf(angleRad / 2.f);
 		return {
@@ -931,7 +940,8 @@ public:
 	}
 
 	/* ---- METHODS ---- */
-	const char* toString();
+	const char* toCString();
+	std::string toString();
 	inline static Quaternion euler(const Vec3f& eulerRot) {
 		return headingAttitudeBank(eulerRot.y, eulerRot.z, eulerRot.x);
 	}
@@ -1135,7 +1145,8 @@ public:
 		}};
 	}
 
-	const char* toString();
+	const char* toCString();
+	std::string toString();
 };
 #pragma endregion
 
@@ -1252,7 +1263,8 @@ public:
 	}
 
 	/* ---- METHODS ---- */
-	const char* toString();
+	const char* toCString();
+	std::string toString();
 
 private:
 	inline static float hsvIntermediate(float h, float s, float v, float n) {
@@ -1273,7 +1285,8 @@ public:
 		return Boxi(center - extents, center + extents);
 	}
 
-	const char* toString();
+	const char* toCString();
+	std::string toString();
 };
 
 /* ==== BOXf ==== */
@@ -1288,7 +1301,8 @@ public:
 		return Boxf(Vec3f((min.x + max.x) / 2.0f, (min.y + max.y) / 2.0f, (min.z + max.z) / 2.0f), Vec3f((max.x - min.x) / 2.0f, (max.y - min.y) / 2.0f, (max.z - min.z) / 2.0f));
 	}
 
-	const char* toString();
+	const char* toCString();
+	std::string toString();
 };
 
 /* ==== RECTi ==== */
@@ -1299,7 +1313,8 @@ public:
 	inline Recti() : min(Vec2i(0, 0)), max(Vec2i(0, 0)) {}
 	inline Recti(Vec2i min, Vec2i max) : min(min), max(max) {}
 
-	const char* toString();
+	const char* toCString();
+	std::string toString();
 };
 
 /* ==== RECTf ==== */
@@ -1310,7 +1325,8 @@ public:
 	inline Rectf() : min(Vec2f(0, 0)), max(Vec2f(0, 0)) {}
 	inline Rectf(Vec2f min, Vec2f max) : min(min), max(max) {}
 
-	const char* toString();
+	const char* toCString();
+	std::string toString();
 };
 
 /* ==== RAY ==== */
@@ -1321,7 +1337,8 @@ public:
 	inline Ray() : origin(Vec3f(0, 0, 0)), direction(Vec3f(0, 1, 0)) {}
 	inline Ray(Vec3f origin, Vec3f dir) : origin(origin), direction(dir) {}
 
-	const char* toString();
+	const char* toCString();
+	std::string toString();
 };
 
 /* ==== PLANE ==== */
@@ -1349,7 +1366,8 @@ public:
 		return true;
 	}
 
-	const char* toString();
+	const char* toCString();
+	std::string toString();
 };
 #pragma endregion
 

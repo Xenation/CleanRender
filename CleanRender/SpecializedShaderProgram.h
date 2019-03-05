@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <gl3w.h>
+#include "XTypes.h"
 #include "XMath.h"
 #include "HollowSet.h"
 

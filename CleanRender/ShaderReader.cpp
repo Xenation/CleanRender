@@ -281,7 +281,7 @@ void ShaderReader::extractMetaInfo(ShaderFile* shaderFile) {
 			shaderFile->info.shaderFields[fieldIndex++] = new ShaderNativeTypeFieldInfo(ShaderFieldType::In, inMatch[2], glslTypeFromString(inMatch[1]));
 			inLine = inMatch.suffix();
 		}
-		currentString = inMatch.suffix();
+		currentString = inLineMatch.suffix();
 	}
 	currentString = shaderFile->rawSource;
 	while (std::regex_search(currentString, inLayoutMatch, inLayoutRegex)) {
