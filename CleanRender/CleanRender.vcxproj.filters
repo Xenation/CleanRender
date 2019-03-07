@@ -147,9 +147,6 @@
     <ClCompile Include="Gui.cpp">
       <Filter>Source Files\Engine</Filter>
     </ClCompile>
-    <ClCompile Include="FrameBuffer.cpp">
-      <Filter>Source Files\Engine\Render</Filter>
-    </ClCompile>
     <ClCompile Include="Material.cpp">
       <Filter>Source Files\Engine\Render\Shader</Filter>
     </ClCompile>
@@ -164,6 +161,9 @@
     </ClCompile>
     <ClCompile Include="ShaderProgram.cpp">
       <Filter>Source Files\Engine\Render\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Framebuffer.cpp">
+      <Filter>Source Files\Engine\Render</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -281,9 +281,6 @@
     <ClInclude Include="Gui.h">
       <Filter>Header Files\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="FrameBuffer.h">
-      <Filter>Header Files\Engine\Render</Filter>
-    </ClInclude>
     <ClInclude Include="Material.h">
       <Filter>Header Files\Engine\Render\Shader</Filter>
     </ClInclude>
@@ -301,6 +298,9 @@
     </ClInclude>
     <ClInclude Include="ShaderProgram.h">
       <Filter>Header Files\Engine\Render\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Framebuffer.h">
+      <Filter>Header Files\Engine\Render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

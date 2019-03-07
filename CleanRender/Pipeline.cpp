@@ -10,7 +10,7 @@
 #include "UniformBuffer.h"
 #include "Material.h"
 #include "RenderPass.h"
-#include "FrameBuffer.h"
+#include "Framebuffer.h"
 #include "SpecializedShaderProgram.h"
 
 #define RENDERERS_START_SIZE 32
@@ -28,8 +28,8 @@ Pipeline::Pipeline(int width, int height)
 	renderPasses.add(new RenderPassOpaque("opaque"));
 	renderPasses.add(new RenderPassTransparent("transparent"));
 
-	renderBuffer = new FrameBuffer("RenderBuffer", width, height);
-	renderBuffer->createAttachments(2, new FrameBuffer::Attachment[2]{FrameBuffer::Attachment(GL_COLOR_ATTACHMENT0, GL_RGBA), FrameBuffer::Attachment(GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT)});
+	renderBuffer = new Framebuffer("RenderBuffer", width, height);
+	renderBuffer->createAttachments(2, new Framebuffer::Attachment[2]{Framebuffer::Attachment(GL_COLOR_ATTACHMENT0, GL_RGBA), Framebuffer::Attachment(GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT)});
 	renderBuffer->clearColor = Color(0.5f, 0, 0, 1);
 
 	fullscreenQuad = new Mesh(4, 6);
@@ -97,6 +97,7 @@ void Pipeline::resizeFrameBuffer(int width, int height) {
 		cameras[i]->updateProjectionMatrix();
 		adjusted++;
 	}
+	renderBuffer->resize(width, height);
 }
 
 unsigned int Pipeline::registerRenderer(Renderer* renderer) {

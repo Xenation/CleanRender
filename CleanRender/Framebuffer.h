@@ -6,7 +6,7 @@
 
 class Texture;
 
-class FrameBuffer {
+class Framebuffer {
 public:
 	struct Attachment {
 		GLenum slot;
@@ -20,16 +20,17 @@ public:
 
 	Color clearColor = Color::clear;
 
-	FrameBuffer(std::string name, uint width, uint height, uint samples = 0);
-	FrameBuffer(const FrameBuffer&) = delete;
-	~FrameBuffer();
+	Framebuffer(std::string name, uint width, uint height, uint samples = 0);
+	Framebuffer(const Framebuffer&) = delete;
+	~Framebuffer();
 
-	FrameBuffer* copy();
+	Framebuffer* copy();
 	void createAttachments(uint count, Attachment* attachments);
+	void resize(uint width, uint height);
 	
 	void bind();
 	void unbind();
-	void blitTo(FrameBuffer* frameBuffer);
+	void blitTo(Framebuffer* frameBuffer);
 
 private:
 	std::string name;

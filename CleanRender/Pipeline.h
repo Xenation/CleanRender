@@ -8,7 +8,7 @@ class Renderer;
 class Camera;
 class UniformBuffer;
 class RenderPass;
-class FrameBuffer;
+class Framebuffer;
 
 class Pipeline {
 public:
@@ -33,7 +33,7 @@ private:
 	HollowSet<Renderer*> renderers;
 	HollowSet<Camera*> cameras;
 	UniformBuffer* globalUniformBuffer;
-	FrameBuffer* renderBuffer;
+	Framebuffer* renderBuffer;
 	float aspectRatio = 1.0f;
 
 	Mesh* fullscreenQuad;
