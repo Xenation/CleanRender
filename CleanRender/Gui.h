@@ -15,6 +15,7 @@ private:
 	bool debugDisplayed;
 	bool statsDisplayed;
 	bool sceneDisplayed;
+	bool shadersDisplayed;
 
 	float frameTimes[300];
 	float maxFrameTime = 0;

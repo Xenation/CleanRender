@@ -204,3 +204,11 @@ void Texture::setName(std::string n) {
 		glObjectLabel(GL_TEXTURE, textureID, fullName.size(), fullName.c_str());
 	}
 }
+
+void Texture::bind() {
+	glBindTexture(target, textureID);
+}
+
+void Texture::unbind() {
+	glBindTexture(target, 0);
+}

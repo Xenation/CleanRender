@@ -6,7 +6,7 @@
 class SpecializedShaderProgram;
 class RenderPass;
 class Pipeline;
-class ShaderReader;
+class ShaderPreprocessor;
 
 class ShaderProgram {
 public:
@@ -16,6 +16,7 @@ public:
 	static void initializeAll(Pipeline* pipeline);
 	static void reloadAll();
 	static ShaderProgram* find(std::string name);
+	static void guiAll();
 
 	const std::string name;
 	ShaderProgramMetaInfo* info = nullptr;
@@ -24,13 +25,14 @@ public:
 	ShaderProgram(const ShaderProgram&) = delete;
 	~ShaderProgram();
 
+	void gui();
+
 	void load();
 	void reload();
 	void unload();
 
 	SpecializedShaderProgram* getSpecializedProgram(std::string renderPassName);
 	SpecializedShaderProgram* getSpecializedProgram(RenderPass* renderPass);
-	ShaderFieldInfo* getMaterialFieldInfo();
 
 private:
 	static Pipeline* defaultPipeline;
@@ -39,6 +41,6 @@ private:
 	uint specializedProgramsCount = 0;
 	bool loaded = false;
 
-	ShaderReader* readShaders();
+	ShaderPreprocessor* readShaders();
 };
 

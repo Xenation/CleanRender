@@ -150,9 +150,6 @@
     <ClCompile Include="Material.cpp">
       <Filter>Source Files\Engine\Render\Shader</Filter>
     </ClCompile>
-    <ClCompile Include="ShaderReader.cpp">
-      <Filter>Source Files\Engine\Render\Shader</Filter>
-    </ClCompile>
     <ClCompile Include="ShaderMetaInfo.cpp">
       <Filter>Source Files\Engine\Render\Shader</Filter>
     </ClCompile>
@@ -164,6 +161,9 @@
     </ClCompile>
     <ClCompile Include="Framebuffer.cpp">
       <Filter>Source Files\Engine\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderPreprocessor.cpp">
+      <Filter>Source Files\Engine\Render\Shader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -287,9 +287,6 @@
     <ClInclude Include="XTypes.h">
       <Filter>Header Files\Engine\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="ShaderReader.h">
-      <Filter>Header Files\Engine\Render\Shader</Filter>
-    </ClInclude>
     <ClInclude Include="ShaderMetaInfo.h">
       <Filter>Header Files\Engine\Render\Shader</Filter>
     </ClInclude>
@@ -301,6 +298,9 @@
     </ClInclude>
     <ClInclude Include="Framebuffer.h">
       <Filter>Header Files\Engine\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderPreprocessor.h">
+      <Filter>Header Files\Engine\Render\Shader</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,8 +1,10 @@
 #pragma once
 #include <string>
+#include "XTypes.h"
 #include "HollowSet.h"
 
 class SpecializedShaderProgram;
+class Framebuffer;
 
 class RenderPass {
 public:
@@ -14,6 +16,7 @@ public:
 
 	virtual void prepare();
 	virtual void render();
+	virtual void onResize(uint width, uint height);
 };
 
 class RenderPassOpaque : public RenderPass {
@@ -32,3 +35,16 @@ public:
 	virtual void prepare() override;
 };
 
+class RenderPassPostprocess : public RenderPass {
+public:
+	RenderPassPostprocess(const char* name, Framebuffer* renderBuffer);
+	~RenderPassPostprocess();
+
+	virtual void render() override;
+	virtual void onResize(uint width, uint height) override;
+
+private:
+	Framebuffer* renderBuffer;
+	Framebuffer* temporary1;
+	Framebuffer* temporary2;
+};

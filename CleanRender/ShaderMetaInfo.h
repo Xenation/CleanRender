@@ -3,12 +3,15 @@
 #include "XTypes.h"
 #include "GLUtils.h"
 
+
+// ---- Field Info ----
 enum class ShaderFieldType {
 	In,
 	InLayout,
 	Out,
 	Uniform,
 	UniformLayout,
+	UniformBufferLayout,
 	NativeType,
 };
 
@@ -47,15 +50,26 @@ public:
 	}
 };
 
-struct ShaderUniformLayoutFieldInfo : public ShaderFieldInfo {
+struct ShaderUniformLayoutFieldInfo : public ShaderNativeTypeFieldInfo {
+	uint binding = 0;
+
+public:
+	ShaderUniformLayoutFieldInfo(ShaderFieldType fieldType, std::string name, GLSLType type, uint binding) : ShaderNativeTypeFieldInfo(fieldType, name, type), binding(binding) {}
+
+	inline virtual ShaderFieldInfo* copy() override {
+		return new ShaderUniformLayoutFieldInfo(fieldType, name, type, binding);
+	}
+};
+
+struct ShaderUniformBufferLayoutFieldInfo : public ShaderFieldInfo {
 	UniformLayoutType layoutType = UniformLayoutType::STD140;
 	uint binding = 0;
 	ShaderFieldInfo** subFields = nullptr;
 	uint subFieldCount = 0;
 
 public:
-	ShaderUniformLayoutFieldInfo(ShaderFieldType fieldType, std::string name, UniformLayoutType layoutType, uint binding) : ShaderFieldInfo(fieldType, name), layoutType(layoutType), binding(binding) {}
-	~ShaderUniformLayoutFieldInfo() {
+	ShaderUniformBufferLayoutFieldInfo(ShaderFieldType fieldType, std::string name, UniformLayoutType layoutType, uint binding) : ShaderFieldInfo(fieldType, name), layoutType(layoutType), binding(binding) {}
+	~ShaderUniformBufferLayoutFieldInfo() {
 		if (subFields != nullptr) {
 			for (uint i = 0; i < subFieldCount; i++) {
 				delete subFields[i];
@@ -65,7 +79,7 @@ public:
 	}
 
 	inline virtual ShaderFieldInfo* copy() override {
-		ShaderUniformLayoutFieldInfo* c = new ShaderUniformLayoutFieldInfo(fieldType, std::string(name), layoutType, binding);
+		ShaderUniformBufferLayoutFieldInfo* c = new ShaderUniformBufferLayoutFieldInfo(fieldType, std::string(name), layoutType, binding);
 		c->subFields = new ShaderFieldInfo*[subFieldCount];
 		c->subFieldCount = subFieldCount;
 		for (uint i = 0; i < subFieldCount; i++) {
@@ -83,6 +97,8 @@ public:
 	}
 };
 
+
+// ---- Meta Info ----
 struct ShaderFileMetaInfo { // TODO rename
 	ShaderFieldInfo** shaderFields = nullptr;
 	uint shaderFieldCount = 0;

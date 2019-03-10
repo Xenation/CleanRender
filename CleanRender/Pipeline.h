@@ -3,7 +3,6 @@
 #include "HollowSet.h"
 #include "SimpleList.h"
 
-class Mesh;
 class Renderer;
 class Camera;
 class UniformBuffer;
@@ -35,8 +34,6 @@ private:
 	UniformBuffer* globalUniformBuffer;
 	Framebuffer* renderBuffer;
 	float aspectRatio = 1.0f;
-
-	Mesh* fullscreenQuad;
 
 	void render(Camera* camera);
 };

@@ -1,9 +1,11 @@
 #include "SpecializedShaderProgram.h"
 
+#include <imgui.h>
 #include "Debug.h"
 #include "ShaderProgram.h"
 #include "RenderPass.h"
 #include "Pipeline.h"
+#include "Material.h"
 
 #define SHADER_CODE_ERROR_VS "#version 420 core\n//meta pass opaque\nlayout (location = 0) in vec3 vp;\nlayout (std140, binding = 1) uniform CameraMatrices {\nmat4x4 projectionMatrix;\nmat4x4 viewMatrix;\n};\nlayout (std140, binding = 10) uniform Material {\nmat4x4 modelMatrix;\n};\nvoid main() { gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(vp, 1.0); }\n\0"
 #define SHADER_CODE_ERROR_FS "#version 420 core\nout vec4 fc;\nvoid main() { fc = vec4(1.0, 0.0, 1.0, 1.0); }\n\0"
@@ -22,6 +24,19 @@ void SpecializedShaderProgram::initialize(Pipeline* pipeline) {
 SpecializedShaderProgram::SpecializedShaderProgram(ShaderProgram*const parentShader, RenderPass* renderPass) : parentShader(parentShader), renderPass(renderPass), materials(4, 4) {}
 
 SpecializedShaderProgram::~SpecializedShaderProgram() {}
+
+void SpecializedShaderProgram::gui() {
+	if (renderPass == nullptr) return;
+	if (ImGui::TreeNode(renderPass->name.c_str())) {
+		uint matProcessed = 0;
+		for (uint matIndex = 0; matIndex < materials.capacity && matProcessed < materials.count; matIndex++) {
+			if (materials[matIndex] == nullptr) continue;
+			materials[matIndex]->gui();
+			matProcessed++;
+		}
+		ImGui::TreePop();
+	}
+}
 
 void SpecializedShaderProgram::load(const char* vsSource[3], const char* tcsSource[3], const char* tesSource[3], const char* gsSource[3], const char* fsSource[3]) {
 	if (renderPass != nullptr) {
@@ -61,6 +76,12 @@ void SpecializedShaderProgram::reload(const char* vsSource[3], const char* tcsSo
 		unload();
 	}
 	load(vsSource, tcsSource, tesSource, gsSource, fsSource);
+	uint reloadedMaterials = 0;
+	for (uint i = 0; i < materials.capacity && reloadedMaterials < materials.count; reloadedMaterials++) {
+		if (materials[i] == nullptr) continue;
+		materials[i]->reload();
+		reloadedMaterials++;
+	}
 }
 
 void SpecializedShaderProgram::unload() {

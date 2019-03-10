@@ -1,7 +1,9 @@
 #pragma once
+#include <string>
 #include <gl3w.h>
 #include "GLUtils.h"
 #include "XMath.h"
+#include "ShaderMetaInfo.h"
 
 class UniformBuffer;
 
@@ -9,6 +11,7 @@ struct UniformLayout {
 	GLuint binding = 0;
 	UniformLayoutType type = UniformLayoutType::STD140;
 	GLSLType* members = nullptr;
+	std::string* memberNames = nullptr;
 	unsigned int* membersOffsets = nullptr;
 	unsigned int memberCount = 0;
 	unsigned int size = 0;
@@ -16,6 +19,7 @@ struct UniformLayout {
 	unsigned char* buffer = nullptr;
 
 public:
+	UniformLayout(unsigned int binding, ShaderUniformBufferLayoutFieldInfo* bufferField);
 	UniformLayout(unsigned int binding, unsigned int memberCount, GLSLType* members);
 	UniformLayout(unsigned int binding, UniformLayoutType type, unsigned int memberCount, GLSLType* members);
 	~UniformLayout();
@@ -28,8 +32,36 @@ public:
 	void setMember(unsigned int index, Vec2f value);
 	void setMember(unsigned int index, Vec3f value);
 	void setMember(unsigned int index, Vec4f value);
+	void setMember(unsigned int index, Vec2i value);
+	void setMember(unsigned int index, Vec3i value);
+	void setMember(unsigned int index, Vec4i value);
 	void setMember(unsigned int index, Matrix4x4f value);
 	void setMember(unsigned int index, unsigned char* bytes, unsigned int byteSize);
+	inline bool getBool(unsigned int index) { return *getBoolPtr(index); }
+	inline int getInt(unsigned int index) { return *getIntPtr(index); }
+	inline unsigned int getUint(unsigned int index) { return *getUintPtr(index); }
+	inline float getFloat(unsigned int index) { return *getFloatPtr(index); }
+	inline double getDouble(unsigned int index) { return *getDoublePtr(index); }
+	inline Vec2f getVec2f(unsigned int index) { return *getVec2fPtr(index); }
+	inline Vec3f getVec3f(unsigned int index) { return *getVec3fPtr(index); }
+	inline Vec4f getVec4f(unsigned int index) { return *getVec4fPtr(index); }
+	inline Vec2i getVec2i(unsigned int index) { return *getVec2iPtr(index); }
+	inline Vec3i getVec3i(unsigned int index) { return *getVec3iPtr(index); }
+	inline Vec4i getVec4i(unsigned int index) { return *getVec4iPtr(index); }
+	inline Matrix4x4f getMatrix4x4f(unsigned int index) { return *getMatrix4x4fPtr(index); }
+	inline bool* getBoolPtr(unsigned int index) { return (bool*) getBytes(index); }
+	inline int* getIntPtr(unsigned int index) { return (int*) getBytes(index); }
+	inline unsigned int* getUintPtr(unsigned int index) { return (unsigned int*) getBytes(index); }
+	inline float* getFloatPtr(unsigned int index) { return (float*) getBytes(index); }
+	inline double* getDoublePtr(unsigned int index) { return (double*) getBytes(index); }
+	inline Vec2f* getVec2fPtr(unsigned int index) { return (Vec2f*) getBytes(index); }
+	inline Vec3f* getVec3fPtr(unsigned int index) { return (Vec3f*) getBytes(index); }
+	inline Vec4f* getVec4fPtr(unsigned int index) { return (Vec4f*) getBytes(index); }
+	inline Vec2i* getVec2iPtr(unsigned int index) { return (Vec2i*) getBytes(index); }
+	inline Vec3i* getVec3iPtr(unsigned int index) { return (Vec3i*) getBytes(index); }
+	inline Vec4i* getVec4iPtr(unsigned int index) { return (Vec4i*) getBytes(index); }
+	inline Matrix4x4f* getMatrix4x4fPtr(unsigned int index) { return (Matrix4x4f*) getBytes(index); }
+	unsigned char* getBytes(unsigned int index);
 	void computeLayoutOffsets();
 };
 

@@ -1,10 +1,12 @@
 #include "ShaderProgram.h"
 
 #include <filesystem>
+#include <imgui.h>
 #include "Debug.h"
-#include "ShaderReader.h"
+#include "ShaderPreprocessor.h"
 #include "SpecializedShaderProgram.h"
 #include "Pipeline.h"
+#include "RenderPass.h"
 
 #define SHADER_DIRECTORY "res/shaders/"
 
@@ -19,6 +21,7 @@ Pipeline* ShaderProgram::defaultPipeline = nullptr;
 void ShaderProgram::initializeAll(Pipeline* pipeline) {
 	defaultPipeline = pipeline;
 
+	Debug::log("==== Shaders Init ====");
 	// Shader search
 	if (!fs::exists(SHADER_DIRECTORY)) {
 		Debug::log("ShaderInit", "Shader directory " + std::string(SHADER_DIRECTORY) + " not found!");
@@ -41,6 +44,7 @@ void ShaderProgram::initializeAll(Pipeline* pipeline) {
 }
 
 void ShaderProgram::reloadAll() {
+	Debug::log("==== Shaders Reload ====");
 	for (uint i = 0; i < shaderCount; i++) {
 		shaders[i]->reload();
 	}
@@ -56,6 +60,13 @@ ShaderProgram* ShaderProgram::find(std::string name) {
 	Debug::log("ShaderFind", "Could not find shader program named " + name);
 	return nullptr;
 }
+
+void ShaderProgram::guiAll() {
+	for (uint programIndex = 0; programIndex < shaderCount; programIndex++) {
+		shaders[programIndex]->gui();
+	}
+}
+
 
 
 ShaderProgram::ShaderProgram(std::string name) : name(name) {
@@ -77,9 +88,18 @@ ShaderProgram::~ShaderProgram() {
 	}
 }
 
+void ShaderProgram::gui() {
+	if (ImGui::TreeNode(name.c_str())) {
+		for (uint specProgramIndex = 0; specProgramIndex < specializedProgramsCount; specProgramIndex++) {
+			specializedPrograms[specProgramIndex]->gui();
+		}
+		ImGui::TreePop();
+	}
+}
+
 void ShaderProgram::load() {
 	if (loaded) return;
-	ShaderReader* reader = readShaders();
+	ShaderPreprocessor* reader = readShaders();
 	if (reader == nullptr) return;
 	info = reader->programInfo;
 	
@@ -95,11 +115,11 @@ void ShaderProgram::load() {
 }
 
 void ShaderProgram::reload() {
-	ShaderReader* reader = readShaders();
+	ShaderPreprocessor* reader = readShaders();
 	if (reader == nullptr) return;
 	
 	if (reader->programInfo->passCount != info->passCount) {
-		if (specializedPrograms != nullptr) {
+		if (specializedPrograms != nullptr) { // TODO avoid deleting specialized programs that already existed
 			for (uint i = 0; i < specializedProgramsCount; i++) {
 				delete specializedPrograms[i];
 			}
@@ -129,8 +149,8 @@ void ShaderProgram::unload() {
 	loaded = false;
 }
 
-ShaderReader* ShaderProgram::readShaders() {
-	ShaderReader* reader = new ShaderReader(fs::path(SHADER_DIRECTORY) / name);
+ShaderPreprocessor* ShaderProgram::readShaders() {
+	ShaderPreprocessor* reader = new ShaderPreprocessor(fs::path(SHADER_DIRECTORY) / name);
 
 	if (!reader->read()) {
 		Debug::log("ShaderProgram", "Failed to Read shader files!");
@@ -154,18 +174,6 @@ SpecializedShaderProgram* ShaderProgram::getSpecializedProgram(RenderPass* rende
 	for (uint i = 0; i < specializedProgramsCount; i++) {
 		if (specializedPrograms[i]->getRenderPass() == renderPass) {
 			return specializedPrograms[i];
-		}
-	}
-	return nullptr;
-}
-
-ShaderFieldInfo* ShaderProgram::getMaterialFieldInfo() {
-	for (uint i = 0; i < info->programFieldCount; i++) {
-		if (info->programFields[i]->fieldType == ShaderFieldType::UniformLayout) {
-			ShaderUniformLayoutFieldInfo* uniformField = (ShaderUniformLayoutFieldInfo*) info->programFields[i];
-			if (uniformField->binding == 10) {
-				return uniformField;
-			}
 		}
 	}
 	return nullptr;

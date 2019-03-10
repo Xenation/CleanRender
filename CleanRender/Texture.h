@@ -15,9 +15,13 @@ public:
 	void uploadToGL();
 	void deleteFromGL();
 	void setName(std::string n);
+	void bind();
+	void unbind();
+	inline std::string getName() const { return name; }
 	inline bool isLoadedToGL() const { return loadedToGL; }
 	inline bool isCachedInLocal() const { return cachedInLocal; }
 	inline GLuint getTextureID() const { return textureID; }
+	inline GLenum getTextureTarget() const { return target; }
 
 private:
 	std::string name;

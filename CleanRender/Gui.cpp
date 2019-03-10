@@ -9,6 +9,7 @@
 #include "Input.h"
 #include "Time.h"
 #include "Mesh.h"
+#include "ShaderProgram.h"
 
 
 
@@ -43,6 +44,9 @@ void Gui::update() {
 		if (Input::getKeyDown(KeyCode::F2)) {
 			sceneDisplayed = !sceneDisplayed;
 		}
+		if (Input::getKeyDown(KeyCode::F3)) {
+			shadersDisplayed = !shadersDisplayed;
+		}
 	}
 
 	onUpdate();
@@ -57,6 +61,9 @@ void Gui::onUpdate() {
 		}
 		if (ImGui::MenuItem("Scene")) {
 			sceneDisplayed = !sceneDisplayed;
+		}
+		if (ImGui::MenuItem("Shaders")) {
+			shadersDisplayed = !shadersDisplayed;
 		}
 		ImGui::EndMainMenuBar();
 
@@ -76,6 +83,12 @@ void Gui::onUpdate() {
 		if (sceneDisplayed) {
 			ImGui::Begin("Scene");
 			Engine::entityManager->gui();
+			ImGui::End();
+		}
+
+		if (shadersDisplayed) {
+			ImGui::Begin("ShaderPrograms");
+			ShaderProgram::guiAll();
 			ImGui::End();
 		}
 	}

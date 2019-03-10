@@ -5,6 +5,14 @@
 
 
 
+UniformLayout::UniformLayout(unsigned int binding, ShaderUniformBufferLayoutFieldInfo* bufferField)
+	: UniformLayout(binding, bufferField->layoutType, bufferField->subFieldCount, bufferField->getMembersTypes()) {
+	memberNames = new std::string[bufferField->subFieldCount];
+	for (uint i = 0; i < bufferField->subFieldCount; i++) {
+		memberNames[i] = bufferField->subFields[i]->name;
+	}
+}
+
 UniformLayout::UniformLayout(unsigned int binding, unsigned int memberCount, GLSLType* members)
 	: UniformLayout(binding, UniformLayoutType::STD140, memberCount, members) {
 
@@ -30,35 +38,36 @@ void UniformLayout::setMember(unsigned int index, bool value) {
 	unsigned char bytes[4]{value, 0, 0, 0}; // Required because booleans are 4bytes in glsl
 	setMember(index, bytes, 4);
 }
-
 void UniformLayout::setMember(unsigned int index, int value) {
 	setMember(index, (unsigned char*) &value, 4);
 }
-
 void UniformLayout::setMember(unsigned int index, unsigned int value) {
 	setMember(index, (unsigned char*) &value, 4);
 }
-
 void UniformLayout::setMember(unsigned int index, float value) {
 	setMember(index, (unsigned char*) &value, 4);
 }
-
 void UniformLayout::setMember(unsigned int index, double value) {
 	setMember(index, (unsigned char*) &value, 8);
 }
-
 void UniformLayout::setMember(unsigned int index, Vec2f value) {
 	setMember(index, (unsigned char*) &value, 8);
 }
-
 void UniformLayout::setMember(unsigned int index, Vec3f value) {
 	setMember(index, (unsigned char*) &value, 12);
 }
-
 void UniformLayout::setMember(unsigned int index, Vec4f value) {
 	setMember(index, (unsigned char*) &value, 16);
 }
-
+void UniformLayout::setMember(unsigned int index, Vec2i value) {
+	setMember(index, (unsigned char*) &value, 8);
+}
+void UniformLayout::setMember(unsigned int index, Vec3i value) {
+	setMember(index, (unsigned char*) &value, 12);
+}
+void UniformLayout::setMember(unsigned int index, Vec4i value) {
+	setMember(index, (unsigned char*) &value, 16);
+}
 void UniformLayout::setMember(unsigned int index, Matrix4x4f value) {
 	setMember(index, (unsigned char*) &value, 64);
 }
@@ -67,6 +76,10 @@ void UniformLayout::setMember(unsigned int index, unsigned char* bytes, unsigned
 	for (unsigned int i = 0; i < byteSize; i++) {
 		buffer[membersOffsets[index] + i] = bytes[i];
 	}
+}
+
+unsigned char* UniformLayout::getBytes(unsigned int index) {
+	return &buffer[membersOffsets[index]];
 }
 
 void UniformLayout::computeLayoutOffsets() {

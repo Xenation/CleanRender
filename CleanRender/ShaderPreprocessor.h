@@ -1,9 +1,11 @@
 #pragma once
 #include <string>
+#include <regex>
 #include <filesystem>
 #include "ShaderMetaInfo.h"
+#include "SimpleList.h"
 
-class ShaderReader {
+class ShaderPreprocessor {
 public:
 	struct SpecializedShaderSource {
 		union {
@@ -31,9 +33,9 @@ public:
 	SpecializedShaderSource* gsSources = nullptr;
 	SpecializedShaderSource* fsSources = nullptr;
 
-	ShaderReader(std::filesystem::path shaderDir);
-	ShaderReader(const ShaderReader&) = delete;
-	~ShaderReader();
+	ShaderPreprocessor(std::filesystem::path shaderDir);
+	ShaderPreprocessor(const ShaderPreprocessor&) = delete;
+	~ShaderPreprocessor();
 
 	bool read();
 	bool generate();
@@ -58,6 +60,8 @@ private:
 	ShaderFile* createShaderFileInfo(std::filesystem::path filePath, GLenum type, std::string rawSource);
 	void removeComments(ShaderFile* shaderFile);
 	void extractMetaInfo(ShaderFile* shaderFile);
+	void findRegexMatches(std::string& str, std::regex& reg, SimpleList<std::smatch>& matches);
+	void removeMatches(std::string& str, SimpleList<std::smatch>& matches);
 	void mergeMetaInfo();
 	void generateSpecializedSources(ShaderFile* shaderFile, SpecializedShaderSource*& specializedSources);
 };

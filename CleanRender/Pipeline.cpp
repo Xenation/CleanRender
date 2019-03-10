@@ -2,7 +2,6 @@
 
 #include <locale>
 #include <gl3w.h>
-#include "Mesh.h"
 #include "ShaderProgram.h"
 #include "Renderer.h"
 #include "Camera.h"
@@ -25,30 +24,22 @@
 Pipeline::Pipeline(int width, int height) 
 	: renderers(RENDERERS_START_SIZE, RENDERERS_INCREASE), cameras(CAMERAS_START_SIZE, CAMERAS_INCREASE), renderPasses(RENDERPASSES_START_SIZE, RENDERERS_INCREASE) {
 
-	renderPasses.add(new RenderPassOpaque("opaque"));
-	renderPasses.add(new RenderPassTransparent("transparent"));
-
 	renderBuffer = new Framebuffer("RenderBuffer", width, height);
 	renderBuffer->createAttachments(2, new Framebuffer::Attachment[2]{Framebuffer::Attachment(GL_COLOR_ATTACHMENT0, GL_RGBA), Framebuffer::Attachment(GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT)});
 	renderBuffer->clearColor = Color(0.5f, 0, 0, 1);
+	resizeFrameBuffer(width, height);
 
-	fullscreenQuad = new Mesh(4, 6);
-	fullscreenQuad->setAttributesDefinition(2, new int[2]{3, 2}, new GLenum[2]{GL_FLOAT, GL_FLOAT});
-	float* data = new float[12]{0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0};
-	fullscreenQuad->setAttribute(0, data);
-	delete[] data;
-	data = new float[8]{0, 0, 0, 1, 1, 1, 1, 0};
-	fullscreenQuad->setAttribute(0, data);
-	delete[] data;
-	fullscreenQuad->setIndices(new unsigned int[6]{1, 0, 3, 1, 3, 2});
+	renderPasses.add(new RenderPassOpaque("opaque"));
+	renderPasses.add(new RenderPassTransparent("transparent"));
+	renderPasses.add(new RenderPassPostprocess("postprocess", renderBuffer));
 
 	SpecializedShaderProgram::initialize(this);
 	ShaderProgram::initializeAll(this);
-
-	resizeFrameBuffer(width, height);
+	ShaderProgram::find("postprocess_test")->load();
+	Material* postTestMat = new Material(ShaderProgram::find("postprocess_test"), "postprocess"); // TODO replace by better postprocess control
 
 	globalUniformBuffer = new UniformBuffer();
-	globalUniformBuffer->setLayouts(2, new UniformLayout[2]{UniformLayout(1, 2, new GLSLType[2]{GLSL_MAT4, GLSL_MAT4}), UniformLayout(2, 1, new GLSLType[1]{GLSL_FLOAT})});
+	globalUniformBuffer->setLayouts(2, new UniformLayout[2]{UniformLayout(1, 3, new GLSLType[3]{GLSL_MAT4, GLSL_MAT4, GLSL_IVEC2}), UniformLayout(2, 1, new GLSLType[1]{GLSL_FLOAT})});
 	globalUniformBuffer->uploadToGL();
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
@@ -57,7 +48,6 @@ Pipeline::Pipeline(int width, int height)
 Pipeline::~Pipeline() {
 	delete globalUniformBuffer;
 	delete renderBuffer;
-	delete fullscreenQuad;
 }
 
 
@@ -74,6 +64,7 @@ void Pipeline::render(Camera* camera) {
 	// Globals Update
 	globalUniformBuffer->getLayout(0).setMember(0, camera->getProjectionMatrix());
 	globalUniformBuffer->getLayout(0).setMember(1, camera->getViewMatrix());
+	globalUniformBuffer->getLayout(0).setMember(2, Vec2i(renderBuffer->getWidth(), renderBuffer->getHeight()));
 	globalUniformBuffer->updateLayout(0);
 	globalUniformBuffer->getLayout(1).setMember(0, Time::time);
 	globalUniformBuffer->updateLayout(1);
@@ -98,6 +89,10 @@ void Pipeline::resizeFrameBuffer(int width, int height) {
 		adjusted++;
 	}
 	renderBuffer->resize(width, height);
+	for (unsigned int passIndex = 0; passIndex < renderPasses.count; passIndex++) {
+		RenderPass* renderPass = renderPasses[passIndex];
+		renderPass->onResize(width, height);
+	}
 }
 
 unsigned int Pipeline::registerRenderer(Renderer* renderer) {
