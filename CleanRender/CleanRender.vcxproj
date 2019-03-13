@@ -182,6 +182,7 @@
     <ClCompile Include="ext\imgui_widgets.cpp" />
     <ClCompile Include="ext\lodepng.cpp" />
     <ClCompile Include="Framebuffer.cpp" />
+    <ClCompile Include="Game.cpp" />
     <ClCompile Include="Gui.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Material.cpp" />
@@ -222,6 +223,7 @@
     <ClInclude Include="ext\imstb_truetype.h" />
     <ClInclude Include="ext\lodepng.h" />
     <ClInclude Include="Framebuffer.h" />
+    <ClInclude Include="Game.h" />
     <ClInclude Include="GLUtils.h" />
     <ClInclude Include="Gui.h" />
     <ClInclude Include="HollowSet.h" />

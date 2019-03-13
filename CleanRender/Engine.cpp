@@ -7,6 +7,7 @@
 #include "EntityManager.h"
 #include "Gui.h"
 #include "Scene.h"
+#include "Game.h"
 
 
 
@@ -20,9 +21,10 @@ Pipeline* Engine::pipeline = nullptr;
 EntityManager* Engine::entityManager = nullptr;
 Gui* Engine::gui = nullptr;
 Scene* Engine::scene = nullptr;
+Game* Engine::game = nullptr;
 
 
-void Engine::initialize(Pipeline* pipelinePt, Gui* guiPt) {
+void Engine::initialize(Game* gamePt,  Pipeline* pipelinePt, Gui* guiPt) {
 	window = new Window();
 	entityManager = new EntityManager();
 	if (pipelinePt == nullptr) {
@@ -35,6 +37,9 @@ void Engine::initialize(Pipeline* pipelinePt, Gui* guiPt) {
 	} else {
 		gui = guiPt;
 	}
+
+	game = gamePt;
+	game->initialize();
 }
 
 void Engine::loop() {
@@ -43,11 +48,13 @@ void Engine::loop() {
 		// INPUT
 		Input::PollEvents();
 		// UPDATE
+		game->preUpdate();
 		entityManager->updateEntities();
 		if (scene != nullptr) {
 			scene->update();
 		}
 		gui->update();
+		game->postUpdate();
 		// RENDER
 		pipeline->render();
 		gui->render();
@@ -57,6 +64,8 @@ void Engine::loop() {
 }
 
 void Engine::destroy() {
+	game->cleanUp();
+
 	delete scene;
 	delete entityManager;
 	delete gui;

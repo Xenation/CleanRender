@@ -165,6 +165,9 @@
     <ClCompile Include="ShaderPreprocessor.cpp">
       <Filter>Source Files\Engine\Render\Shader</Filter>
     </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Debug.h">
@@ -301,6 +304,9 @@
     </ClInclude>
     <ClInclude Include="ShaderPreprocessor.h">
       <Filter>Header Files\Engine\Render\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>Header Files\Engine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

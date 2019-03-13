@@ -36,10 +36,16 @@
     <ClCompile Include="TestScene.cpp">
       <Filter>Source Files\Scenes</Filter>
     </ClCompile>
+    <ClCompile Include="TestGame.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestScene.h">
       <Filter>Header Files\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="TestGame.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -49,13 +55,7 @@
     <CopyFileToFolders Include="res\shaders\test\fs.glsl">
       <Filter>Resource Files\shaders\test</Filter>
     </CopyFileToFolders>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="res\shaders\postprocess_test\fs.glsl">
-      <Filter>Resource Files\shaders\postprocess_test</Filter>
-    </None>
-    <None Include="res\shaders\postprocess_test\vs.glsl">
-      <Filter>Resource Files\shaders\postprocess_test</Filter>
-    </None>
+    <CopyFileToFolders Include="res\shaders\postprocess_test\fs.glsl" />
+    <CopyFileToFolders Include="res\shaders\postprocess_test\vs.glsl" />
   </ItemGroup>
 </Project>

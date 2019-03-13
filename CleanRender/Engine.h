@@ -1,9 +1,12 @@
 #pragma once
+
 class Window;
 class Pipeline;
 class EntityManager;
 class Scene;
 class Gui;
+class Game;
+
 class Engine {
 public:
 	static Window* window;
@@ -11,8 +14,9 @@ public:
 	static EntityManager* entityManager;
 	static Gui* gui;
 	static Scene* scene;
+	static Game* game;
 
-	static void initialize(Pipeline* pipeline = nullptr, Gui* gui = nullptr);
+	static void initialize(Game* game, Pipeline* pipeline = nullptr, Gui* gui = nullptr);
 	static void loop();
 	static void destroy();
 private:
