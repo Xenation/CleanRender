@@ -24,9 +24,9 @@
 Pipeline::Pipeline(int width, int height) 
 	: renderers(RENDERERS_START_SIZE, RENDERERS_INCREASE), cameras(CAMERAS_START_SIZE, CAMERAS_INCREASE), renderPasses(RENDERPASSES_START_SIZE, RENDERERS_INCREASE) {
 
-	renderBuffer = new Framebuffer("RenderBuffer", width, height);
+	renderBuffer = new Framebuffer("RenderBuffer", width, height, 8);
 	renderBuffer->createAttachments(2, new Framebuffer::Attachment[2]{Framebuffer::Attachment(GL_COLOR_ATTACHMENT0, GL_RGBA), Framebuffer::Attachment(GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT)});
-	renderBuffer->clearColor = Color(0.5f, 0, 0, 1);
+	renderBuffer->clearColor = Color(0.52f, 0.80f, 0.97f, 1); //135-206-250
 	resizeFrameBuffer(width, height);
 
 	renderPasses.add(new RenderPassOpaque("opaque"));
