@@ -89,11 +89,8 @@ ShaderProgram::~ShaderProgram() {
 }
 
 void ShaderProgram::gui() {
-	if (ImGui::TreeNode(name.c_str())) {
-		for (uint specProgramIndex = 0; specProgramIndex < specializedProgramsCount; specProgramIndex++) {
-			specializedPrograms[specProgramIndex]->gui();
-		}
-		ImGui::TreePop();
+	for (uint specProgramIndex = 0; specProgramIndex < specializedProgramsCount; specProgramIndex++) {
+		specializedPrograms[specProgramIndex]->gui();
 	}
 }
 

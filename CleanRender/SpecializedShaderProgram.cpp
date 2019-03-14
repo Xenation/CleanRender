@@ -27,14 +27,11 @@ SpecializedShaderProgram::~SpecializedShaderProgram() {}
 
 void SpecializedShaderProgram::gui() {
 	if (renderPass == nullptr) return;
-	if (ImGui::TreeNode(renderPass->name.c_str())) {
-		uint matProcessed = 0;
-		for (uint matIndex = 0; matIndex < materials.capacity && matProcessed < materials.count; matIndex++) {
-			if (materials[matIndex] == nullptr) continue;
-			materials[matIndex]->gui();
-			matProcessed++;
-		}
-		ImGui::TreePop();
+	uint matProcessed = 0;
+	for (uint matIndex = 0; matIndex < materials.capacity && matProcessed < materials.count; matIndex++) {
+		if (materials[matIndex] == nullptr) continue;
+		materials[matIndex]->gui();
+		matProcessed++;
 	}
 }
 

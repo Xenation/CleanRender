@@ -50,7 +50,7 @@ Material::~Material() {
 
 
 void Material::gui() {
-	if (ImGui::TreeNode("material")) {
+	if (ImGui::TreeNode((specializedProgram->parentShader->name + "/" + specializedProgram->getRenderPass()->name + "/" + name).c_str())) {
 		for (uint texIndex = 0; texIndex < textureFieldCount; texIndex++) {
 			TextureField& texField = textureFields[texIndex];
 			std::string texName = texField.texture->getName();
