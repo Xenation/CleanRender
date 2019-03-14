@@ -36,7 +36,7 @@ Pipeline::Pipeline(int width, int height)
 	SpecializedShaderProgram::initialize(this);
 	ShaderProgram::initializeAll(this);
 
-	globalUniformBuffer = new UniformBuffer();
+	globalUniformBuffer = new UniformBuffer("Global");
 	globalUniformBuffer->setLayouts(2, new UniformLayout[2]{UniformLayout(1, 3, new GLSLType[3]{GLSL_MAT4, GLSL_MAT4, GLSL_IVEC2}), UniformLayout(2, 1, new GLSLType[1]{GLSL_FLOAT})});
 	globalUniformBuffer->uploadToGL();
 	glEnable(GL_CULL_FACE);

@@ -17,5 +17,7 @@ public:
 private:
 	ShaderProgram* postTestShader;
 	Material* postTestMaterial;
+	ShaderProgram* testShader;
+	Material* testMaterial;
 };
 

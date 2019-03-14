@@ -62,13 +62,16 @@ public:
 	inline Vec4i* getVec4iPtr(unsigned int index) { return (Vec4i*) getBytes(index); }
 	inline Matrix4x4f* getMatrix4x4fPtr(unsigned int index) { return (Matrix4x4f*) getBytes(index); }
 	unsigned char* getBytes(unsigned int index);
+
 	void computeLayoutOffsets();
 };
 
 class UniformBuffer {
 public:
-	UniformBuffer();
+	UniformBuffer(std::string name);
 	~UniformBuffer();
+
+	const std::string name;
 
 	void setLayouts(unsigned int layoutCount, UniformLayout* layouts);
 	UniformLayout& getLayout(unsigned int index);

@@ -4,10 +4,14 @@ layout (std140, binding = 2) uniform GlobalsVars {
 	float time;
 };
 
+layout (std140, binding = 10) uniform Material {
+	vec4 color;
+};
+
 in vec4 worldPos;
 
 out vec4 fragColor;
 
 void main() {
-	fragColor = vec4(abs(worldPos.xyz) * sin(time), 1.0);
+	fragColor = color * (sin(time) * 0.5 + 0.5);
 }

@@ -9,8 +9,10 @@ layout (std140, binding = 1) uniform Camera {
 	ivec2 resolution;
 };
 
+uniform mat4x4 modelMatrix;
+
 layout (std140, binding = 10) uniform Material {
-	mat4x4 modelMatrix;
+	vec4 color;
 };
 
 out vec4 worldPos;

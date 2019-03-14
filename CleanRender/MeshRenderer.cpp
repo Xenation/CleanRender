@@ -4,6 +4,7 @@
 #include "Entity.h"
 #include "Transform.h"
 #include "Material.h"
+#include "SpecializedShaderProgram.h"
 
 
 
@@ -15,11 +16,15 @@ MeshRenderer::~MeshRenderer() {
 
 }
 
+void MeshRenderer::setMaterial(Material* mat) {
+	Renderer::setMaterial(mat);
+	modelMatrixLocation = mat->specializedProgram->getUniformLocation("modelMatrix");
+}
+
 void MeshRenderer::render() {
 	if (mesh == nullptr) return;
 
-	material->setField(0, entity->transform->getLocalToWorldMatrix());
-	material->updateFields();
+	material->specializedProgram->loadMatrix4x4f(modelMatrixLocation, entity->transform->getLocalToWorldMatrix());
 
 	mesh->render();
 }

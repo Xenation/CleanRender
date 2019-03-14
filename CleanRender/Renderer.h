@@ -8,7 +8,7 @@ public:
 
 	virtual void render() = 0;
 
-	void setMaterial(Material* mat);
+	virtual void setMaterial(Material* mat);
 	Material* getMaterial() { return material; }
 
 protected:

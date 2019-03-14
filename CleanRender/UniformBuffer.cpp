@@ -100,7 +100,7 @@ void UniformLayout::computeLayoutOffsets() {
 
 
 
-UniformBuffer::UniformBuffer() {}
+UniformBuffer::UniformBuffer(std::string name) : name(name) {}
 
 UniformBuffer::~UniformBuffer() {
 	if (layouts != nullptr) {
@@ -159,6 +159,8 @@ void UniformBuffer::bindLayout(unsigned int index) {
 void UniformBuffer::uploadToGL() {
 	if (ubo == 0) {
 		glGenBuffers(1, &ubo);
+		std::string fullName = "UBO " + name;
+		glObjectLabel(GL_BUFFER, ubo, fullName.size(), fullName.c_str());
 	}
 	glBindBuffer(GL_UNIFORM_BUFFER, ubo);
 	glBufferData(GL_UNIFORM_BUFFER, bufferSize, buffer, GL_DYNAMIC_DRAW);

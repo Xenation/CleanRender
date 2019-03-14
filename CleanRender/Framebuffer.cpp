@@ -60,7 +60,7 @@ void Framebuffer::createAttachments(uint count, Attachment* attachments) {
 void Framebuffer::createAttachment(int index) {
 	Attachment& attachment = attachments[index];
 	if (attachment.texture == nullptr) {
-		attachment.texture = new Texture(name + "/Attachment/" + glAttachmentString(attachment.slot));
+		attachment.texture = new Texture(name + "/" + glAttachmentString(attachment.slot));
 	}
 	attachment.texture->createEmpty(width, height, attachment.format, glGetDefaultInternalFormat(attachment.format), samples, true, false); // TODO implement a way to manually specify internal format
 	attachment.texture->uploadToGL();

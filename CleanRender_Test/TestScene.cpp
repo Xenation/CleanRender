@@ -51,11 +51,7 @@ void TestScene::load() {
 	});
 	cubeMesh->uploadToGL();
 
-	testShader = ShaderProgram::find("test");
-	if (testShader != nullptr) {
-		testShader->load();
-	}
-	testMaterial = new Material(testShader, "opaque");
+	Material* testMaterial = Material::find("Test");
 
 	testCube = new Entity("TestCube");
 	testCube->transform->setPosition(Vec3f(5, 0, 0));
@@ -100,6 +96,4 @@ void TestScene::destroy() {
 	delete noTransfParent;
 	delete testCube;
 	delete cubeMesh;
-	delete testShader;
-	delete testMaterial;
 }

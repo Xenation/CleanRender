@@ -55,7 +55,11 @@
     <CopyFileToFolders Include="res\shaders\test\fs.glsl">
       <Filter>Resource Files\shaders\test</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="res\shaders\postprocess_test\fs.glsl" />
-    <CopyFileToFolders Include="res\shaders\postprocess_test\vs.glsl" />
+    <CopyFileToFolders Include="res\shaders\postprocess_test\fs.glsl">
+      <Filter>Resource Files\shaders\postprocess_test</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="res\shaders\postprocess_test\vs.glsl">
+      <Filter>Resource Files\shaders\postprocess_test</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
 </Project>

@@ -11,16 +11,30 @@
 
 
 Material* Material::errorMaterial = nullptr;
+HollowSet<Material*> Material::materials(8, 8);
+
+Material* Material::find(std::string name) {
+	uint materialProcessed = 0;
+	for (uint i = 0; i < materials.capacity && materialProcessed < materials.count; i++) {
+		if (materials[i] == nullptr) continue;
+		if (materials[i]->name == name) {
+			return materials[i];
+		}
+		materialProcessed++;
+	}
+	return nullptr;
+}
 
 
-Material::Material(ShaderProgram* shaderProgram, std::string renderPassName) : Material(shaderProgram->getSpecializedProgram(renderPassName)) {}
+Material::Material(std::string name, ShaderProgram* shaderProgram, std::string renderPassName) : Material(name, shaderProgram->getSpecializedProgram(renderPassName)) {}
 
-Material::Material(ShaderProgram* shaderProgram, RenderPass* renderPass) : Material(shaderProgram->getSpecializedProgram(renderPass)) {}
+Material::Material(std::string name, ShaderProgram* shaderProgram, RenderPass* renderPass) : Material(name, shaderProgram->getSpecializedProgram(renderPass)) {}
 
-Material::Material(SpecializedShaderProgram* specializedProgram)
-	: specializedProgram(specializedProgram), uniformBuffer(new UniformBuffer()), renderers(4, 16) {
+Material::Material(std::string name, SpecializedShaderProgram* specializedProgram)
+	: name(name), specializedProgram(specializedProgram), uniformBuffer(new UniformBuffer(name)), renderers(4, 16) {
 	setupFields();
 	idInProgram = specializedProgram->materials.add(this);
+	idInMaterialStore = materials.add(this);
 }
 
 Material::~Material() {
@@ -31,6 +45,7 @@ Material::~Material() {
 		delete[] textureFields;
 	}
 	specializedProgram->materials.remove(idInProgram);
+	materials.remove(idInMaterialStore);
 }
 
 
@@ -179,7 +194,7 @@ void Material::reload() {
 	if (uniformBuffer != nullptr) {
 		delete uniformBuffer;
 	}
-	uniformBuffer = new UniformBuffer();
+	uniformBuffer = new UniformBuffer(name);
 	initializeUniformBuffer();
 	reloadTextureFields();
 }

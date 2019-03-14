@@ -20,7 +20,5 @@ private:
 	Entity* noTransfParent;
 	Entity* transfChild;
 	Mesh* cubeMesh;
-	ShaderProgram* testShader;
-	Material* testMaterial;
 };
 

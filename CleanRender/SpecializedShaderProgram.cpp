@@ -244,21 +244,27 @@ GLuint SpecializedShaderProgram::loadShaderFromSourceArray(GLenum type, const ch
 	GLint compileStatus = GL_TRUE;
 	char* log = nullptr;
 	std::string typeStr;
+	std::string shortTypeStr;
 	switch (type) {
 	case GL_VERTEX_SHADER:
 		typeStr = std::string("Vertex");
+		shortTypeStr = std::string("vs");
 		break;
 	case GL_TESS_CONTROL_SHADER:
 		typeStr = std::string("Tesselation Control");
+		shortTypeStr = std::string("tcs");
 		break;
 	case GL_TESS_EVALUATION_SHADER:
 		typeStr = std::string("Tesselation Evaluation");
+		shortTypeStr = std::string("tes");
 		break;
 	case GL_FRAGMENT_SHADER:
 		typeStr = std::string("Fragment");
+		shortTypeStr = std::string("fs");
 		break;
 	case GL_GEOMETRY_SHADER:
 		typeStr = std::string("Geometry");
+		shortTypeStr = std::string("gs");
 		break;
 	}
 
@@ -267,7 +273,7 @@ GLuint SpecializedShaderProgram::loadShaderFromSourceArray(GLenum type, const ch
 		if (!silent) Debug::logError("ShaderLoad", "Program  " + parentShader->name + " could not create " + typeStr + " Shader");
 		return 0;
 	}
-	std::string label("Shader " + parentShader->name + "/" + renderPass->name + "/" + typeStr);
+	std::string label("Shader " + parentShader->name + "/" + renderPass->name + "/" + shortTypeStr);
 	glObjectLabel(GL_SHADER, shader, label.size(), label.c_str());
 
 	glShaderSource(shader, srcPiecesCount, (const GLchar**) src, NULL);

@@ -17,12 +17,15 @@ class Material {
 public:
 	static Material* errorMaterial;
 
+	static Material* find(std::string name);
+
+	const std::string name;
 	SpecializedShaderProgram*const specializedProgram;
 	HollowSet<Renderer*> renderers;
 
-	Material(ShaderProgram* shaderProgram, std::string renderPassName);
-	Material(ShaderProgram* shaderProgram, RenderPass* renderPass);
-	Material(SpecializedShaderProgram* specializedProgram);
+	Material(std::string name, ShaderProgram* shaderProgram, std::string renderPassName);
+	Material(std::string name, ShaderProgram* shaderProgram, RenderPass* renderPass);
+	Material(std::string name, SpecializedShaderProgram* specializedProgram);
 	~Material();
 
 	void gui();
@@ -49,6 +52,8 @@ public:
 	void reload();
 
 private:
+	static HollowSet<Material*> materials;
+
 	struct TextureField {
 		std::string name;
 		GLuint uniformLocation;
@@ -61,6 +66,7 @@ private:
 	TextureField* textureFields = nullptr;
 	uint textureFieldCount = 0;
 	unsigned int idInProgram = 0;
+	unsigned int idInMaterialStore = 0;
 	bool fieldsExpired = true;
 
 	void setupFields();
