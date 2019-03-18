@@ -4,6 +4,7 @@
 class Mesh {
 public:
 	static unsigned int triangleCount;
+	static Mesh* quadCentered;
 
 	Mesh(int vCount, int iCount);
 	Mesh(std::string name, int vCount, int iCount);

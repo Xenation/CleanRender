@@ -1,6 +1,8 @@
 #pragma once
 #include "Component.h"
+
 class Material;
+
 class Renderer : public Component {
 public:
 	Renderer(Entity* entity);

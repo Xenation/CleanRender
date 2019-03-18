@@ -19,5 +19,7 @@ private:
 	Material* postTestMaterial;
 	ShaderProgram* testShader;
 	Material* testMaterial;
+	ShaderProgram* particleShader;
+	Material* particleMaterial;
 };
 

@@ -114,6 +114,14 @@ inline int floorToInt(double d) {
 inline int floorToInt(float f) {
 	return (f > 0) ? (int) f : (int) (f - 1);
 }
+
+inline int ceilToInt(double d) {
+	return (d > 0) ? ((int) d) + 1 : ((int) (d - 1)) - 1;
+}
+
+inline int ceilToInt(float f) {
+	return (f > 0) ? ((int) f) + 1 : ((int) (f - 1)) - 1;
+}
 #pragma endregion
 
 #pragma region Vectors

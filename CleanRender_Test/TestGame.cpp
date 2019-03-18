@@ -22,6 +22,13 @@ void TestGame::initialize() {
 	}
 	testMaterial = new Material("Test", testShader, "opaque");
 	testMaterial->setField(0, Color(1.0f, 0.5f, 0.0f));
+
+	particleShader = ShaderProgram::find("particle_basic");
+	if (particleShader != nullptr) {
+		particleShader->load();
+	}
+	particleMaterial = new Material("ParticleBasic", particleShader, "opaque");
+	particleMaterial->setField(0, Color(1.0f, 1.0f, 0.0f));
 }
 
 void TestGame::preUpdate() {
@@ -37,4 +44,6 @@ void TestGame::cleanUp() {
 	//delete postTestShader;
 	delete testMaterial;
 	delete testShader;
+	delete particleMaterial;
+	delete particleShader;
 }

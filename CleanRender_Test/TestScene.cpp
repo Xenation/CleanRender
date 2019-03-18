@@ -1,6 +1,7 @@
 #include "TestScene.h"
 
 #include <Material.h>
+#include <ParticleSystem.h>
 #include "Mesh.h"
 #include "Entity.h"
 #include "MeshRenderer.h"
@@ -83,6 +84,10 @@ void TestScene::load() {
 	MeshRenderer* subTransfRend = subTransfChild->addComponent<MeshRenderer>();
 	subTransfRend->setMaterial(testMaterial);
 	subTransfRend->setMesh(cubeMesh);
+	ParticleSystem* particleSystem = subTransfChild->addComponent<ParticleSystem>();
+	particleSystem->emitRate = 30;
+	particleSystem->setMaterial(Material::find("ParticleBasic"));
+	particleSystem->startEmit();
 }
 
 void TestScene::update() {

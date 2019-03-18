@@ -186,6 +186,7 @@
     <ClCompile Include="Gui.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Material.cpp" />
+    <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="RenderPass.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="ShaderMetaInfo.cpp" />
@@ -229,6 +230,7 @@
     <ClInclude Include="HollowSet.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Material.h" />
+    <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="Perlin.h" />
     <ClInclude Include="RenderPass.h" />
     <ClInclude Include="ShaderProgram.h" />

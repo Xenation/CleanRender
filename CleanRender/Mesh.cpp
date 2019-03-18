@@ -7,6 +7,7 @@
 
 
 unsigned int Mesh::triangleCount = 0;
+Mesh* Mesh::quadCentered = nullptr;
 
 
 Mesh::Mesh(int vCount, int iCount) : Mesh("", vCount, iCount) {}
@@ -219,7 +220,10 @@ void Mesh::deleteFromGL() {
 }
 
 void Mesh::render() const {
-	if (!loadedToGL) return;
+	if (!loadedToGL) {
+		Debug::log("Mesh", "Trying to render a mesh that is not loaded to GL!");
+		return;
+	}
 
 	triangleCount += indexCount / 3;
 
