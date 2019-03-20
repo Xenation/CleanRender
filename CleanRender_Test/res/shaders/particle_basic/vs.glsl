@@ -1,8 +1,9 @@
 #version 420
-#pragma pass opaque
+#pragma pass transparent
 
-layout (location = 0) in vec3 vertexPos;
-layout (location = 1) in vec2 vertexUV;
+layout (location = 0) in vec3 particlePos;
+layout (location = 1) in vec3 particleVel;
+layout (location = 2) in vec2 particleParams;
 
 layout (std140, binding = 1) uniform Camera {
 	mat4x4 projectionMatrix;
@@ -14,13 +15,14 @@ uniform mat4x4 modelMatrix;
 
 layout (std140, binding = 10) uniform Material {
 	vec4 color;
+	float test;
 };
 
-out vec4 worldPos;
-out vec2 uv;
+out vec3 geomPartVel;
+out vec2 geomPartParams;
 
 void main() {
-	uv = vertexUV;
-	worldPos = modelMatrix * vec4(vertexPos, 1.0);
-	gl_Position = projectionMatrix * viewMatrix * worldPos;
+	geomPartVel = particleVel;
+	geomPartParams = particleParams;
+	gl_Position = vec4(particlePos, 1.0);
 }

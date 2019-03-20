@@ -4,6 +4,7 @@
 #include "XMath.h"
 
 class Entity;
+class Mesh;
 
 class ParticleSystem : public Renderer {
 public:
@@ -12,12 +13,14 @@ public:
 		Vec3f position;
 		Vec3f velocity;
 		float creationTime;
+		float lifetime;
 	};
 
 	Particle* particles = nullptr;
 
 	float emitRate = 5;
-	float lifetime = 5;
+	float minLifetime = 5;
+	float maxLifetime = 8;
 
 	ParticleSystem(Entity* entity);
 	~ParticleSystem();
@@ -30,6 +33,7 @@ public:
 	virtual void render() override;
 
 private:
+	Mesh* mesh = nullptr;
 	bool isEmitting = false;
 	uint maxParticles = 0;
 	float emissionInterval = 0;
@@ -37,7 +41,8 @@ private:
 
 	uint modelMatrixLocation = 0;
 
-	void createParticle(const Vec3f& pos, const Vec3f& vel);
+	void createParticle(const Vec3f& pos, const Vec3f& vel, float lifetime);
+	void resizeParticleData(uint nCount);
 	void initializeQuadMesh();
 };
 

@@ -128,11 +128,82 @@ void Mesh::setAttributeData(int index, char* bytes) {
 	}
 }
 
+void Mesh::setAttributeElement(int attrIndex, int elemIndex, signed char value) {
+	setAttributeElementData(attrIndex, elemIndex, (unsigned char*) &value);
+}
+
+void Mesh::setAttributeElement(int attrIndex, int elemIndex, char value) {
+	setAttributeElementData(attrIndex, elemIndex, (unsigned char*) &value);
+}
+
+void Mesh::setAttributeElement(int attrIndex, int elemIndex, short value) {
+	setAttributeElementData(attrIndex, elemIndex, (unsigned char*) &value);
+}
+
+void Mesh::setAttributeElement(int attrIndex, int elemIndex, unsigned short value) {
+	setAttributeElementData(attrIndex, elemIndex, (unsigned char*) &value);
+}
+
+void Mesh::setAttributeElement(int attrIndex, int elemIndex, int value) {
+	setAttributeElementData(attrIndex, elemIndex, (unsigned char*) &value);
+}
+
+void Mesh::setAttributeElement(int attrIndex, int elemIndex, unsigned int value) {
+	setAttributeElementData(attrIndex, elemIndex, (unsigned char*) &value);
+}
+
+void Mesh::setAttributeElement(int attrIndex, int elemIndex, float value) {
+	setAttributeElementData(attrIndex, elemIndex, (unsigned char*) &value);
+}
+
+void Mesh::setAttributeElement(int attrIndex, int elemIndex, double value) {
+	setAttributeElementData(attrIndex, elemIndex, (unsigned char*) &value);
+}
+
+void Mesh::setAttributeElement(int attrIndex, int elemIndex, Vec2i value) {
+	setAttributeElementData(attrIndex, elemIndex, (unsigned char*) &value);
+}
+
+void Mesh::setAttributeElement(int attrIndex, int elemIndex, Vec3i value) {
+	setAttributeElementData(attrIndex, elemIndex, (unsigned char*) &value);
+}
+
+void Mesh::setAttributeElement(int attrIndex, int elemIndex, Vec4i value) {
+	setAttributeElementData(attrIndex, elemIndex, (unsigned char*) &value);
+}
+
+void Mesh::setAttributeElement(int attrIndex, int elemIndex, Vec2f value) {
+	setAttributeElementData(attrIndex, elemIndex, (unsigned char*) &value);
+}
+
+void Mesh::setAttributeElement(int attrIndex, int elemIndex, Vec3f value) {
+	setAttributeElementData(attrIndex, elemIndex, (unsigned char*) &value);
+}
+
+void Mesh::setAttributeElement(int attrIndex, int elemIndex, Vec4f value) {
+	setAttributeElementData(attrIndex, elemIndex, (unsigned char*) &value);
+}
+
+void Mesh::setAttributeElementData(int attrIndex, int elemIndex, unsigned char* bytes) {
+	int attrByteOffset = attributeByteOffsets[attrIndex];
+	int attrSize = attributeSizes[attrIndex];
+	int typeSize = glTypeSize(attributeTypes[attrIndex]);
+	for (int ci = 0; ci < attrSize; ci++) {
+		for (int bi = 0; bi < typeSize; bi++) {
+			((char*) vertices)[elemIndex * vertexByteSize + attrByteOffset + ci * typeSize + bi] = bytes[ci * typeSize + bi];
+		}
+	}
+}
+
 void Mesh::setIndices(unsigned int* indices) {
 	if (this->indices != nullptr) {
 		delete[] this->indices;
 	}
 	this->indices = indices;
+}
+
+void Mesh::setTopology(GLenum topology) {
+	this->topology = topology;
 }
 
 void Mesh::setName(std::string n) {
@@ -204,6 +275,15 @@ void Mesh::uploadToGL() {
 	updateLabel();
 }
 
+void Mesh::updateInGL() {
+	if (!loadedToGL) return;
+
+	glBindBuffer(GL_ARRAY_BUFFER, vboVertices);
+	unsigned int vboVerticesSize = vertexCount * vertexByteSize;
+	glBufferSubData(GL_ARRAY_BUFFER, 0, vboVerticesSize, vertices);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
 void Mesh::deleteFromGL() {
 	if (vboIndices != 0) {
 		glDeleteBuffers(1, &vboIndices);
@@ -229,7 +309,7 @@ void Mesh::render() const {
 
 	glBindVertexArray(vao);
 
-	glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, NULL);
+	glDrawElements(topology, indexCount, GL_UNSIGNED_INT, NULL);
 
 	glBindVertexArray(0);
 }

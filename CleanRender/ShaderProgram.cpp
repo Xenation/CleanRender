@@ -112,6 +112,8 @@ void ShaderProgram::load() {
 }
 
 void ShaderProgram::reload() {
+	if (!loaded) return;
+
 	ShaderPreprocessor* reader = readShaders();
 	if (reader == nullptr) return;
 	

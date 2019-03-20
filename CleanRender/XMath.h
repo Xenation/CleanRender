@@ -122,6 +122,17 @@ inline int ceilToInt(double d) {
 inline int ceilToInt(float f) {
 	return (f > 0) ? ((int) f) + 1 : ((int) (f - 1)) - 1;
 }
+
+inline float randomValuef() {
+	return rand() / (float) RAND_MAX;
+}
+
+inline float randomRangef(float min, float max) {
+	// (r / rmax) * (max - min)
+	// max * (r / rmax) - min * (r / rmax)
+	// r * ((max - min) / rmax)
+	return rand() * ((max - min) / (float) RAND_MAX) + min;
+}
 #pragma endregion
 
 #pragma region Vectors

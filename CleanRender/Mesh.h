@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
 #include "gl3w.h"
+#include "XMath.h"
+
 class Mesh {
 public:
 	static unsigned int triangleCount;
@@ -21,14 +23,32 @@ public:
 	void setAttribute(int index, float* values);
 	void setAttribute(int index, double* values);
 	void setAttributeData(int index, char* bytes);
+	void setAttributeElement(int attrIndex, int elemIndex, signed char value);
+	void setAttributeElement(int attrIndex, int elemIndex, char value);
+	void setAttributeElement(int attrIndex, int elemIndex, short value);
+	void setAttributeElement(int attrIndex, int elemIndex, unsigned short value);
+	void setAttributeElement(int attrIndex, int elemIndex, int value);
+	void setAttributeElement(int attrIndex, int elemIndex, unsigned int value);
+	void setAttributeElement(int attrIndex, int elemIndex, float value);
+	void setAttributeElement(int attrIndex, int elemIndex, double value);
+	void setAttributeElement(int attrIndex, int elemIndex, Vec2i value);
+	void setAttributeElement(int attrIndex, int elemIndex, Vec3i value);
+	void setAttributeElement(int attrIndex, int elemIndex, Vec4i value);
+	void setAttributeElement(int attrIndex, int elemIndex, Vec2f value);
+	void setAttributeElement(int attrIndex, int elemIndex, Vec3f value);
+	void setAttributeElement(int attrIndex, int elemIndex, Vec4f value);
+	void setAttributeElementData(int attrIndex, int elemIndex, unsigned char* bytes);
 	void setIndices(unsigned int* indices);
+	void setTopology(GLenum topology);
 	void setName(std::string n);
 	void deleteLocal();
 	void uploadToGL();
+	void updateInGL();
 	void deleteFromGL();
 	void render() const;
 	inline bool isLoadedToGL() const { return loadedToGL; }
 	inline bool isCachedInLocal() const { return cachedInLocal; }
+	inline GLenum getTopology() const { return topology; }
 
 private:
 	std::string name;
@@ -46,6 +66,7 @@ private:
 	void* vertices = nullptr;
 	int indexCount;
 	unsigned int* indices = nullptr;
+	GLenum topology = GL_TRIANGLES;
 
 	void updateLabel();
 };
