@@ -43,6 +43,6 @@ private:
 
 	void createParticle(const Vec3f& pos, const Vec3f& vel, float lifetime);
 	void resizeParticleData(uint nCount);
-	void initializeQuadMesh();
+	void updateMesh();
 };
 

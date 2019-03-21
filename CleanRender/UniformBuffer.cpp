@@ -78,7 +78,32 @@ void UniformLayout::setMember(unsigned int index, unsigned char* bytes, unsigned
 	}
 }
 
-unsigned char* UniformLayout::getBytes(unsigned int index) {
+void UniformLayout::copyFrom(UniformLayout& layout) {
+	for (unsigned int i = 0; i < memberCount; i++) {
+		int toCopy = layout.indexOf(memberNames[i]);
+		if (toCopy != -1) {
+			// TODO perform type conversions when necessary (int to float, ...)
+			setMember(toCopy, layout.getBytes(toCopy), glslTypeSize(layout.members[toCopy]));
+		} else {
+			// Init at zero
+			unsigned int size = glslTypeSize(members[i]);
+			for (unsigned int bi = 0; bi < membersOffsets[i] + size; bi++) {
+				buffer[bi] = 0;
+			}
+		}
+	}
+}
+
+int UniformLayout::indexOf(std::string memberName) const {
+	for (unsigned int i = 0; i < memberCount; i++) {
+		if (memberName == memberNames[i]) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+unsigned char* UniformLayout::getBytes(unsigned int index) const {
 	return &buffer[membersOffsets[index]];
 }
 
@@ -116,24 +141,56 @@ UniformBuffer::~UniformBuffer() {
 
 
 void UniformBuffer::setLayouts(unsigned int layoutCount, UniformLayout* layouts) {
-	this->layouts = layouts;
-	this->layoutCount = layoutCount;
 	unsigned int currentOffset = 0;
 	for (unsigned int i = 0; i < layoutCount; i++) {
-		this->layouts[i].offset = currentOffset;
-		this->layouts[i].computeLayoutOffsets();
-		currentOffset += this->layouts[i].size;
+		layouts[i].offset = currentOffset;
+		layouts[i].computeLayoutOffsets();
+		currentOffset += layouts[i].size;
 		currentOffset = glGetUniformBufferAlignment(currentOffset);
 	}
-	bufferSize = this->layouts[this->layoutCount - 1].offset + this->layouts[this->layoutCount - 1].size;
-	buffer = new unsigned char[bufferSize];
+
+	unsigned int nBufferSize = layouts[layoutCount - 1].offset + layouts[layoutCount - 1].size;
+	unsigned char* nBuffer = nullptr;
+	bool resized = false;
+	if (nBufferSize != bufferSize) {
+		nBuffer = new unsigned char[nBufferSize];
+		resized = true;
+	} else {
+		nBuffer = buffer;
+	}
+
 	for (unsigned int i = 0; i < layoutCount; i++) {
-		this->layouts[i].buffer = buffer + layouts[i].offset;
+		layouts[i].buffer = nBuffer + layouts[i].offset;
+		UniformLayout* existingLayout = findLayout(layouts[i].binding);
+		if (existingLayout != nullptr) {
+			layouts[i].copyFrom(*existingLayout);
+		}
+	}
+
+	if (this->layouts != nullptr) {
+		delete[] this->layouts;
+	}
+	this->layoutCount = layoutCount;
+	this->layouts = layouts;
+
+	if (resized) {
+		if (buffer != nullptr) {
+			delete[] buffer;
+		}
+		buffer = nBuffer;
+		bufferSize = nBufferSize;
 	}
 }
 
 UniformLayout& UniformBuffer::getLayout(unsigned int index) {
 	return layouts[index];
+}
+
+UniformLayout* UniformBuffer::findLayout(GLuint binding) {
+	for (unsigned int i = 0; i < layoutCount; i++) {
+		if (layouts[i].binding == binding) return &layouts[i];
+	}
+	return nullptr;
 }
 
 void UniformBuffer::updateLayout(unsigned int index) { // TODO make a version of this function to update a single member of a layout

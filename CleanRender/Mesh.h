@@ -6,7 +6,6 @@
 class Mesh {
 public:
 	static unsigned int triangleCount;
-	static Mesh* quadCentered;
 
 	Mesh(int vCount, int iCount);
 	Mesh(std::string name, int vCount, int iCount);
@@ -40,6 +39,7 @@ public:
 	void setAttributeElementData(int attrIndex, int elemIndex, unsigned char* bytes);
 	void setIndices(unsigned int* indices);
 	void setTopology(GLenum topology);
+	void setUsageHint(GLenum usage);
 	void setName(std::string n);
 	void deleteLocal();
 	void uploadToGL();
@@ -67,6 +67,7 @@ private:
 	int indexCount;
 	unsigned int* indices = nullptr;
 	GLenum topology = GL_TRIANGLES;
+	GLenum usage = GL_STATIC_DRAW;
 
 	void updateLabel();
 };

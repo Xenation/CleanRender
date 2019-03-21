@@ -7,7 +7,6 @@
 
 
 unsigned int Mesh::triangleCount = 0;
-Mesh* Mesh::quadCentered = nullptr;
 
 
 Mesh::Mesh(int vCount, int iCount) : Mesh("", vCount, iCount) {}
@@ -206,6 +205,10 @@ void Mesh::setTopology(GLenum topology) {
 	this->topology = topology;
 }
 
+void Mesh::setUsageHint(GLenum usage) {
+	this->usage = usage;
+}
+
 void Mesh::setName(std::string n) {
 	name = n;
 	if (loadedToGL) {
@@ -251,7 +254,7 @@ void Mesh::uploadToGL() {
 	}
 	glBindBuffer(GL_ARRAY_BUFFER, vboVertices);
 	unsigned int vboVerticesSize = vertexCount * vertexByteSize;
-	glBufferData(GL_ARRAY_BUFFER, vboVerticesSize, vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, vboVerticesSize, vertices, usage);
 	for (int i = 0; i < attributeCount; i++) {
 		if (glTypeIsInteger(attributeTypes[i])) {
 			glVertexAttribIPointer(i, attributeSizes[i], attributeTypes[i], vertexByteSize, (void*) attributeByteOffsets[i]);
@@ -265,7 +268,7 @@ void Mesh::uploadToGL() {
 	}
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboIndices);
 	unsigned int vboIndicesSize = indexCount * sizeof(unsigned int);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, vboIndicesSize, indices, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, vboIndicesSize, indices, usage);
 
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);

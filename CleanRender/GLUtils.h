@@ -743,3 +743,60 @@ inline UniformLayoutType glslUniformLayoutTypeFromString(std::string typeStr) {
 		break;
 	}
 }
+
+inline unsigned int glslTypeSize(GLSLType type) {
+	switch (type) {
+	case GLSL_BOOL:
+	case GLSL_INT:
+	case GLSL_UINT:
+	case GLSL_FLOAT:
+		return 4;
+	case GLSL_DOUBLE:
+	case GLSL_BVEC2:
+	case GLSL_IVEC2:
+	case GLSL_UVEC2:
+	case GLSL_VEC2:
+		return 8;
+	case GLSL_BVEC3:
+	case GLSL_IVEC3:
+	case GLSL_UVEC3:
+	case GLSL_VEC3:
+		return 12;
+	case GLSL_BVEC4:
+	case GLSL_IVEC4:
+	case GLSL_UVEC4:
+	case GLSL_VEC4:
+	case GLSL_DVEC2:
+	case GLSL_MAT2x2:
+		return 16;
+	case GLSL_DVEC3:
+	case GLSL_MAT2x3:
+	case GLSL_MAT3x2:
+		return 24;
+	case GLSL_DVEC4:
+	case GLSL_MAT2x4:
+	case GLSL_MAT4x2:
+	case GLSL_DMAT2x2:
+		return 32;
+	case GLSL_MAT3x3:
+		return 36;
+	case GLSL_MAT3x4:
+	case GLSL_MAT4x3:
+	case GLSL_DMAT2x3:
+	case GLSL_DMAT3x2:
+		return 48;
+	case GLSL_MAT4x4:
+	case GLSL_DMAT2x4:
+	case GLSL_DMAT4x2:
+		return 64;
+	case GLSL_DMAT3x3:
+		return 72;
+	case GLSL_DMAT3x4:
+	case GLSL_DMAT4x3:
+		return 96;
+	case GLSL_DMAT4x4:
+		return 128;
+	default: // Other types are ints in disguise
+		return 4;
+	}
+}

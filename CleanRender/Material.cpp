@@ -191,10 +191,6 @@ void Material::use() {
 }
 
 void Material::reload() {
-	if (uniformBuffer != nullptr) {
-		delete uniformBuffer;
-	}
-	uniformBuffer = new UniformBuffer(name);
 	initializeUniformBuffer();
 	reloadTextureFields();
 }
