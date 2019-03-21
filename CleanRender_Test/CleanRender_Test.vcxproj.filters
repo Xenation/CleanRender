@@ -64,11 +64,13 @@
     <CopyFileToFolders Include="res\shaders\postprocess_test\vs.glsl">
       <Filter>Resource Files\shaders\postprocess_test</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="res\shaders\particle_basic\gs.glsl" />
     <CopyFileToFolders Include="res\shaders\particle_basic\vs.glsl">
       <Filter>Resource Files\shaders\particle_basic</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="res\shaders\particle_basic\fs.glsl">
+      <Filter>Resource Files\shaders\particle_basic</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="res\shaders\particle_basic\gs.glsl">
       <Filter>Resource Files\shaders\particle_basic</Filter>
     </CopyFileToFolders>
   </ItemGroup>
