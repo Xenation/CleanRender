@@ -19,111 +19,75 @@ Transform::~Transform() {
 
 
 Matrix4x4f Transform::getLocalToWorldMatrix() {
-	if (localToWorldMatrixExpired) {
-		recalculateLTWMatrix();
-	}
 	return localToWorldMatrix;
 }
 
 Matrix4x4f Transform::getWorldToLocalMatrix() {
-	if (worldToLocalMatrixExpired) {
-		recalculateWTLMatrix();
-	}
 	return worldToLocalMatrix;
 }
 
 Vec4f Transform::localToWorld(Vec4f vec) {
-	if (localToWorldMatrixExpired) {
-		recalculateLTWMatrix();
-	}
 	return localToWorldMatrix * vec;
 }
 
 Vec3f Transform::localToWorldPos(Vec3f pos) {
-	if (localToWorldMatrixExpired) {
-		recalculateLTWMatrix();
-	}
 	return localToWorldMatrix.multPoint(pos);
 }
 
 Vec3f Transform::localToWorldDir(Vec3f dir) {
-	if (localToWorldMatrixExpired) {
-		recalculateLTWMatrix();
-	}
 	return localToWorldMatrix.multDirection(dir);
 }
 
 Vec4f Transform::worldToLocal(Vec4f vec) {
-	if (worldToLocalMatrixExpired) {
-		recalculateWTLMatrix();
-	}
 	return worldToLocalMatrix * vec;
 }
 
 Vec3f Transform::worldToLocalPos(Vec3f pos) {
-	if (worldToLocalMatrixExpired) {
-		recalculateWTLMatrix();
-	}
 	return worldToLocalMatrix.multPoint(pos);
 }
 
 Vec3f Transform::worldToLocalDir(Vec3f dir) {
-	if (worldToLocalMatrixExpired) {
-		recalculateWTLMatrix();
-	}
 	return worldToLocalMatrix.multDirection(dir);
 }
 
 void Transform::parentChanged() {
-	localToWorldMatrixExpired = true;
-	worldToLocalMatrixExpired = true;
+	updateMatricesFromLTP();
 }
 
-void Transform::invalidateMatrices() {
-	modelMatrixExpired = true;
-	localToWorldMatrixExpired = true;
-	worldToLocalMatrixExpired = true;
-	worldPositionExpired = true;
-}
-
-void Transform::recalculateModelMatrix() {
-	modelMatrix = Matrix4x4f::transformation(position, scale, rotation);
-	modelMatrixExpired = false;
-	localToWorldMatrixExpired = true;
-	worldToLocalMatrixExpired = true;
-}
-
-void Transform::recalculateLTWMatrix() {
-	if (modelMatrixExpired) {
-		recalculateModelMatrix();
-	}
-	localToWorldMatrix = modelMatrix;
+void Transform::updateMatricesFromLTP() {
+	// Update LTW
+	localToWorldMatrix = localToParentMatrix;
 	if (entity->getParent() != nullptr) {
 		Entity* currentParent = entity->getParent();
 		while (currentParent != nullptr) {
 			if (currentParent->transform != nullptr) {
-				localToWorldMatrix = currentParent->transform->getLocalToWorldMatrix() * modelMatrix;
+				localToWorldMatrix = currentParent->transform->getLocalToWorldMatrix() * localToParentMatrix;
 				break;
 			}
 			currentParent = currentParent->getParent();
 		}
 	}
 	entity->ltwChangeNotifyChildren();
-	localToWorldMatrixExpired = false;
-	worldToLocalMatrixExpired = true;
-}
 
-void Transform::recalculateWTLMatrix() {
-	if (localToWorldMatrixExpired) {
-		recalculateLTWMatrix();
-	}
+	// Update WTL
 	worldToLocalMatrix = localToWorldMatrix.inverseAffine();
-	worldToLocalMatrixExpired = false;
 }
 
-void Transform::recalculateWorldPosition() {
-	if (localToWorldMatrixExpired) {
-		recalculateLTWMatrix();
+void Transform::updateMatricesFromLTW() {
+	// Update LTP
+	Matrix4x4f parentWTL = Matrix4x4f::identity;
+	if (entity->getParent() != nullptr) {
+		Entity* currentParent = entity->getParent();
+		while (currentParent != nullptr) {
+			if (currentParent->transform != nullptr) {
+				parentWTL = currentParent->transform->getWorldToLocalMatrix();
+				break;
+			}
+			currentParent = currentParent->getParent();
+		}
 	}
-	worldPosition = localToWorldMatrix.multPoint(Vec3f::zero);
+	localToParentMatrix = parentWTL * localToWorldMatrix;
+
+	// Update WTL
+	worldToLocalMatrix = localToWorldMatrix.inverseAffine();
 }

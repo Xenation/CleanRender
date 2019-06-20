@@ -21,5 +21,6 @@ private:
 	Material* testMaterial;
 	ShaderProgram* particleShader;
 	Material* particleMaterial;
+	Material* groundMaterial;
 };
 

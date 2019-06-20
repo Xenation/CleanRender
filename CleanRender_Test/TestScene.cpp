@@ -2,14 +2,15 @@
 
 #include <Material.h>
 #include <ParticleSystem.h>
-#include "Mesh.h"
-#include "Entity.h"
-#include "MeshRenderer.h"
-#include "Camera.h"
-#include "Transform.h"
-#include "ShaderProgram.h"
+#include <Rigidbody.h>
+#include <Mesh.h>
+#include <Entity.h>
+#include <MeshRenderer.h>
+#include <Camera.h>
+#include <Transform.h>
+#include <ShaderProgram.h>
+#include <Time.h>
 #include "NoclipController.h"
-#include "Time.h"
 
 
 
@@ -22,7 +23,8 @@ void TestScene::load() {
 	camera = new Entity("Camera");
 	camera->addComponent<Camera>();
 	camera->addComponent<NoclipController>();
-	camera->transform->setPosition({0, 0, -5});
+	camera->transform->setPosition({5, 5, -5});
+	camera->transform->setRotation(Quaternion::euler({ M_PI_4, -M_PI_4, 0 }));
 
 	cubeMesh = new Mesh("Cube", 8, 36);
 	cubeMesh->setAttributesDefinition(1, new int[1]{3});
@@ -53,6 +55,7 @@ void TestScene::load() {
 	cubeMesh->uploadToGL();
 
 	Material* testMaterial = Material::find("Test");
+	Material* groundMaterial = Material::find("Ground");
 
 	testCube = new Entity("TestCube");
 	testCube->transform->setPosition(Vec3f(5, 0, 0));
@@ -78,7 +81,7 @@ void TestScene::load() {
 	Entity* subNoTransfChild = new Entity("SubNoTransfChild", false);
 	subNoTransfChild->setParent(transfChild);
 
-	Entity* subTransfChild = new Entity("SubTransfChild");
+	subTransfChild = new Entity("SubTransfChild");
 	subTransfChild->setParent(subNoTransfChild);
 	subTransfChild->transform->setPosition(Vec3f(0, 2, 0));
 	MeshRenderer* subTransfRend = subTransfChild->addComponent<MeshRenderer>();
@@ -90,11 +93,33 @@ void TestScene::load() {
 	particleSystem->minLifetime = 5;
 	particleSystem->setMaterial(Material::find("ParticleBasic"));
 	particleSystem->startEmit();
+
+	btCollisionShape* groundShape = new btBoxShape(btVector3(50.0f, 5.0f, 50.0f));
+
+	ground = new Entity("Ground");
+	ground->transform->setPosition(Vec3f(0, -10, 0));
+	ground->transform->setScale(Vec3f(50.0f, 10.0f, 50.0f));
+	MeshRenderer* groundRenderer = ground->addComponent<MeshRenderer>();
+	groundRenderer->setMaterial(groundMaterial);
+	groundRenderer->setMesh(cubeMesh);
+	Rigidbody* groundRb = ground->addComponent<Rigidbody>();
+	groundRb->Initialize(groundShape, 0.0f);
+
+	btCollisionShape* ballShape = new btSphereShape(0.5f);
+
+	ball = new Entity("Ball");
+	ball->transform->setPosition(Vec3f(0, 20, 0));
+	MeshRenderer* ballRenderer = ball->addComponent<MeshRenderer>();
+	ballRenderer->setMaterial(testMaterial);
+	ballRenderer->setMesh(cubeMesh);
+	Rigidbody* ballRb = ball->addComponent<Rigidbody>();
+	ballRb->Initialize(ballShape, 1.0f);
 }
 
 void TestScene::update() {
 	testCube->transform->rotate(Quaternion::euler(Vec3f(0, 5 * Time::deltaTime, 0)));
 	transfChild->transform->rotate(Quaternion::euler(Vec3f(2.5f * Time::deltaTime, 0, 0)));
+	subTransfChild->transform->setWorldRotation(Quaternion::identity);
 }
 
 void TestScene::destroy() {

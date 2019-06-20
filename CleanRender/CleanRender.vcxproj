@@ -100,7 +100,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>ext;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>ext;ext/bullet3/include;</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>
       </ForcedIncludeFiles>
     </ClCompile>
@@ -117,7 +117,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>ext;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>ext;ext/bullet3/include;</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>
       </ForcedIncludeFiles>
     </ClCompile>
@@ -135,7 +135,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>ext;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>ext;ext/bullet3/include;</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>
       </ForcedIncludeFiles>
     </ClCompile>
@@ -155,7 +155,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>ext;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>ext;ext/bullet3/include;</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>
       </ForcedIncludeFiles>
     </ClCompile>
@@ -187,7 +187,9 @@
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
+    <ClCompile Include="PhysicsWorld.cpp" />
     <ClCompile Include="RenderPass.cpp" />
+    <ClCompile Include="Rigidbody.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="ShaderMetaInfo.cpp" />
     <ClCompile Include="ShaderPreprocessor.cpp" />
@@ -232,7 +234,9 @@
     <ClInclude Include="Material.h" />
     <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="Perlin.h" />
+    <ClInclude Include="PhysicsWorld.h" />
     <ClInclude Include="RenderPass.h" />
+    <ClInclude Include="Rigidbody.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="ShaderMetaInfo.h" />
     <ClInclude Include="ShaderPreprocessor.h" />

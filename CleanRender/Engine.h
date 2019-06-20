@@ -6,12 +6,14 @@ class EntityManager;
 class Scene;
 class Gui;
 class Game;
+class PhysicsWorld;
 
 class Engine {
 public:
 	static Window* window;
 	static Pipeline* pipeline;
 	static EntityManager* entityManager;
+	static PhysicsWorld* physicsWorld;
 	static Gui* gui;
 	static Scene* scene;
 	static Game* game;

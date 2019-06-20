@@ -19,6 +19,9 @@ private:
 	Entity* testCube;
 	Entity* noTransfParent;
 	Entity* transfChild;
+	Entity* subTransfChild;
+	Entity* ground;
+	Entity* ball;
 	Mesh* cubeMesh;
 };
 
