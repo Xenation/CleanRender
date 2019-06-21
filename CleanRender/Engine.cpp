@@ -49,7 +49,7 @@ void Engine::loop() {
 	while (!window->shouldClose()) {
 		Time::computeFrameTimes();
 		// PHYSICS UPDATE
-		physicsWorld->Simulate(Time::deltaTime);
+		physicsWorld->simulate(Time::deltaTime);
 		// INPUT
 		Input::PollEvents();
 		// UPDATE

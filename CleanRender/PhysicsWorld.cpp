@@ -35,17 +35,17 @@ PhysicsWorld::~PhysicsWorld() {
 }
 
 
-void PhysicsWorld::Simulate(float dt) {
+void PhysicsWorld::simulate(float dt) {
 	dynamicsWorld->stepSimulation(dt, 10);
 
 	//DisplayDebugWorldContents();
 }
 
-void PhysicsWorld::RegisterRigibody(Rigidbody* rigidbody) {
+void PhysicsWorld::registerRigibody(Rigidbody* rigidbody) {
 	dynamicsWorld->addRigidBody(rigidbody->getBulletBody());
 }
 
-void PhysicsWorld::UnregisterRigidbody(Rigidbody* rigidbody) {
+void PhysicsWorld::unregisterRigidbody(Rigidbody* rigidbody) {
 	dynamicsWorld->removeRigidBody(rigidbody->getBulletBody());
 }
 

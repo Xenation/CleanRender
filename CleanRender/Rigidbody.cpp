@@ -46,22 +46,22 @@ Rigidbody::~Rigidbody() {
 
 
 void Rigidbody::onEnable() {
-	Engine::physicsWorld->RegisterRigibody(this);
+	Engine::physicsWorld->registerRigibody(this);
 }
 
 void Rigidbody::onDisable() {
-	Engine::physicsWorld->UnregisterRigidbody(this);
+	Engine::physicsWorld->unregisterRigidbody(this);
 }
 
 void Rigidbody::setMass(float mass) {
-	Engine::physicsWorld->UnregisterRigidbody(this);
+	Engine::physicsWorld->unregisterRigidbody(this);
 	this->mass = mass;
 	btVector3 localInertia(0, 0, 0);
 	if (mass != 0.0f) {
 		collider->getBulletShape()->calculateLocalInertia(mass, localInertia);
 	}
 	body->setMassProps(mass, localInertia);
-	Engine::physicsWorld->RegisterRigibody(this);
+	Engine::physicsWorld->registerRigibody(this);
 	if (mass != 0.0f) {
 		body->activate();
 	}
@@ -78,7 +78,7 @@ void Rigidbody::setKinematic(bool kinematic) {
 }
 
 void Rigidbody::setCollider(Collider* collider) {
-	Engine::physicsWorld->UnregisterRigidbody(this);
+	Engine::physicsWorld->unregisterRigidbody(this);
 	this->collider = collider;
 	body->setCollisionShape(collider->getBulletShape());
 	btVector3 localInertia(0, 0, 0);
@@ -86,5 +86,5 @@ void Rigidbody::setCollider(Collider* collider) {
 		this->collider->getBulletShape()->calculateLocalInertia(mass, localInertia);
 	}
 	body->setMassProps(mass, localInertia);
-	Engine::physicsWorld->RegisterRigibody(this);
+	Engine::physicsWorld->registerRigibody(this);
 }

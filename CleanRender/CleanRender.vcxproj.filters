@@ -207,6 +207,9 @@
     <ClCompile Include="Perlin.cpp">
       <Filter>Source Files\Engine</Filter>
     </ClCompile>
+    <ClCompile Include="CompoundCollider.cpp">
+      <Filter>Source Files\Engine\Physics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Debug.h">
@@ -375,6 +378,9 @@
       <Filter>Header Files\Engine\Physics</Filter>
     </ClInclude>
     <ClInclude Include="BulletMesh.h">
+      <Filter>Header Files\Engine\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="CompoundCollider.h">
       <Filter>Header Files\Engine\Physics</Filter>
     </ClInclude>
   </ItemGroup>

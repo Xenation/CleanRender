@@ -171,6 +171,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="Component.cpp" />
+    <ClCompile Include="CompoundCollider.cpp" />
     <ClCompile Include="ConcaveMeshCollider.cpp" />
     <ClCompile Include="ConvexMeshCollider.cpp" />
     <ClCompile Include="Engine.cpp" />
@@ -221,6 +222,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="Component.h" />
+    <ClInclude Include="CompoundCollider.h" />
     <ClInclude Include="ConcaveMeshCollider.h" />
     <ClInclude Include="ConvexMeshCollider.h" />
     <ClInclude Include="Debug.h" />

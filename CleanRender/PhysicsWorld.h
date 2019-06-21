@@ -16,10 +16,10 @@ public:
 	PhysicsWorld();
 	~PhysicsWorld();
 
-	void Simulate(float dt);
+	void simulate(float dt);
 
-	void RegisterRigibody(Rigidbody* rigidbody);
-	void UnregisterRigidbody(Rigidbody* rigidbody);
+	void registerRigibody(Rigidbody* rigidbody);
+	void unregisterRigidbody(Rigidbody* rigidbody);
 
 private:
 	btDefaultCollisionConfiguration* collisionConfiguration;
