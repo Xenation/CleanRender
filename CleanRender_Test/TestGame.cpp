@@ -29,6 +29,9 @@ void TestGame::initialize() {
 	}
 	particleMaterial = new Material("ParticleBasic", particleShader, "transparent");
 	particleMaterial->setField(0, Color(1.0f, 1.0f, 0.0f));
+
+	groundMaterial = new Material("Ground", testShader, "opaque");
+	groundMaterial->setField(0, Color(0.5f, 0.5f, 0.0f));
 }
 
 void TestGame::preUpdate() {

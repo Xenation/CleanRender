@@ -100,7 +100,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>ext;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>ext;ext/bullet3/include;</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>
       </ForcedIncludeFiles>
     </ClCompile>
@@ -117,7 +117,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>ext;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>ext;ext/bullet3/include;</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>
       </ForcedIncludeFiles>
     </ClCompile>
@@ -135,7 +135,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>ext;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>ext;ext/bullet3/include;</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>
       </ForcedIncludeFiles>
     </ClCompile>
@@ -155,7 +155,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>ext;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>ext;ext/bullet3/include;</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>
       </ForcedIncludeFiles>
     </ClCompile>
@@ -166,8 +166,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BoxCollider.cpp" />
+    <ClCompile Include="BulletMesh.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Collider.cpp" />
     <ClCompile Include="Component.cpp" />
+    <ClCompile Include="ConcaveMeshCollider.cpp" />
+    <ClCompile Include="ConvexMeshCollider.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="EntityManager.cpp" />
@@ -186,13 +191,17 @@
     <ClCompile Include="Gui.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Material.cpp" />
+    <ClCompile Include="MeshCollider.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
+    <ClCompile Include="PhysicsWorld.cpp" />
     <ClCompile Include="Perlin.cpp" />
     <ClCompile Include="RenderPass.cpp" />
+    <ClCompile Include="Rigidbody.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="ShaderMetaInfo.cpp" />
     <ClCompile Include="ShaderPreprocessor.cpp" />
     <ClCompile Include="SpecializedShaderProgram.cpp" />
+    <ClCompile Include="SphereCollider.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="UniformBuffer.cpp" />
     <ClCompile Include="XMath.cpp" />
@@ -207,8 +216,13 @@
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BoxCollider.h" />
+    <ClInclude Include="BulletMesh.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Collider.h" />
     <ClInclude Include="Component.h" />
+    <ClInclude Include="ConcaveMeshCollider.h" />
+    <ClInclude Include="ConvexMeshCollider.h" />
     <ClInclude Include="Debug.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="Entity.h" />
@@ -231,13 +245,17 @@
     <ClInclude Include="HollowSet.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Material.h" />
+    <ClInclude Include="MeshCollider.h" />
     <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="Perlin.h" />
+    <ClInclude Include="PhysicsWorld.h" />
     <ClInclude Include="RenderPass.h" />
+    <ClInclude Include="Rigidbody.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="ShaderMetaInfo.h" />
     <ClInclude Include="ShaderPreprocessor.h" />
     <ClInclude Include="SpecializedShaderProgram.h" />
+    <ClInclude Include="SphereCollider.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="UniformBuffer.h" />
     <ClInclude Include="XMath.h" />

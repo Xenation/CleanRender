@@ -65,12 +65,12 @@ const Vec4f Vec4f::backward = {0, 0, -1, 0};
 // Rotor3f
 const Rotor3f Rotor3f::identity = {1, {0, 0, 0}};
 // Matrix4x4f
-const Matrix4x4f Matrix4x4f::identity = {{
+const Matrix4x4f Matrix4x4f::identity = {
 	1, 0, 0, 0,
 	0, 1, 0, 0,
 	0, 0, 1, 0,
 	0, 0, 0, 1
-}};
+};
 // Quaternion
 const Quaternion Quaternion::identity = {0.0f, 0.0f, 0.0f, 1.0f};
 // Color
@@ -217,13 +217,21 @@ Vec4f Matrix4x4f::solve(Matrix4x4f &lu, Vec4f toSolve) {
 	return x;
 }
 
-std::string Matrix4x4f::toString() {
+const char* Matrix4x4f::toCString() {
 	return (
 		std::to_string(m00) + ", " + std::to_string(m01) + ", " + std::to_string(m02) + ", " + std::to_string(m03) + ",\n" +
 		std::to_string(m10) + ", " + std::to_string(m11) + ", " + std::to_string(m12) + ", " + std::to_string(m13) + ",\n" +
 		std::to_string(m20) + ", " + std::to_string(m21) + ", " + std::to_string(m22) + ", " + std::to_string(m23) + ",\n" +
 		std::to_string(m30) + ", " + std::to_string(m31) + ", " + std::to_string(m32) + ", " + std::to_string(m33) + "\n"
 	).c_str();
+}
+std::string Matrix4x4f::toString() {
+	return (
+		std::to_string(m00) + ", " + std::to_string(m01) + ", " + std::to_string(m02) + ", " + std::to_string(m03) + ",\n" +
+		std::to_string(m10) + ", " + std::to_string(m11) + ", " + std::to_string(m12) + ", " + std::to_string(m13) + ",\n" +
+		std::to_string(m20) + ", " + std::to_string(m21) + ", " + std::to_string(m22) + ", " + std::to_string(m23) + ",\n" +
+		std::to_string(m30) + ", " + std::to_string(m31) + ", " + std::to_string(m32) + ", " + std::to_string(m33) + "\n"
+	);
 }
 
 /* ---- Others ---- */

@@ -8,6 +8,7 @@
 #include "Gui.h"
 #include "Scene.h"
 #include "Game.h"
+#include "PhysicsWorld.h"
 
 
 
@@ -19,6 +20,7 @@ Engine::~Engine() {}
 Window* Engine::window = nullptr;
 Pipeline* Engine::pipeline = nullptr;
 EntityManager* Engine::entityManager = nullptr;
+PhysicsWorld* Engine::physicsWorld = nullptr;
 Gui* Engine::gui = nullptr;
 Scene* Engine::scene = nullptr;
 Game* Engine::game = nullptr;
@@ -27,6 +29,7 @@ Game* Engine::game = nullptr;
 void Engine::initialize(Game* gamePt,  Pipeline* pipelinePt, Gui* guiPt) {
 	window = new Window();
 	entityManager = new EntityManager();
+	physicsWorld = new PhysicsWorld();
 	if (pipelinePt == nullptr) {
 		pipeline = new Pipeline(window->getWidth(), window->getHeight());
 	} else {
@@ -45,6 +48,8 @@ void Engine::initialize(Game* gamePt,  Pipeline* pipelinePt, Gui* guiPt) {
 void Engine::loop() {
 	while (!window->shouldClose()) {
 		Time::computeFrameTimes();
+		// PHYSICS UPDATE
+		physicsWorld->Simulate(Time::deltaTime);
 		// INPUT
 		Input::PollEvents();
 		// UPDATE

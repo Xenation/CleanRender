@@ -13,5 +13,5 @@ in vec4 worldPos;
 out vec4 fragColor;
 
 void main() {
-	fragColor = color * (sin(time) * 0.5 + 0.5);
+	fragColor = color;
 }
