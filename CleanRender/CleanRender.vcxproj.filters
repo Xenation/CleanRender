@@ -171,6 +171,9 @@
     <ClCompile Include="ParticleSystem.cpp">
       <Filter>Source Files\Engine\Entity\Components</Filter>
     </ClCompile>
+    <ClCompile Include="Perlin.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Debug.h">

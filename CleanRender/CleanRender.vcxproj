@@ -187,6 +187,7 @@
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
+    <ClCompile Include="Perlin.cpp" />
     <ClCompile Include="RenderPass.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="ShaderMetaInfo.cpp" />
