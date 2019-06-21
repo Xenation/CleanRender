@@ -17,10 +17,10 @@ public:
 	inline void setPosition(Vec3f pos) { localToParentMatrix.translation() = pos; updateMatricesFromLTP(); }
 	inline void setWorldPosition(Vec3f pos) { localToWorldMatrix.translation() = pos; updateMatricesFromLTW(); }
 	inline void translate(Vec3f translation) { localToParentMatrix.translation() += translation; updateMatricesFromLTP(); }
-	inline void setScale(Vec3f sca) { scale = sca; localToParentMatrix = Matrix4x4f::transformation(localToParentMatrix.translation(), scale, localToParentMatrix.rotation()); updateMatricesFromLTP(); }
+	inline void setScale(Vec3f sca) { scale = sca; localToParentMatrix = Matrix4x4f::transformation(localToParentMatrix.translation(), scale, rotation); updateMatricesFromLTP(); }
 	inline void setWorldScale(Vec3f sca) { localToWorldMatrix = Matrix4x4f::transformation(localToWorldMatrix.translation(), sca, localToWorldMatrix.rotation()); updateMatricesFromLTW(); }
-	inline void setRotation(Quaternion rot) { rotation = rot; localToParentMatrix = Matrix4x4f::transformation(localToParentMatrix.translation(), localToParentMatrix.scale(), rotation); updateMatricesFromLTP(); }
-	inline void rotate(Quaternion rot) { rotation *= rot; localToParentMatrix = Matrix4x4f::transformation(localToParentMatrix.translation(), localToParentMatrix.scale(), rotation); updateMatricesFromLTP(); }
+	inline void setRotation(Quaternion rot) { rotation = rot; localToParentMatrix = Matrix4x4f::transformation(localToParentMatrix.translation(), scale, rotation); updateMatricesFromLTP(); }
+	inline void rotate(Quaternion rot) { rotation *= rot; localToParentMatrix = Matrix4x4f::transformation(localToParentMatrix.translation(), scale, rotation); updateMatricesFromLTP(); }
 	inline void setWorldRotation(Quaternion rot) { localToWorldMatrix = Matrix4x4f::transformation(localToWorldMatrix.translation(), localToWorldMatrix.scale(), rot); updateMatricesFromLTW(); }
 
 	Matrix4x4f getLocalToWorldMatrix();
@@ -51,11 +51,5 @@ private:
 
 	void updateMatricesFromLTP();
 	void updateMatricesFromLTW();
-
-	/*void invalidateMatrices();
-	void recalculateLTPMatrix();
-	void recalculateLTWMatrix();
-	void recalculateWTLMatrix();
-	void recalculateWorldPosition();*/
 };
 

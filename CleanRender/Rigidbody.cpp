@@ -4,6 +4,7 @@
 #include "Entity.h"
 #include "Engine.h"
 #include "PhysicsWorld.h"
+#include "Collider.h"
 
 
 
@@ -33,19 +34,57 @@ void SynchronizedTransform::setWorldTransform(const btTransform& worldTransform)
 
 
 Rigidbody::Rigidbody(Entity* entity) : Component(entity), syncTransform(entity->transform) {
-	
+	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, &syncTransform, Collider::empty->getBulletShape());
+	body = new btRigidBody(rbInfo);
 }
 
 Rigidbody::~Rigidbody() {
 	if (body != nullptr) {
-		Engine::physicsWorld->UnregisterRigidbody(this);
 		delete body;
 	}
 }
 
 
-void Rigidbody::Initialize(btCollisionShape* shape, float mass) {
-	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, &syncTransform, shape);
-	body = new btRigidBody(rbInfo);
+void Rigidbody::onEnable() {
+	Engine::physicsWorld->RegisterRigibody(this);
+}
+
+void Rigidbody::onDisable() {
+	Engine::physicsWorld->UnregisterRigidbody(this);
+}
+
+void Rigidbody::setMass(float mass) {
+	Engine::physicsWorld->UnregisterRigidbody(this);
+	this->mass = mass;
+	btVector3 localInertia(0, 0, 0);
+	if (mass != 0.0f) {
+		collider->getBulletShape()->calculateLocalInertia(mass, localInertia);
+	}
+	body->setMassProps(mass, localInertia);
+	Engine::physicsWorld->RegisterRigibody(this);
+	if (mass != 0.0f) {
+		body->activate();
+	}
+}
+
+void Rigidbody::setKinematic(bool kinematic) {
+	if (kinematic) {
+		body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
+		body->setActivationState(DISABLE_DEACTIVATION);
+	} else {
+		body->setCollisionFlags(body->getCollisionFlags() & ~btCollisionObject::CF_KINEMATIC_OBJECT);
+		body->setActivationState(WANTS_DEACTIVATION);
+	}
+}
+
+void Rigidbody::setCollider(Collider* collider) {
+	Engine::physicsWorld->UnregisterRigidbody(this);
+	this->collider = collider;
+	body->setCollisionShape(collider->getBulletShape());
+	btVector3 localInertia(0, 0, 0);
+	if (mass != 0.0f) {
+		this->collider->getBulletShape()->calculateLocalInertia(mass, localInertia);
+	}
+	body->setMassProps(mass, localInertia);
 	Engine::physicsWorld->RegisterRigibody(this);
 }

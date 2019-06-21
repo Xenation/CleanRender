@@ -61,6 +61,12 @@
     <Filter Include="Source Files\Engine\Render\Shader">
       <UniqueIdentifier>{7f9d265d-fc81-40b9-b8e6-1df80d3a01a6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Engine\Physics">
+      <UniqueIdentifier>{34f566a4-62f5-4adf-9033-1b8efa6aba1f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Physics">
+      <UniqueIdentifier>{f79de6d6-d1dc-4266-bd07-b6c0bb80f57a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Window.cpp">
@@ -171,11 +177,32 @@
     <ClCompile Include="ParticleSystem.cpp">
       <Filter>Source Files\Engine\Entity\Components</Filter>
     </ClCompile>
-    <ClCompile Include="PhysicsWorld.cpp">
-      <Filter>Source Files\Engine</Filter>
-    </ClCompile>
     <ClCompile Include="Rigidbody.cpp">
       <Filter>Source Files\Engine\Entity\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsWorld.cpp">
+      <Filter>Source Files\Engine\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Collider.cpp">
+      <Filter>Source Files\Engine\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="BoxCollider.cpp">
+      <Filter>Source Files\Engine\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="SphereCollider.cpp">
+      <Filter>Source Files\Engine\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshCollider.cpp">
+      <Filter>Source Files\Engine\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="ConvexMeshCollider.cpp">
+      <Filter>Source Files\Engine\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="ConcaveMeshCollider.cpp">
+      <Filter>Source Files\Engine\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="BulletMesh.cpp">
+      <Filter>Source Files\Engine\Physics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -320,11 +347,32 @@
     <ClInclude Include="ParticleSystem.h">
       <Filter>Header Files\Engine\Entity\Components</Filter>
     </ClInclude>
-    <ClInclude Include="PhysicsWorld.h">
-      <Filter>Header Files\Engine</Filter>
-    </ClInclude>
     <ClInclude Include="Rigidbody.h">
       <Filter>Header Files\Engine\Entity\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsWorld.h">
+      <Filter>Header Files\Engine\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Collider.h">
+      <Filter>Header Files\Engine\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="BoxCollider.h">
+      <Filter>Header Files\Engine\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="SphereCollider.h">
+      <Filter>Header Files\Engine\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshCollider.h">
+      <Filter>Header Files\Engine\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="ConvexMeshCollider.h">
+      <Filter>Header Files\Engine\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="ConcaveMeshCollider.h">
+      <Filter>Header Files\Engine\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="BulletMesh.h">
+      <Filter>Header Files\Engine\Physics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -5,6 +5,7 @@
 
 class Transform;
 class Entity;
+class Collider;
 
 class SynchronizedTransform : public btMotionState {
 public:
@@ -19,14 +20,24 @@ public:
 
 class Rigidbody : public Component {
 public:
+
 	Rigidbody(Entity* entity);
 	~Rigidbody();
+	
+	void setMass(float mass);
+	inline float getMass() { return mass; }
+	void setKinematic(bool kinematic);
+	void setCollider(Collider* collider);
+	inline Collider* getCollider() { return collider; }
 
-	void Initialize(btCollisionShape* shape, float mass);
+	virtual void onEnable() override;
+	virtual void onDisable() override;
+
 	inline btRigidBody* getBulletBody() { return body; }
 
 private:
 	float mass = 0.0f;
+	Collider* collider = nullptr;
 	SynchronizedTransform syncTransform;
 	btRigidBody* body;
 };

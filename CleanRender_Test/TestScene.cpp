@@ -10,6 +10,9 @@
 #include <Transform.h>
 #include <ShaderProgram.h>
 #include <Time.h>
+#include <BoxCollider.h>
+#include <ConvexMeshCollider.h>
+#include <ConcaveMeshCollider.h>
 #include "NoclipController.h"
 
 
@@ -22,7 +25,7 @@ void TestScene::load() {
 	Scene::load();
 	camera = new Entity("Camera");
 	camera->addComponent<Camera>();
-	camera->addComponent<NoclipController>();
+	camera->addComponent<NoclipController>()->lookSensivity = 1.0f;
 	camera->transform->setPosition({5, 5, -5});
 	camera->transform->setRotation(Quaternion::euler({ M_PI_4, -M_PI_4, 0 }));
 
@@ -74,6 +77,7 @@ void TestScene::load() {
 	transfChild = new Entity("TransfChild");
 	transfChild->setParent(noTransfParent);
 	transfChild->transform->setPosition(Vec3f(-5, 2, 0));
+	transfChild->transform->setScale({ 1.0f, 2.0f, 1.0f });
 	MeshRenderer* transfRend = transfChild->addComponent<MeshRenderer>();
 	transfRend->setMaterial(testMaterial);
 	transfRend->setMesh(cubeMesh);
@@ -94,18 +98,18 @@ void TestScene::load() {
 	particleSystem->setMaterial(Material::find("ParticleBasic"));
 	particleSystem->startEmit();
 
-	btCollisionShape* groundShape = new btBoxShape(btVector3(50.0f, 5.0f, 50.0f));
+	Collider* groundCollider = new ConcaveMeshCollider(cubeMesh, {100, 10, 100});
+	Collider* ballCollider = new ConvexMeshCollider(cubeMesh);
 
 	ground = new Entity("Ground");
 	ground->transform->setPosition(Vec3f(0, -10, 0));
-	ground->transform->setScale(Vec3f(50.0f, 10.0f, 50.0f));
+	ground->transform->setScale(Vec3f(100.0f, 10.0f, 100.0f));
+	ground->transform->setRotation(Quaternion::euler({0.0f, 0.0f, M_PI_4 / 4.0f}));
 	MeshRenderer* groundRenderer = ground->addComponent<MeshRenderer>();
 	groundRenderer->setMaterial(groundMaterial);
 	groundRenderer->setMesh(cubeMesh);
 	Rigidbody* groundRb = ground->addComponent<Rigidbody>();
-	groundRb->Initialize(groundShape, 0.0f);
-
-	btCollisionShape* ballShape = new btSphereShape(0.5f);
+	groundRb->setCollider(groundCollider);
 
 	ball = new Entity("Ball");
 	ball->transform->setPosition(Vec3f(0, 20, 0));
@@ -113,7 +117,8 @@ void TestScene::load() {
 	ballRenderer->setMaterial(testMaterial);
 	ballRenderer->setMesh(cubeMesh);
 	Rigidbody* ballRb = ball->addComponent<Rigidbody>();
-	ballRb->Initialize(ballShape, 1.0f);
+	ballRb->setCollider(ballCollider);
+	ballRb->setMass(1.0f);
 }
 
 void TestScene::update() {

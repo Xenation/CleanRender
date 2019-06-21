@@ -1054,7 +1054,7 @@ public:
 /* ===== MATRIX4x4f ==== */
 struct Matrix4x4f {
 	union {
-		// Stored in column major order but accessed in row major
+		// Stored in column major order but accessed in row major (first digit is row/y, second is column/x)
 		struct {
 			float m00, m10, m20, m30;
 			float m01, m11, m21, m31;
@@ -1068,7 +1068,6 @@ struct Matrix4x4f {
 public:
 	/* ---- CONSTANTS ---- */
 	static const Matrix4x4f identity;
-	//static constexpr Matrix4x4f identityf = Matrix4x4f(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
 	/* ---- CONSTRUCTORS ---- */
 	constexpr Matrix4x4f() :
@@ -1289,14 +1288,48 @@ public:
 			0,							0,							0,				1
 		);
 	}
+	static Matrix4x4f translationRotation(Vec3f transVec, Quaternion rot) {
+		return Matrix4x4f(
+			1.0f - 2.0f * rot.y * rot.y - 2.0f * rot.z * rot.z, 2.0f * rot.x * rot.y + 2.0f * rot.z * rot.w, 2.0f * rot.x * rot.z - 2.0f * rot.y * rot.w, 0,
+			2.0f * rot.x * rot.y - 2.0f * rot.z * rot.w, 1.0f - 2.0f * rot.x * rot.x - 2.0f * rot.z * rot.z, 2.0f * rot.y * rot.z + 2.0f * rot.x * rot.w, 0,
+			2.0f * rot.x * rot.z + 2.0f * rot.y * rot.w, 2.0f * rot.y * rot.z - 2.0f * rot.x * rot.w, 1.0f - 2.0f * rot.x * rot.x - 2.0f * rot.y * rot.y, 0,
+			transVec.x, transVec.y, transVec.z, 1
+		);
+	}
+	static Matrix4x4f translationRotation(Vec3f transVec, Rotor3f rot) {
+		// TODO optimize
+		Vec3f vx = rot.rotate(Vec3f(1, 0, 0));
+		Vec3f vy = rot.rotate(Vec3f(0, 1, 0));
+		Vec3f vz = rot.rotate(Vec3f(0, 0, 1));
+		return Matrix4x4f(
+			vx.x, vy.x, vz.x, 0,
+			vx.y, vy.y, vz.y, 0,
+			vx.z, vy.z, vz.z, 0,
+			transVec.x, transVec.y, transVec.z, 1
+		);
+	}
+	static Matrix4x4f translationRotation(Vec3f transVec, Vec3f euler) {
+		float cx = cosf(euler.x);
+		float sx = sinf(euler.x);
+		float cy = cosf(euler.y);
+		float sy = sinf(euler.y);
+		float cz = cosf(euler.z);
+		float sz = sinf(euler.z);
+		return Matrix4x4f(
+			cx * cz - sx * sy * sz, cz * sx + cx * sy * sz, -(cy * sz), 0,
+			-(cy * sx), cx * cy, sy, 0,
+			cx * sz + cz * sx * sy, sx * sz - cx * cz * sy, cy * cz, 0,
+			transVec.x, transVec.y, transVec.z, 1
+		);
+	}
 	static Matrix4x4f transformation(Vec3f translationVec, Vec3f scaleVec, Rotor3f rotor) {
-		return translationScale(translationVec, scaleVec) * rotation(rotor);
+		return translationRotation(translationVec, rotor) * scale(scaleVec);
 	}
 	static Matrix4x4f transformation(Vec3f translationVec, Vec3f scaleVec, Quaternion rotationQuat) {
-		return translationScale(translationVec, scaleVec) * rotation(rotationQuat);
+		return translationRotation(translationVec, rotationQuat) * scale(scaleVec);
 	}
 	static Matrix4x4f transformation(Vec3f translationVec, Vec3f scaleVec, Vec3f rotationVec) {
-		return translationScale(translationVec, scaleVec) * rotation(rotationVec);
+		return translationRotation(translationVec, rotationVec) * scale(scaleVec);
 	}
 	static Matrix4x4f perspectiveProjection(float fov, float aspect, float nearPlane, float farPlane) {
 		float zRange = farPlane - nearPlane;

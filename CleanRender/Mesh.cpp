@@ -327,3 +327,8 @@ void Mesh::updateLabel() {
 		glObjectLabel(GL_BUFFER, vboIndices, fullIndicesName.size(), fullIndicesName.c_str());
 	}
 }
+
+void* Mesh::getAttributePointer(int attrIndex, int& stride) const {
+	stride = vertexByteSize;
+	return ((char*) vertices) + attributeByteOffsets[0];
+}

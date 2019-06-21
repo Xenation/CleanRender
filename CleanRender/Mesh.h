@@ -41,14 +41,21 @@ public:
 	void setTopology(GLenum topology);
 	void setUsageHint(GLenum usage);
 	void setName(std::string n);
+
 	void deleteLocal();
 	void uploadToGL();
 	void updateInGL();
 	void deleteFromGL();
 	void render() const;
+
+	inline int getVertexCount() const { return vertexCount; }
+	inline int getIndexCount() const { return indexCount; }
 	inline bool isLoadedToGL() const { return loadedToGL; }
 	inline bool isCachedInLocal() const { return cachedInLocal; }
 	inline GLenum getTopology() const { return topology; }
+
+	void* getAttributePointer(int attrIndex, int& stride) const;
+	inline unsigned int* getIndicesPointer() const { return indices; }
 
 private:
 	std::string name;
