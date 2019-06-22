@@ -9,6 +9,7 @@
 #include "Scene.h"
 #include "Game.h"
 #include "PhysicsWorld.h"
+#include "VisualDebug.h"
 
 
 
@@ -63,6 +64,7 @@ void Engine::loop() {
 		// RENDER
 		pipeline->render();
 		gui->render();
+		VisualDebug::render();
 		// DISPLAY
 		window->display();
 	}

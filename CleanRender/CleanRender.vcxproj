@@ -194,6 +194,7 @@
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="MeshCollider.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
+    <ClCompile Include="PhysicsDebugger.cpp" />
     <ClCompile Include="PhysicsWorld.cpp" />
     <ClCompile Include="Perlin.cpp" />
     <ClCompile Include="RenderPass.cpp" />
@@ -205,6 +206,7 @@
     <ClCompile Include="SphereCollider.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="UniformBuffer.cpp" />
+    <ClCompile Include="VisualDebug.cpp" />
     <ClCompile Include="XMath.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshRenderer.cpp" />
@@ -250,6 +252,7 @@
     <ClInclude Include="MeshCollider.h" />
     <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="Perlin.h" />
+    <ClInclude Include="PhysicsDebugger.h" />
     <ClInclude Include="PhysicsWorld.h" />
     <ClInclude Include="RenderPass.h" />
     <ClInclude Include="Rigidbody.h" />
@@ -260,6 +263,7 @@
     <ClInclude Include="SphereCollider.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="UniformBuffer.h" />
+    <ClInclude Include="VisualDebug.h" />
     <ClInclude Include="XMath.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshRenderer.h" />

@@ -5,6 +5,13 @@
 
 class Mesh {
 public:
+	enum class ResizeMode {
+		GrowOnly,
+		GrowOrShrinkHalf,
+		GrowOrShrinkQuarter,
+		Force,
+	};
+
 	static unsigned int triangleCount;
 
 	Mesh(int vCount, int iCount);
@@ -38,9 +45,11 @@ public:
 	void setAttributeElement(int attrIndex, int elemIndex, Vec4f value);
 	void setAttributeElementData(int attrIndex, int elemIndex, unsigned char* bytes);
 	void setIndices(unsigned int* indices);
+	void setIndex(unsigned int indexIndex, unsigned int index);
 	void setTopology(GLenum topology);
 	void setUsageHint(GLenum usage);
 	void setName(std::string n);
+	void resize(int vCount, int iCount, bool copy = true, ResizeMode mode = ResizeMode::Force);
 
 	void deleteLocal();
 	void uploadToGL();
@@ -75,6 +84,8 @@ private:
 	unsigned int* indices = nullptr;
 	GLenum topology = GL_TRIANGLES;
 	GLenum usage = GL_STATIC_DRAW;
+	unsigned int loadedVertexBufferSize = 0;
+	unsigned int loadedIndexBufferSize = 0;
 
 	void updateLabel();
 };
