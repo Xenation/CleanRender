@@ -16,6 +16,7 @@ private:
 	bool statsDisplayed;
 	bool sceneDisplayed;
 	bool shadersDisplayed;
+	bool physicsDisplayed;
 
 	float frameTimes[300];
 	float maxFrameTime = 0;

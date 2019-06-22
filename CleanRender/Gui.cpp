@@ -10,6 +10,7 @@
 #include "Time.h"
 #include "Mesh.h"
 #include "ShaderProgram.h"
+#include "PhysicsWorld.h"
 
 
 
@@ -47,6 +48,10 @@ void Gui::update() {
 		if (Input::getKeyDown(KeyCode::F3)) {
 			shadersDisplayed = !shadersDisplayed;
 		}
+		if (Input::getKeyDown(KeyCode::F4)) {
+			physicsDisplayed = !physicsDisplayed;
+			Engine::physicsWorld->debug = physicsDisplayed;
+		}
 	}
 
 	onUpdate();
@@ -64,6 +69,10 @@ void Gui::onUpdate() {
 		}
 		if (ImGui::MenuItem("Shaders")) {
 			shadersDisplayed = !shadersDisplayed;
+		}
+		if (ImGui::MenuItem("Physics")) {
+			physicsDisplayed = !physicsDisplayed;
+			Engine::physicsWorld->debug = physicsDisplayed;
 		}
 		ImGui::EndMainMenuBar();
 

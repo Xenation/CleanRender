@@ -13,6 +13,8 @@ class Rigidbody;
 
 class PhysicsWorld {
 public:
+	bool debug = false;
+
 	PhysicsWorld();
 	~PhysicsWorld();
 

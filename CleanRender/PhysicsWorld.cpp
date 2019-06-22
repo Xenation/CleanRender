@@ -39,7 +39,9 @@ PhysicsWorld::~PhysicsWorld() {
 
 void PhysicsWorld::simulate(float dt) {
 	dynamicsWorld->stepSimulation(dt, 10);
-	dynamicsWorld->debugDrawWorld();
+	if (debug) {
+		dynamicsWorld->debugDrawWorld();
+	}
 
 	//DisplayDebugWorldContents();
 }
