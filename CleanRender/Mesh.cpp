@@ -229,7 +229,7 @@ void Mesh::resize(int vCount, int iCount, bool copy, ResizeMode mode) {
 	switch (mode) {
 	case ResizeMode::GrowOnly:
 		if (vCount > vertexCount) {
-			nVertices = new char[vCount];
+			nVertices = new char[vCount * vertexByteSize];
 		}
 		if (iCount > indexCount) {
 			nIndices = new unsigned int[iCount];
@@ -237,7 +237,7 @@ void Mesh::resize(int vCount, int iCount, bool copy, ResizeMode mode) {
 		break;
 	case ResizeMode::GrowOrShrinkHalf:
 		if (vCount > vertexCount || vCount < vertexCount / 2) {
-			nVertices = new char[vCount];
+			nVertices = new char[vCount * vertexByteSize];
 		}
 		if (iCount > indexCount || iCount < indexCount / 2) {
 			nIndices = new unsigned int[iCount];
@@ -245,7 +245,7 @@ void Mesh::resize(int vCount, int iCount, bool copy, ResizeMode mode) {
 		break;
 	case ResizeMode::GrowOrShrinkQuarter:
 		if (vCount > vertexCount || vCount < vertexCount - vertexCount / 4) {
-			nVertices = new char[vCount];
+			nVertices = new char[vCount * vertexByteSize];
 		}
 		if (iCount > indexCount || iCount < indexCount -  indexCount / 4) {
 			nIndices = new unsigned int[iCount];
@@ -253,7 +253,7 @@ void Mesh::resize(int vCount, int iCount, bool copy, ResizeMode mode) {
 		break;
 	case ResizeMode::Force:
 		if (vCount != vertexCount) {
-			nVertices = new char[vCount];
+			nVertices = new char[vCount * vertexByteSize];
 		}
 		if (iCount != indexCount) {
 			nIndices = new unsigned int[iCount];
