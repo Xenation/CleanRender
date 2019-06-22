@@ -18,7 +18,7 @@ public:
 
 	void simulate(float dt);
 
-	void registerRigibody(Rigidbody* rigidbody);
+	void registerRigidbody(Rigidbody* rigidbody);
 	void unregisterRigidbody(Rigidbody* rigidbody);
 
 private:

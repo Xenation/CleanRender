@@ -5,7 +5,7 @@
 
 
 
-const Collider*const Collider::empty = new Collider(new btEmptyShape());
+Collider*const Collider::empty = new Collider(new btEmptyShape());
 
 
 Collider::Collider() {}
