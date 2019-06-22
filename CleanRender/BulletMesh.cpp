@@ -14,7 +14,7 @@ void BulletMesh::getLockedVertexIndexBase(unsigned char** vertexbase, int& numve
 	numverts = mesh->getVertexCount();
 	type = PHY_ScalarType::PHY_FLOAT;
 	*indexbase = (unsigned char*) mesh->getIndicesPointer();
-	indexstride = 4;
+	indexstride = 12;
 	numfaces = mesh->getIndexCount() / 3;
 	indicestype = PHY_ScalarType::PHY_INTEGER;
 }
@@ -24,7 +24,7 @@ void BulletMesh::getLockedReadOnlyVertexIndexBase(const unsigned char** vertexba
 	numverts = mesh->getVertexCount();
 	type = PHY_ScalarType::PHY_FLOAT;
 	*indexbase = (unsigned char*) mesh->getIndicesPointer();
-	indexstride = 4;
+	indexstride = 12;
 	numfaces = mesh->getIndexCount() / 3;
 	indicestype = PHY_ScalarType::PHY_INTEGER;
 }
