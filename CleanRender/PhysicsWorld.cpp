@@ -44,7 +44,7 @@ void PhysicsWorld::simulate(float dt) {
 	//DisplayDebugWorldContents();
 }
 
-void PhysicsWorld::registerRigibody(Rigidbody* rigidbody) {
+void PhysicsWorld::registerRigidbody(Rigidbody* rigidbody) {
 	dynamicsWorld->addRigidBody(rigidbody->getBulletBody());
 }
 

@@ -22,6 +22,7 @@ class Rigidbody : public Component {
 public:
 
 	Rigidbody(Entity* entity);
+	Rigidbody(Entity* entity, Collider* collider);
 	~Rigidbody();
 	
 	void setMass(float mass);
@@ -35,7 +36,7 @@ public:
 
 	inline btRigidBody* getBulletBody() { return body; }
 
-private:
+protected:
 	float mass = 0.0f;
 	Collider* collider = nullptr;
 	SynchronizedTransform syncTransform;

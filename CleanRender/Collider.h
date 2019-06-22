@@ -5,7 +5,7 @@ class CompoundCollider;
 
 class Collider {
 public:
-	static const Collider*const empty;
+	static Collider*const empty;
 
 	CompoundCollider* _parent = nullptr; // TODO ugly and does not allow multiple compound to use a same shape
 

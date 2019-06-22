@@ -38,6 +38,11 @@ Rigidbody::Rigidbody(Entity* entity) : Component(entity), syncTransform(entity->
 	body = new btRigidBody(rbInfo);
 }
 
+Rigidbody::Rigidbody(Entity* entity, Collider* collider) : Component(entity), syncTransform(entity->transform), collider(collider) {
+	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, &syncTransform, collider->getBulletShape());
+	body = new btRigidBody(rbInfo);
+}
+
 Rigidbody::~Rigidbody() {
 	if (body != nullptr) {
 		delete body;
@@ -46,7 +51,7 @@ Rigidbody::~Rigidbody() {
 
 
 void Rigidbody::onEnable() {
-	Engine::physicsWorld->registerRigibody(this);
+	Engine::physicsWorld->registerRigidbody(this);
 }
 
 void Rigidbody::onDisable() {
@@ -61,7 +66,7 @@ void Rigidbody::setMass(float mass) {
 		collider->getBulletShape()->calculateLocalInertia(mass, localInertia);
 	}
 	body->setMassProps(mass, localInertia);
-	Engine::physicsWorld->registerRigibody(this);
+	Engine::physicsWorld->registerRigidbody(this);
 	if (mass != 0.0f) {
 		body->activate();
 	}
@@ -86,5 +91,5 @@ void Rigidbody::setCollider(Collider* collider) {
 		this->collider->getBulletShape()->calculateLocalInertia(mass, localInertia);
 	}
 	body->setMassProps(mass, localInertia);
-	Engine::physicsWorld->registerRigibody(this);
+	Engine::physicsWorld->registerRigidbody(this);
 }
