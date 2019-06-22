@@ -25,6 +25,8 @@ namespace fsys = std::filesystem;
 
 ShaderPreprocessor::ShaderPreprocessor(fsys::path shaderDir) : shaderDirectoryPath(shaderDir), programInfo(new ShaderProgramMetaInfo()) {}
 
+ShaderPreprocessor::ShaderPreprocessor(std::string rawVS, std::string rawFS) : useRaw(true), rawVS(rawVS), rawFS(rawFS), programInfo(new ShaderProgramMetaInfo()) {}
+
 ShaderPreprocessor::~ShaderPreprocessor() {
 	if (vs != nullptr) {
 		delete vs;
@@ -60,6 +62,17 @@ ShaderPreprocessor::~ShaderPreprocessor() {
 
 
 bool ShaderPreprocessor::read() {
+	// When using raw source create VS and FS only
+	if (useRaw) {
+		vs = createShaderFileInfo(fsys::path(), GL_VERTEX_SHADER, rawVS);
+		extractMetaInfo(vs);
+		fs = createShaderFileInfo(fsys::path(), GL_FRAGMENT_SHADER, rawFS);
+		extractMetaInfo(fs);
+
+		mergeMetaInfo();
+		return true;
+	}
+
 	// VERTEX SHADER
 	fsys::path pathVS = shaderDirectoryPath / fsys::path("vs.glsl");
 	if (fsys::exists(pathVS)) {

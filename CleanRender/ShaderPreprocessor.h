@@ -34,6 +34,7 @@ public:
 	SpecializedShaderSource* fsSources = nullptr;
 
 	ShaderPreprocessor(std::filesystem::path shaderDir);
+	ShaderPreprocessor(std::string rawVS, std::string rawFS);
 	ShaderPreprocessor(const ShaderPreprocessor&) = delete;
 	~ShaderPreprocessor();
 
@@ -55,6 +56,10 @@ private:
 	ShaderFile* tes = nullptr;
 	ShaderFile* gs = nullptr;
 	ShaderFile* fs = nullptr;
+	// Used when reading a shader from raw source
+	bool useRaw = false;
+	std::string rawVS;
+	std::string rawFS;
 
 	std::string readRawSource(std::filesystem::path filePath);
 	ShaderFile* createShaderFileInfo(std::filesystem::path filePath, GLenum type, std::string rawSource);

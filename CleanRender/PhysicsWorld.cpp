@@ -3,6 +3,7 @@
 #include "bullet/btBulletDynamicsCommon.h"
 #include "Debug.h"
 #include "Rigidbody.h"
+#include "PhysicsDebugger.h"
 
 
 
@@ -17,6 +18,7 @@ PhysicsWorld::PhysicsWorld() {
 
 	dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
 	dynamicsWorld->setGravity(btVector3(0, -9.81f, 0));
+	dynamicsWorld->setDebugDrawer(new PhysicsDebugger());
 
 	//InitializeDebugWorldContents();
 }
@@ -37,6 +39,7 @@ PhysicsWorld::~PhysicsWorld() {
 
 void PhysicsWorld::simulate(float dt) {
 	dynamicsWorld->stepSimulation(dt, 10);
+	dynamicsWorld->debugDrawWorld();
 
 	//DisplayDebugWorldContents();
 }

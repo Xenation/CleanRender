@@ -201,6 +201,13 @@ void Mesh::setIndices(unsigned int* indices) {
 	this->indices = indices;
 }
 
+void Mesh::setIndex(unsigned int indexIndex, unsigned int index) {
+	if (indices == nullptr) {
+		indices = new unsigned int[indexCount];
+	}
+	indices[indexIndex] = index;
+}
+
 void Mesh::setTopology(GLenum topology) {
 	this->topology = topology;
 }
@@ -213,6 +220,66 @@ void Mesh::setName(std::string n) {
 	name = n;
 	if (loadedToGL) {
 		updateLabel();
+	}
+}
+
+void Mesh::resize(int vCount, int iCount, bool copy, ResizeMode mode) {
+	void* nVertices = nullptr;
+	unsigned int* nIndices = nullptr;
+	switch (mode) {
+	case ResizeMode::GrowOnly:
+		if (vCount > vertexCount) {
+			nVertices = new char[vCount];
+		}
+		if (iCount > indexCount) {
+			nIndices = new unsigned int[iCount];
+		}
+		break;
+	case ResizeMode::GrowOrShrinkHalf:
+		if (vCount > vertexCount || vCount < vertexCount / 2) {
+			nVertices = new char[vCount];
+		}
+		if (iCount > indexCount || iCount < indexCount / 2) {
+			nIndices = new unsigned int[iCount];
+		}
+		break;
+	case ResizeMode::GrowOrShrinkQuarter:
+		if (vCount > vertexCount || vCount < vertexCount - vertexCount / 4) {
+			nVertices = new char[vCount];
+		}
+		if (iCount > indexCount || iCount < indexCount -  indexCount / 4) {
+			nIndices = new unsigned int[iCount];
+		}
+		break;
+	case ResizeMode::Force:
+		if (vCount != vertexCount) {
+			nVertices = new char[vCount];
+		}
+		if (iCount != indexCount) {
+			nIndices = new unsigned int[iCount];
+		}
+		break;
+	}
+
+	if (nVertices != nullptr) {
+		if (copy) {
+			for (unsigned int i = 0; i < vCount && i < vertexCount; i++) {
+				((char*) nVertices)[i] = ((char*) vertices)[i];
+			}
+		}
+		delete[] vertices;
+		vertices = nVertices;
+		vertexCount = vCount;
+	}
+	if (nIndices != nullptr) {
+		if (copy) {
+			for (unsigned int i = 0; i < iCount && i < indexCount; i++) {
+				nIndices[i] = indices[i];
+			}
+		}
+		delete[] indices;
+		indices = nIndices;
+		indexCount = iCount;
 	}
 }
 
@@ -253,8 +320,8 @@ void Mesh::uploadToGL() {
 		glGenBuffers(1, &vboVertices);
 	}
 	glBindBuffer(GL_ARRAY_BUFFER, vboVertices);
-	unsigned int vboVerticesSize = vertexCount * vertexByteSize;
-	glBufferData(GL_ARRAY_BUFFER, vboVerticesSize, vertices, usage);
+	loadedVertexBufferSize = vertexCount * vertexByteSize;
+	glBufferData(GL_ARRAY_BUFFER, loadedVertexBufferSize, vertices, usage);
 	for (int i = 0; i < attributeCount; i++) {
 		if (glTypeIsInteger(attributeTypes[i])) {
 			glVertexAttribIPointer(i, attributeSizes[i], attributeTypes[i], vertexByteSize, (void*) attributeByteOffsets[i]);
@@ -267,8 +334,8 @@ void Mesh::uploadToGL() {
 		glGenBuffers(1, &vboIndices);
 	}
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboIndices);
-	unsigned int vboIndicesSize = indexCount * sizeof(unsigned int);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, vboIndicesSize, indices, usage);
+	loadedIndexBufferSize = indexCount * sizeof(unsigned int);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, loadedIndexBufferSize, indices, usage);
 
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -283,8 +350,23 @@ void Mesh::updateInGL() {
 
 	glBindBuffer(GL_ARRAY_BUFFER, vboVertices);
 	unsigned int vboVerticesSize = vertexCount * vertexByteSize;
-	glBufferSubData(GL_ARRAY_BUFFER, 0, vboVerticesSize, vertices);
+	if (loadedVertexBufferSize != vboVerticesSize) {
+		loadedVertexBufferSize = vboVerticesSize;
+		glBufferData(GL_ARRAY_BUFFER, loadedVertexBufferSize, vertices, usage);
+	} else {
+		glBufferSubData(GL_ARRAY_BUFFER, 0, loadedVertexBufferSize, vertices);
+	}
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboIndices);
+	unsigned int vboIndicesSize = indexCount * sizeof(unsigned int);
+	if (loadedIndexBufferSize != vboIndicesSize) {
+		loadedIndexBufferSize = vboIndicesSize;
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, loadedIndexBufferSize, indices, usage);
+	} else {
+		glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, loadedIndexBufferSize, indices);
+	}
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 void Mesh::deleteFromGL() {

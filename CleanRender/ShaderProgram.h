@@ -16,6 +16,7 @@ public:
 	static void initializeAll(Pipeline* pipeline);
 	static void reloadAll();
 	static ShaderProgram* find(std::string name);
+	static ShaderProgram* createFromRaw(std::string name, std::string vs, std::string fs);
 	static void guiAll();
 
 	const std::string name;
@@ -40,6 +41,10 @@ private:
 	SpecializedShaderProgram** specializedPrograms = nullptr;
 	uint specializedProgramsCount = 0;
 	bool loaded = false;
+	// Used when source needs to be in program
+	bool useRaw = false;
+	std::string rawVS;
+	std::string rawFS;
 
 	ShaderPreprocessor* readShaders();
 };

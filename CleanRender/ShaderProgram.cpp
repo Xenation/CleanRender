@@ -61,6 +61,14 @@ ShaderProgram* ShaderProgram::find(std::string name) {
 	return nullptr;
 }
 
+ShaderProgram* ShaderProgram::createFromRaw(std::string name, std::string vs, std::string fs) {
+	ShaderProgram* rawProgram = new ShaderProgram(name);
+	rawProgram->rawVS = vs;
+	rawProgram->rawFS = fs;
+	rawProgram->useRaw = true;
+	return rawProgram;
+}
+
 void ShaderProgram::guiAll() {
 	for (uint programIndex = 0; programIndex < shaderCount; programIndex++) {
 		shaders[programIndex]->gui();
@@ -149,7 +157,7 @@ void ShaderProgram::unload() {
 }
 
 ShaderPreprocessor* ShaderProgram::readShaders() {
-	ShaderPreprocessor* reader = new ShaderPreprocessor(fs::path(SHADER_DIRECTORY) / name);
+	ShaderPreprocessor* reader = (useRaw) ? new ShaderPreprocessor(rawVS, rawFS) : new ShaderPreprocessor(fs::path(SHADER_DIRECTORY) / name);
 
 	if (!reader->read()) {
 		Debug::log("ShaderProgram", "Failed to Read shader files!");
