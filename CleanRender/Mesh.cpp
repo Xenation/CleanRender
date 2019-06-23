@@ -382,6 +382,7 @@ void Mesh::deleteFromGL() {
 		glDeleteVertexArrays(1, &vao);
 		vao = 0;
 	}
+	loadedToGL = false;
 }
 
 void Mesh::render() const {
