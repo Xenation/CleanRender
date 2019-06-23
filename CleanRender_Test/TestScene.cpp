@@ -92,9 +92,10 @@ void TestScene::load() {
 	subTransfRend->setMaterial(testMaterial);
 	subTransfRend->setMesh(cubeMesh);
 	ParticleSystem* particleSystem = subTransfChild->addComponent<ParticleSystem>();
+	particleSystem->emitVelocity = Vec3f::up * 5;
 	particleSystem->emitRate = 30;
 	particleSystem->minLifetime = 3;
-	particleSystem->minLifetime = 5;
+	particleSystem->maxLifetime = 5;
 	particleSystem->setMaterial(Material::find("ParticleBasic"));
 	particleSystem->startEmit();
 

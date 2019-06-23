@@ -19,6 +19,7 @@ public:
 	Particle* particles = nullptr;
 
 	float emitRate = 5;
+	Vec3f emitVelocity = Vec3f::up;
 	float minLifetime = 5;
 	float maxLifetime = 8;
 

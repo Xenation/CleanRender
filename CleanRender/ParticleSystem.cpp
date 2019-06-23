@@ -42,7 +42,7 @@ void ParticleSystem::onUpdate() {
 	// New Particle generation
 	if (isEmitting && Time::time - lastEmissionTime > emissionInterval) {
 		lastEmissionTime = Time::time;
-		createParticle(entity->transform->getWorldPosition() + Vec3f(perlinf(Time::time * 100, 0, 0), perlinf(0, Time::time * 100, 0), perlinf(0, 0, Time::time * 100)), entity->transform->up() * 10, randomRangef(minLifetime, maxLifetime));
+		createParticle(entity->transform->getWorldPosition() + Vec3f(perlinf(Time::time * 100, 0, 0), perlinf(0, Time::time * 100, 0), perlinf(0, 0, Time::time * 100)), entity->transform->localToWorldDir(emitVelocity), randomRangef(minLifetime, maxLifetime));
 	}
 
 	// Particles state update
