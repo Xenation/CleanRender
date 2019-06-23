@@ -42,7 +42,7 @@ void ParticleSystem::onUpdate() {
 	// New Particle generation
 	if (isEmitting && Time::time - lastEmissionTime > emissionInterval) {
 		lastEmissionTime = Time::time;
-		createParticle(entity->transform->getWorldPosition() + Vec3f(perlinf(Time::time * 100, 0, 0), perlinf(0, Time::time * 100, 0), perlinf(0, 0, Time::time * 100)), entity->transform->localToWorldDir(emitVelocity), randomRangef(minLifetime, maxLifetime));
+		createParticle(entity->transform->getWorldPosition() + emitOffset + Vec3f(perlinf(Time::time * 100, 0, 0) * emitZoneExtents.x, perlinf(0, Time::time * 100, 0) * emitZoneExtents.y, perlinf(0, 0, Time::time * 100) * emitZoneExtents.z), entity->transform->localToWorldDir(emitVelocity), randomRangef(minLifetime, maxLifetime));
 	}
 
 	// Particles state update
@@ -71,6 +71,7 @@ void ParticleSystem::render() {
 	
 	//material->specializedProgram->loadMatrix4x4f(modelMatrixLocation, Matrix4x4f::translation(entity->transform->getWorldPosition()));
 
+	if (mesh == nullptr) return;
 	mesh->render();
 
 	/*for (uint i = 0; i < maxParticles; i++) {
@@ -124,6 +125,7 @@ void ParticleSystem::resizeParticleData(uint nCount) {
 }
 
 void ParticleSystem::updateMesh() {
+	if (mesh == nullptr) return;
 	for (uint i = 0; i < maxParticles; i++) {
 		if (!particles[i].alive) continue;
 		mesh->setAttributeElement(0, i, particles[i].position);
