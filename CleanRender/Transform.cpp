@@ -87,6 +87,7 @@ void Transform::updateMatricesFromLTW() {
 		}
 	}
 	localToParentMatrix = parentWTL * localToWorldMatrix;
+	entity->ltwChangeNotifyChildren();
 
 	// Update WTL
 	worldToLocalMatrix = localToWorldMatrix.inverseAffine();
