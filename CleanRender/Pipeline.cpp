@@ -24,7 +24,7 @@
 Pipeline::Pipeline(int width, int height) 
 	: renderers(RENDERERS_START_SIZE, RENDERERS_INCREASE), cameras(CAMERAS_START_SIZE, CAMERAS_INCREASE), renderPasses(RENDERPASSES_START_SIZE, RENDERERS_INCREASE) {
 
-	renderBuffer = new Framebuffer("RenderBuffer", width, height, 8);
+	renderBuffer = new Framebuffer("RenderBuffer", width, height, samples);
 	renderBuffer->createAttachments(2, new Framebuffer::Attachment[2]{Framebuffer::Attachment(GL_COLOR_ATTACHMENT0, GL_RGBA), Framebuffer::Attachment(GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT)});
 	renderBuffer->clearColor = Color(0.52f, 0.80f, 0.97f, 1); //135-206-250
 	resizeFrameBuffer(width, height);
@@ -37,7 +37,7 @@ Pipeline::Pipeline(int width, int height)
 	ShaderProgram::initializeAll(this);
 
 	globalUniformBuffer = new UniformBuffer("Global");
-	globalUniformBuffer->setLayouts(2, new UniformLayout[2]{UniformLayout(1, 3, new GLSLType[3]{GLSL_MAT4, GLSL_MAT4, GLSL_IVEC2}), UniformLayout(2, 1, new GLSLType[1]{GLSL_FLOAT})});
+	globalUniformBuffer->setLayouts(2, new UniformLayout[2]{UniformLayout(1, 4, new GLSLType[4]{GLSL_MAT4, GLSL_MAT4, GLSL_IVEC2, GLSL_UINT}), UniformLayout(2, 1, new GLSLType[1]{GLSL_FLOAT})});
 	globalUniformBuffer->uploadToGL();
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
@@ -63,6 +63,7 @@ void Pipeline::render(Camera* camera) {
 	globalUniformBuffer->getLayout(0).setMember(0, camera->getProjectionMatrix());
 	globalUniformBuffer->getLayout(0).setMember(1, camera->getViewMatrix());
 	globalUniformBuffer->getLayout(0).setMember(2, Vec2i(renderBuffer->getWidth(), renderBuffer->getHeight()));
+	globalUniformBuffer->getLayout(0).setMember(3, samples);
 	globalUniformBuffer->updateLayout(0);
 	globalUniformBuffer->getLayout(1).setMember(0, Time::time);
 	globalUniformBuffer->updateLayout(1);

@@ -42,12 +42,18 @@
     <ClCompile Include="TestGame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TestRotator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestScene.h">
       <Filter>Header Files\Scenes</Filter>
     </ClInclude>
     <ClInclude Include="TestGame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TestRotator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -73,5 +79,10 @@
     <CopyFileToFolders Include="res\shaders\particle_basic\gs.glsl">
       <Filter>Resource Files\shaders\particle_basic</Filter>
     </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\shaders\test\gs.glsl">
+      <Filter>Resource Files\shaders\test</Filter>
+    </None>
   </ItemGroup>
 </Project>

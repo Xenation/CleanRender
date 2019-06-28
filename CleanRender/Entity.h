@@ -95,6 +95,8 @@ public:
 	unsigned int childCount() { return children.count; }
 	Entity* getChild(unsigned int index);
 
+	HollowSet<Component*>& getRawComponentsSet() { return components; }
+
 private:
 	HollowSet<Component*> components;
 	SimpleList<Entity*> children;

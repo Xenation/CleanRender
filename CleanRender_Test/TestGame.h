@@ -22,5 +22,6 @@ private:
 	ShaderProgram* particleShader;
 	Material* particleMaterial;
 	Material* groundMaterial;
+	Material* wallMaterial;
 };
 

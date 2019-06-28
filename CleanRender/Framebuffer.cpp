@@ -35,7 +35,7 @@ Framebuffer* Framebuffer::copy(std::string name) {
 	Framebuffer* fb = new Framebuffer(name, width, height, samples);
 	Attachment* fbAttachments = new Attachment[attachmentCount];
 	for (uint i = 0; i < attachmentCount; i++) {
-		fbAttachments[i] = attachments[i]; // Copies attachments definition
+		fbAttachments[i] = Attachment(attachments[i].slot, attachments[i].format); // Copies attachments definition
 	}
 	fb->createAttachments(attachmentCount, fbAttachments);
 	return fb;

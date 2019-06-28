@@ -6,12 +6,16 @@ layout (std140, binding = 2) uniform GlobalsVars {
 
 layout (std140, binding = 10) uniform Material {
 	vec4 color;
+	vec4 lightDir;
+	float ambient;
 };
 
-in vec4 worldPos;
+in vec3 normal;
 
 out vec4 fragColor;
 
 void main() {
-	fragColor = color;
+	vec3 light = normalize(lightDir.xyz);
+	vec4 diffuse = vec4(color.rgb * max(ambient, dot(normal, light)), color.a);
+	fragColor = diffuse;
 }

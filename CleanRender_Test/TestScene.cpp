@@ -13,7 +13,9 @@
 #include <BoxCollider.h>
 #include <ConvexMeshCollider.h>
 #include <ConcaveMeshCollider.h>
+#include <SphereCollider.h>
 #include "NoclipController.h"
+#include "TestRotator.h"
 
 
 
@@ -59,39 +61,25 @@ void TestScene::load() {
 
 	Material* testMaterial = Material::find("Test");
 	Material* groundMaterial = Material::find("Ground");
+	Material* wallMaterial = Material::find("Wall");
 
-	testCube = new Entity("TestCube");
-	testCube->transform->setPosition(Vec3f(5, 0, 0));
-	MeshRenderer* cubeRend = testCube->addComponent<MeshRenderer>();
-	cubeRend->setMaterial(testMaterial);
-	cubeRend->setMesh(cubeMesh);
+	rotatingEnt = new Entity("Rotating");
+	rotatingEnt->addComponent<TestRotator>();
+	rotatingEnt->transform->setPosition(Vec3f(-5, 2, 0));
+	MeshRenderer* rotatingRend = rotatingEnt->addComponent<MeshRenderer>();
+	rotatingRend->setMaterial(testMaterial);
+	rotatingRend->setMesh(cubeMesh);
 
-	Entity* testCubeChild = new Entity("TestCubeChild");
-	testCubeChild->setParent(testCube);
-	testCubeChild->transform->setPosition(Vec3f(2, 0, 0));
-	MeshRenderer* cubeRend2 = testCubeChild->addComponent<MeshRenderer>();
-	cubeRend2->setMaterial(testMaterial);
-	cubeRend2->setMesh(cubeMesh);
+	Entity* noTransfChild = new Entity("EntityNoTransform", false);
+	noTransfChild->setParent(rotatingEnt);
 
-	noTransfParent = new Entity("NoTransfParent", false);
-	transfChild = new Entity("TransfChild");
-	transfChild->setParent(noTransfParent);
-	transfChild->transform->setPosition(Vec3f(-5, 2, 0));
-	transfChild->transform->setScale({ 1.0f, 2.0f, 1.0f });
-	MeshRenderer* transfRend = transfChild->addComponent<MeshRenderer>();
-	transfRend->setMaterial(testMaterial);
-	transfRend->setMesh(cubeMesh);
-
-	Entity* subNoTransfChild = new Entity("SubNoTransfChild", false);
-	subNoTransfChild->setParent(transfChild);
-
-	subTransfChild = new Entity("SubTransfChild");
-	subTransfChild->setParent(subNoTransfChild);
-	subTransfChild->transform->setPosition(Vec3f(0, 2, 0));
-	MeshRenderer* subTransfRend = subTransfChild->addComponent<MeshRenderer>();
-	subTransfRend->setMaterial(testMaterial);
-	subTransfRend->setMesh(cubeMesh);
-	ParticleSystem* particleSystem = subTransfChild->addComponent<ParticleSystem>();
+	Entity* particlesEnt = new Entity("Particles");
+	particlesEnt->setParent(noTransfChild);
+	particlesEnt->transform->setPosition(Vec3f(0, 2, 0));
+	MeshRenderer* particlesRend = particlesEnt->addComponent<MeshRenderer>();
+	particlesRend->setMaterial(testMaterial);
+	particlesRend->setMesh(cubeMesh);
+	ParticleSystem* particleSystem = particlesEnt->addComponent<ParticleSystem>();
 	particleSystem->emitVelocity = Vec3f::up * 5;
 	particleSystem->emitRate = 30;
 	particleSystem->minLifetime = 3;
@@ -100,19 +88,30 @@ void TestScene::load() {
 	particleSystem->startEmit();
 
 	Collider* groundCollider = new ConcaveMeshCollider(cubeMesh, {100, 10, 100});
+	Collider* groundWallCollider = new ConvexMeshCollider(cubeMesh, {2, 2, 10});
 	Collider* ballCollider = new ConvexMeshCollider(cubeMesh);
 
 	ground = new Entity("Ground");
 	ground->transform->setPosition(Vec3f(0, -10, 0));
 	ground->transform->setScale(Vec3f(100.0f, 10.0f, 100.0f));
-	ground->transform->setRotation(Quaternion::euler({0.0f, 0.0f, M_PI_4 / 4.0f}));
+	//ground->transform->setRotation(Quaternion::euler({0.0f, 0.0f, M_PI_4 / 4.0f}));
 	MeshRenderer* groundRenderer = ground->addComponent<MeshRenderer>();
 	groundRenderer->setMaterial(groundMaterial);
 	groundRenderer->setMesh(cubeMesh);
 	Rigidbody* groundRb = ground->addComponent<Rigidbody>();
 	groundRb->setCollider(groundCollider);
 
-	ball = new Entity("Ball");
+	Entity* groundWall = new Entity("GroundWall");
+	groundWall->setParent(ground);
+	groundWall->transform->setWorldPosition({ -1, -4, 0 });
+	groundWall->transform->setWorldScale({ 2, 2, 10 });
+	MeshRenderer* groundWallRenderer = groundWall->addComponent<MeshRenderer>();
+	groundWallRenderer->setMaterial(wallMaterial);
+	groundWallRenderer->setMesh(cubeMesh);
+	Rigidbody* groundWallRb = groundWall->addComponent<Rigidbody>();
+	groundWallRb->setCollider(groundWallCollider);
+
+	ball = new Entity("Cube");
 	ball->transform->setPosition(Vec3f(0, 20, 0));
 	MeshRenderer* ballRenderer = ball->addComponent<MeshRenderer>();
 	ballRenderer->setMaterial(testMaterial);
@@ -120,18 +119,21 @@ void TestScene::load() {
 	Rigidbody* ballRb = ball->addComponent<Rigidbody>();
 	ballRb->setCollider(ballCollider);
 	ballRb->setMass(1.0f);
+	ballRb->disable();
 }
 
 void TestScene::update() {
-	testCube->transform->rotate(Quaternion::euler(Vec3f(0, 5 * Time::deltaTime, 0)));
-	transfChild->transform->rotate(Quaternion::euler(Vec3f(2.5f * Time::deltaTime, 0, 0)));
-	subTransfChild->transform->setWorldRotation(Quaternion::identity);
+	Rigidbody* ballRb = ball->getComponent<Rigidbody>();
+	if (Time::time > 15.0f && !ballRb->isEnabled()) {
+		ballRb->enable();
+	}
 }
 
 void TestScene::destroy() {
 	Scene::destroy();
 	delete camera;
-	delete noTransfParent;
-	delete testCube;
+	delete rotatingEnt;
+	delete ground;
+	delete ball;
 	delete cubeMesh;
 }

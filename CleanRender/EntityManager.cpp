@@ -65,9 +65,20 @@ void EntityManager::gui() {
 
 void EntityManager::gui(Entity* entity) {
 	if (ImGui::TreeNode(entity->name)) {
+		HollowSet<Component*>& components = entity->getRawComponentsSet();
+		if (components.count != 0 && ImGui::TreeNode("components")) {
+			unsigned int compCount = 0;
+			for (unsigned int i = 0; i < components.capacity && compCount < components.count; i = compCount = i + 1) {
+				ImGui::Text(typeid(*components[i]).name());
+			}
+			ImGui::TreePop();
+		}
 		unsigned int childCount = entity->childCount();
-		for (unsigned int i = 0; i < childCount; i++) {
-			gui(entity->getChild(i));
+		if (childCount != 0 && ImGui::TreeNode("childs")) {
+			for (unsigned int i = 0; i < childCount; i++) {
+				gui(entity->getChild(i));
+			}
+			ImGui::TreePop();
 		}
 		ImGui::TreePop();
 	}

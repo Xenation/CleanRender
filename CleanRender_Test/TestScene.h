@@ -16,10 +16,7 @@ public:
 	virtual void destroy() override;
 private:
 	Entity* camera;
-	Entity* testCube;
-	Entity* noTransfParent;
-	Entity* transfChild;
-	Entity* subTransfChild;
+	Entity* rotatingEnt;
 	Entity* ground;
 	Entity* ball;
 	Mesh* cubeMesh;

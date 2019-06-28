@@ -244,6 +244,10 @@ struct Vec3i {
 		struct {
 			int x, y, z;
 		};
+		struct {
+			Vec2i xy;
+			float _z;
+		};
 		int data[3];
 	};
 public:
@@ -358,6 +362,10 @@ struct Vec4i {
 	union {
 		struct {
 			int x, y, z, w;
+		};
+		struct {
+			Vec3i xyz;
+			float _w;
 		};
 		int data[4];
 		__m128i _emm;

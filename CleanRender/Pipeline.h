@@ -34,6 +34,7 @@ private:
 	UniformBuffer* globalUniformBuffer;
 	Framebuffer* renderBuffer;
 	float aspectRatio = 1.0f;
+	unsigned int samples = 8;
 
 	void render(Camera* camera);
 };
